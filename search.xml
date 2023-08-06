@@ -20,11 +20,11 @@
       
         <tags>
             
+            <tag> Hexo </tag>
+            
             <tag> Markdown </tag>
             
             <tag> 语法 </tag>
-            
-            <tag> Hexo </tag>
             
         </tags>
       
@@ -516,6 +516,16 @@
           
       </categories>
       
+      
+        <tags>
+            
+            <tag> Markdown </tag>
+            
+            <tag> 语法 </tag>
+            
+            <tag> Mermaid </tag>
+            
+        </tags>
       
     </entry>
     
@@ -1081,9 +1091,9 @@
             
             <tag> Github </tag>
             
-            <tag> Hexo </tag>
-            
             <tag> Butterfly </tag>
+            
+            <tag> Hexo </tag>
             
         </tags>
       
