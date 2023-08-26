@@ -1,7 +1,8 @@
+/* 修改字体 ------------------------------------------------------- */
 @font-face {
   font-family: 'tzy';
 /* 字体名自定义即可 */
-  src: url("https://pic-go-img.oss-cn-hangzhou.aliyuncs.com/ZhuZiAWan.woff2");
+  src: url("/ZhuZiAWan.woff2");
 /* 字体文件路径 */
   font-display: swap;
 }
@@ -9,6 +10,7 @@ body,
 .gitcalendar {
   font-family: tzy !important;
 }
+/* 局部优化 ------------------------------------------------------- */
 .categoryBar-list {
   max-height: 400px;
 }
