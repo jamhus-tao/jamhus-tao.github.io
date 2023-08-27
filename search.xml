@@ -4,6 +4,35 @@
   
     
     <entry>
+      <title>ACMer 一键板子导出工具 cpps2md</title>
+      <link href="/2023/08/27/%E5%B0%8F%E5%B7%A5%E5%85%B7%E6%8C%87%E5%8C%97/ACMer%20%E4%B8%80%E9%94%AE%E6%9D%BF%E5%AD%90%E5%AF%BC%E5%87%BA%E5%B7%A5%E5%85%B7%20cpps2md/"/>
+      <url>/2023/08/27/%E5%B0%8F%E5%B7%A5%E5%85%B7%E6%8C%87%E5%8C%97/ACMer%20%E4%B8%80%E9%94%AE%E6%9D%BF%E5%AD%90%E5%AF%BC%E5%87%BA%E5%B7%A5%E5%85%B7%20cpps2md/</url>
+      
+        <content type="html"><![CDATA[<div class="note default flat"><p><a href="/categories/%E5%B0%8F%E5%B7%A5%E5%85%B7%E6%8C%87%E5%8C%97/">前往 小工具指北 分类</a></p></div><div class="note info flat"><p>这是我的个人开源项目，Github 自取 <a href="https://github.com/jamhus-tao/cpps2md/">jamhus-tao/cpps2md</a>，本来是给自己用的，当然也希望帮助更多人。</p></div><h1>cpps2md @Jamhus Tao</h1><h2 id="简介">简介</h2><p>这是一个 <code>cpp</code> 转 <code>markdown</code> 脚本，主要用于 <code>ACMer</code> 整理板子。如果你不是 <code>ACMer</code>（参与大学生程序设计竞赛的人），这个项目或许对你没有什么帮助。众所周知，<code>ACM</code> 系列赛事允许赛时使用纸质资料，于是每到赛前都需要将之前的练习整理成册打印出来，这是一个繁琐的工作。</p><p>通过该工具，你只需要将所有待打印的练习，分门别类地整理到一个文件夹内，运行脚本就可以整理成单一的 <code>Markdown</code> 文件。然后使用你喜欢的方式打印该 <code>Markdown</code> 文件。</p><p>本工具为命令行工具，运行窗口简陋，但功能实用。同时支持 <code>.cpp</code> 和 <code>.md</code> 文件格式、支持板子增量式打印。也就是说工具会检测你相较于上一次更改了哪些文件并且只导出它们。</p><h2 id="演示">演示</h2><p>原来的文件夹长这样，其中 <code>.bin</code> 放了我的工具，<code>.out</code> 放了工具导出的文件，其他几个可以无视。</p><img src="https://s2.loli.net/2023/08/19/oIlsUwgMHNbrnKd.png" alt=" " style="zoom:20%;" /><p>运行脚本导出到 <code>.out</code> 文件夹。</p><img src="https://s2.loli.net/2023/08/19/7duOaxQoIEG9qc5.png" alt=" " style="zoom:25%;" /><p>然后我使用 <code>Typora</code> 将它转为 <code>PDF</code>。</p><img src="https://s2.loli.net/2023/08/19/aUuqZRcs9V8HWjD.png" alt=" " style="zoom:20%;" /><p>很好，现在装订成册了。</p><img src="https://s2.loli.net/2023/08/19/JvQIiHCP1emtUh8.jpg" alt=" " style="zoom:14%;" /><h2 id="快速开始">快速开始</h2><h3 id="安装环境依赖">安装环境依赖</h3><ol><li>必须安装 <code>Git</code> 并且将其配置到环境变量，本工具使用 <code>Git</code> 管理你的代码。<a href="https://git-scm.com/downloads">Git - Downloads</a></li><li>建议安装 <code>Typora</code> ，后面关于 <code>PDF</code> 导出推荐使用 <code>Typora</code>。<a href="https://typoraio.cn/">Typora 官方中文站</a></li></ol><h3 id="构建目录结构">构建目录结构</h3><p>本工具必须运行在特定的目录结构下，这也是我出于更方便实用工具这样设计的。</p><p>如图是我们放置文件的根目录，而工具及其配置文件必须位于其 <code>.bin</code> 目录下，就是第一个，否则是无法运行的。</p><img src="https://s2.loli.net/2023/08/19/oIlsUwgMHNbrnKd.png" style="zoom:20%;" /><img src="https://s2.loli.net/2023/08/19/8E6YfpwqlBZ2jHI.png" alt=" " style="zoom:25.6%;" /><p><strong>再次强调，注意上图示例中，工具及其配置文件与文件目录的路径关系。</strong></p><p>另外，如果你使用默认配置，所有以 <code>.</code> 开头或包含英文 <code>!</code> 的目录、文件都不会被识别。同时目前只识别 <code>.cpp</code> 和 <code>.md</code> 为后缀的文件。</p><h3 id="运行工具">运行工具</h3><p>在确定目录结构正确后双击运行 <code>cpps2md.exe</code> 即可。</p><p>根据提示询问你是否需要只导出相对于上次后的更改内容，通常我们选择 <code>y</code> 表示增量导出，然后会显示哪些内容被检测到，并且准备打印。</p><p>回车确认导出，如果中间突然不想导出了直接关闭窗口即可。但回车之后请不要在提示完成前关闭窗口。</p><img src="https://s2.loli.net/2023/08/19/7duOaxQoIEG9qc5.png" alt=" " style="zoom:25%;" /><p>如果你进行了错误的操作，可以使用 <code>git</code> 进行回滚，但这首先要求你会使用 <code>git</code>，在开始时键入 <code>Cmd</code> 即可进入命令行模式，在这里直接键入你的 <code>git</code> 命令操作版本。如果在这方面你是小白，请备份好你的版本。不过需要声明，<strong>请放心本工具永远不会修改你的代码</strong>，只是进行增量导出时，它只会记住最近一个版本，但你可能想从两个版本前进行增量导出。</p><p>运行结束时程序会提示文件导出到 <code>.out</code> 文件夹，这时请返回到放置文件的目录，然后找到对应文件。如果你是使用增量导出，<strong>同时可能产生 <code>.log</code> 文件</strong>，它记录了相对于上次你做了哪些更新，你可以依此重新整理你的板子。</p><h3 id="导出文件">导出文件</h3><p>直接导出的 <code>.md</code> 文件是不可打印的，你需要将其导出为 <code>PDF</code>，这不属于本工具的功能范围，但这里以 <code>Typora</code> 为例，简单强调几点：</p><ol><li>务必打开 <code>偏好设置 - 导出 - PDF - 分页 - 按一级标题分页</code>，否则几篇代码放一页会很难受。</li><li>务必打开 <code>偏好设置 - 导出 - PDF - 通用 - 允许 YAML front matters 覆盖当前设置</code>。</li><li>建议打开 <code>偏好设置 - Markdown - 代码块 - 显示行号</code>。</li><li>文件最前面的 <code>YAML</code> 中 <code>header</code> 和 <code>footer</code> 会被 <code>Typora</code> 识别为页眉和页尾。</li></ol><h3 id="拓展工具">拓展工具</h3><h4 id="pdfOutlineOddPage">pdfOutlineOddPage</h4><p>这是一个 <code>PDF</code> 小工具，将 <code>PDF</code> 的所有一级标题对齐到奇数页，这样导出的 <code>PDF</code> 可以直接用于双面打印，并且方便检索。本人很喜欢这样的页面设计，于是分离地实现了这个小工具。你可以看到演示中我的 <code>PDF</code> 所有一级标题都在奇数页。</p><p>本工具支持拖拽运行，也支持双击打开选择文件。导出文件位于源目录。</p><h2 id="全部功能">全部功能</h2><h3 id="全目录打印">全目录打印</h3><ul><li>启动程序时询问 <code>Check the modification?</code> ，回复 <code>N</code> 进入全目录打印。</li><li>全目录打印会搜索并打印全部模板， 并在 <code>Markdown</code> 头部生成目录。</li></ul><h3 id="增量式打印">增量式打印</h3><ul><li>启动程序时询问 <code>Check the modification?</code> ，回复 <code>Y</code> 进入增量式打印。</li><li>增量式打印基于 <code>Git</code> ，仅打印新建、修改的内容，并提示已删除的内容。</li><li>查看同时生成的 <code>.log</code> 文件查看更新细节。</li></ul><h3 id="命令行模式（首先你需要会使用-Git）">命令行模式（首先你需要会使用 Git）</h3><ul><li><p>启动程序时输入特殊命令 <code>CMD</code> 进入命令行模式。</p></li><li><p>命令行模式支持使用 <code>Git</code> 命令行直接对你的仓库进行管理，同时提供了 <strong>全目录打印 / 增量式打印</strong> 的快捷命令。</p></li><li><p><code>Git</code> 仓库的存储位置是工作目录下的隐藏文件 <code>.git.jamhus</code> 。</p></li><li><p>在启动命令中添加 <code>-c</code> 开关，启动时自动进入命令行模式。或者运行提供的 <code>cpps2md-c.bat</code> 批处理文件。</p></li></ul><h3 id="拖拽启动">拖拽启动</h3><ul><li>将要打印的文件同时选中，全部拖拽到脚本上，脚本将以 <strong>参数模式</strong> 启动。</li><li>拖拽的文件尚不支持是文件夹。</li><li>拖拽启动不会干扰增量式管理系统，与工作目录无关。</li></ul><h2 id="配置选项">配置选项</h2><p>配置文件为 <code>config.json</code>。</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="comment">// Markdown YAML Front Matter，视编辑器而定，为空忽略</span></span><br><span class="line">  <span class="attr">&quot;front_matter&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;title&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ACM Code Template&quot;</span><span class="punctuation">,</span>  <span class="comment">// PDF 标题</span></span><br><span class="line">    <span class="attr">&quot;author&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Jamhus Tao&quot;</span><span class="punctuation">,</span>        <span class="comment">// PDF 作者</span></span><br><span class="line">    <span class="attr">&quot;header&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Jamhus Tao / GreatLiangpi $&#123;today&#125;&quot;</span><span class="punctuation">,</span>  <span class="comment">// Typora 页眉</span></span><br><span class="line">    <span class="attr">&quot;footer&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ACM Code Template&quot;</span>                    <span class="comment">// Typora 页尾</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="comment">// 去除开头文本，如果你的代码以这段文本开始，将在导出时过滤，为空忽略</span></span><br><span class="line">  <span class="attr">&quot;ignore_head&quot;</span><span class="punctuation">:</span> <span class="string">&quot;// Jamhus Tao / GreatLiangpi\n// Start at 2022/10/6\n// Please using int32_t and int64_t to replace the int and long long.\n#include &lt;bits/stdc++.h&gt;\n#define int int64_t\n#define endl &#x27;\\n&#x27;\n#pragma GCC optimize(3, \&quot;Ofast\&quot;, \&quot;inline\&quot;)\nusing namespace std;\n&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="comment">// 文件/目录过滤选项，被列表匹配的文件将不导出、目录将不搜索</span></span><br><span class="line">  <span class="attr">&quot;skip&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;regex&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span>  <span class="comment">// 是否使用正则表达式过滤</span></span><br><span class="line">    <span class="attr">&quot;list&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span>  <span class="comment">// 一切以 . 开头的文件/目录被过滤，不可配置</span></span><br><span class="line">      <span class="string">&quot;^README.md$&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;^test&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;^!&quot;</span>     <span class="comment">// 你可以在暂时不想打印的文件前加上 ! 标记</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="comment">// 支持文件类型，null 表示直接复制到正文，否则复制到代码块并标注语言</span></span><br><span class="line">  <span class="attr">&quot;file_type&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;.c&quot;</span><span class="punctuation">:</span> <span class="string">&quot;cpp&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;.cc&quot;</span><span class="punctuation">:</span> <span class="string">&quot;cpp&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;.cpp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;cpp&quot;</span><span class="punctuation">,</span>  <span class="comment">// 支持为 cpp 代码块, 如果同时支持多语言, ignore_head 可能对其他语言无效</span></span><br><span class="line">    <span class="attr">&quot;.h&quot;</span><span class="punctuation">:</span> <span class="string">&quot;cpp&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;.hpp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;cpp&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;.md&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span>     <span class="comment">// 直接复制到正文，注意 Markdown 不能包含一级标题</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure><h2 id="版本更新">版本更新</h2><ul><li><code>V0.0.0:</code> 初始版本，仅支持对单一文件的打印，不支持目录打印。</li><li><code>V0.1.0:</code> 开始支持多文件打印，并将内容输出到多个文件。</li><li><code>V2.0.0:</code> 重写代码，实现了全目录打印到单一文件。</li><li><code>V2.1.0:</code> 重写代码，基于 <code>git</code> 实现全目录增量式打印，提供相关配置文件，基本确定了 <code>V2.x</code> 原型。</li><li><code>V2.1.7:</code> 性能调优，优化目录搜索方式；修复一些已知问题。</li><li><code>V2.2.0:</code> 增加命令行模式，支持直接使用 <code>git</code> 管理。</li><li><code>V2.2.1:</code> 修改输出排序方式，目录顺序可能与原先不一致。</li><li><code>V2.3.0:</code> 增加拖拽启动，拖拽模式只支持打印多个文件，不可为目录。</li><li><code>pdfOutlineOddPage:</code> 新增拓展工具 <code>pdf outline odd page</code>，与主程序完全分离。</li><li><code>V3.0.0:</code> 重构配置文件为 <code>config.json</code>，增强配置选项。</li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> 小工具指北 </category>
+          
+          <category> ACMer 一键板子导出工具 cpps2md </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 小工具 </tag>
+            
+            <tag> cpps2md </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Github + Hexo + Butterfly 建站笔记(六) - 自定义配置</title>
       <link href="/2023/08/26/%E5%BB%BA%E7%AB%99%E7%AC%94%E8%AE%B0/Github%20+%20Hexo%20+%20Butterfly%20%E5%BB%BA%E7%AB%99%E7%AC%94%E8%AE%B0(%E5%85%AD)%20-%20%E8%87%AA%E5%AE%9A%E4%B9%89%E9%85%8D%E7%BD%AE/"/>
       <url>/2023/08/26/%E5%BB%BA%E7%AB%99%E7%AC%94%E8%AE%B0/Github%20+%20Hexo%20+%20Butterfly%20%E5%BB%BA%E7%AB%99%E7%AC%94%E8%AE%B0(%E5%85%AD)%20-%20%E8%87%AA%E5%AE%9A%E4%B9%89%E9%85%8D%E7%BD%AE/</url>
@@ -20,9 +49,9 @@
       
         <tags>
             
-            <tag> Github </tag>
-            
             <tag> Butterfly </tag>
+            
+            <tag> Github </tag>
             
         </tags>
       
@@ -741,11 +770,11 @@
             
             <tag> 数论 </tag>
             
-            <tag> 欧拉降幂 </tag>
-            
             <tag> Miller Rabin </tag>
             
             <tag> Pollard Rho </tag>
+            
+            <tag> 欧拉降幂 </tag>
             
         </tags>
       
@@ -1109,9 +1138,9 @@
       
         <tags>
             
-            <tag> 安装 </tag>
-            
             <tag> Git </tag>
+            
+            <tag> 安装 </tag>
             
         </tags>
       
@@ -1198,9 +1227,9 @@
       
         <tags>
             
-            <tag> Python </tag>
-            
             <tag> 语法 </tag>
+            
+            <tag> Python </tag>
             
         </tags>
       
@@ -1227,9 +1256,9 @@
       
         <tags>
             
-            <tag> Python </tag>
-            
             <tag> 语法 </tag>
+            
+            <tag> Python </tag>
             
         </tags>
       
@@ -1794,9 +1823,9 @@
       
         <tags>
             
-            <tag> Golang </tag>
-            
             <tag> 安装 </tag>
+            
+            <tag> Golang </tag>
             
         </tags>
       
@@ -1821,9 +1850,9 @@
       
         <tags>
             
-            <tag> Github </tag>
-            
             <tag> Butterfly </tag>
+            
+            <tag> Github </tag>
             
         </tags>
       
@@ -1848,9 +1877,9 @@
       
         <tags>
             
-            <tag> Github </tag>
-            
             <tag> Butterfly </tag>
+            
+            <tag> Github </tag>
             
         </tags>
       
@@ -1900,9 +1929,9 @@
       
         <tags>
             
-            <tag> Github </tag>
-            
             <tag> Hexo </tag>
+            
+            <tag> Github </tag>
             
         </tags>
       
@@ -1989,11 +2018,11 @@
       
         <tags>
             
-            <tag> Github </tag>
-            
             <tag> Hexo </tag>
             
             <tag> Butterfly </tag>
+            
+            <tag> Github </tag>
             
         </tags>
       
