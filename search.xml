@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>随笔 - 八月随笔</title>
+      <link href="/2023/08/28/%E9%9A%8F%E7%AC%94/2023/%E9%9A%8F%E7%AC%94%20-%20%E5%85%AB%E6%9C%88%E9%9A%8F%E7%AC%94/"/>
+      <url>/2023/08/28/%E9%9A%8F%E7%AC%94/2023/%E9%9A%8F%E7%AC%94%20-%20%E5%85%AB%E6%9C%88%E9%9A%8F%E7%AC%94/</url>
+      
+        <content type="html"><![CDATA[<p>翻了翻日历，七月中旬到八月中旬大概都是在牛客多校和杭电多校中度过，中间还抽空写了几篇<a href="/categories/%E7%AE%97%E7%AB%9E%E9%A2%98%E8%A7%A3/%E7%89%9B%E5%AE%A2%E5%A4%9A%E6%A0%A1-%E6%9D%AD%E7%94%B5%E5%A4%9A%E6%A0%A1/2023/">相关题解</a>，中间也抽空继续写我的博客。牛客多校和杭电多校虽然考察的知识点非常的偏和奇怪，但是也可以说是收获很多的，督促我去学了很多新东西。杭电多校没有 Rating 机制，因此下面只附了牛客多校。</p><p><img src="https://s2.loli.net/2023/08/28/Wm25uhLoVzxdH4k.png" alt=" "></p><p>按照这个排名，对下半年区域赛的定位大概是银牌靠前。</p><br><p>8 月 20 日 CCPC 网络预选赛，纯纯坐牢局，这场比赛歪榜严重，多数人跟榜都只有一题，还好中间队友开出了另一道题，也算为学校打了一个名额。今年 CCPC 估计名额为 5 个，后面还有两场 ICPC 网络预选赛，吸取教训不乱跟榜。</p><br><p>谈谈八月下旬如何度过，除了算法竞赛方面，继续偷学 <code>Golang</code> 相关，虽然才过去了四五天就开摆了，如果我能坚持下来，后面会看到一个新的系列文章，当然很大概率会被鸽掉。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 随笔 </category>
+          
+          <category> 2023 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 随笔 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>ACMer 一键板子导出工具 cpps2md</title>
       <link href="/2023/08/27/%E5%B0%8F%E5%B7%A5%E5%85%B7%E6%8C%87%E5%8C%97/ACMer%20%E4%B8%80%E9%94%AE%E6%9D%BF%E5%AD%90%E5%AF%BC%E5%87%BA%E5%B7%A5%E5%85%B7%20cpps2md/"/>
       <url>/2023/08/27/%E5%B0%8F%E5%B7%A5%E5%85%B7%E6%8C%87%E5%8C%97/ACMer%20%E4%B8%80%E9%94%AE%E6%9D%BF%E5%AD%90%E5%AF%BC%E5%87%BA%E5%B7%A5%E5%85%B7%20cpps2md/</url>
@@ -1929,9 +1956,9 @@
       
         <tags>
             
-            <tag> Hexo </tag>
-            
             <tag> Github </tag>
+            
+            <tag> Hexo </tag>
             
         </tags>
       
@@ -2018,11 +2045,11 @@
       
         <tags>
             
-            <tag> Hexo </tag>
-            
             <tag> Butterfly </tag>
             
             <tag> Github </tag>
+            
+            <tag> Hexo </tag>
             
         </tags>
       
