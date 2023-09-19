@@ -4,6 +4,62 @@
   
     
     <entry>
+      <title>如何理解C++顶级和低级指针和数组</title>
+      <link href="/2023/09/19/C++/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3C++%E9%A1%B6%E7%BA%A7%E5%92%8C%E4%BD%8E%E7%BA%A7%E6%8C%87%E9%92%88%E5%92%8C%E6%95%B0%E7%BB%84/"/>
+      <url>/2023/09/19/C++/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3C++%E9%A1%B6%E7%BA%A7%E5%92%8C%E4%BD%8E%E7%BA%A7%E6%8C%87%E9%92%88%E5%92%8C%E6%95%B0%E7%BB%84/</url>
+      
+        <content type="html"><![CDATA[<div class="note warning flat"><p>建站提交历史文章，原文写作时间 2023 年 6 月 15 日。</p></div><h2 id="前言">前言</h2><p>关于多级指针中的 <code>const</code> 修饰初学者都会觉得是一个很玄学的问题，我也是初学者，在深入理解后在此留下一些自己的理解，使用更多的示例与图示用这篇短文来展示理解的过程。同时也发现在这一块文章也不多，因此希望此文能对你有帮助。</p><ul><li><code>top-level-const</code> ：顶级常量，指指针本身是常量。</li><li><code>low-level-const</code> ：低级常量，指指针指向的量是常量。</li></ul><h2 id="玄学-const-指针">玄学 <code>const</code> 指针</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> *p;<span class="comment">// 指向变量的指针变量</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> *p;<span class="comment">// 指向常量的指针变量</span></span><br><span class="line"><span class="type">int</span> <span class="type">const</span> *p;       <span class="comment">// 等价于 const int *p</span></span><br><span class="line"><span class="type">int</span> * <span class="type">const</span> p;<span class="comment">// 指向变量的指针常量</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> * <span class="type">const</span> p; <span class="comment">// 指向常量的指针变量</span></span><br></pre></td></tr></table></figure><h2 id="玄学数组指针">玄学数组指针</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> *p[<span class="number">4</span>];<span class="comment">// 指向 int 的指针数组, sizeof(*p) == sizeof(int)</span></span><br><span class="line"><span class="built_in">int</span> (*p)[<span class="number">4</span>];<span class="comment">// 指向数组的指针, sizeof(*p) == sizeof(int) * 4</span></span><br></pre></td></tr></table></figure><h2 id="如何理解-const-指针">如何理解 <code>const</code> 指针</h2><p>我们以 <code>const int * const p</code> 来从编译器的角度解释这个变量声明是如何被解析的。</p><p>编译器是从右往左解析这串声明的。事实上很多的表达式对于编译器而言都是从右往左解析的，尽管大多数是从左往右，这里不展开。</p><ul><li>首先，编译器知道我们声明了一个变量 <code>p</code> ，但因为编译器从右往左解析，它目前不知道 <code>p</code> 是任意数据类型。</li><li>编译器解析到了第二个 <code>const</code> ，因此 <code>p</code> 是一个 <code>const</code> 修饰类型。</li><li>解析到 <code>*</code> ，因此 <code>const p</code> 是一个指针类型，但是目前我们只能说它是一个指针，但不知道它指向何种数据类型。可以认为是 <code>void * const p</code> 。</li><li>注意这时解析到 <code>int</code> 时已经开始确定 <code>void * const p</code> 指向的内容了，即确定 <code>void</code> 的类型，这里确定了 <code>void * const p</code> 指向一个 <code>int</code> 类型。</li><li>最后解析到第一个 <code>const</code> ，因此最后得到 <code>void * const p</code> 指向 <code>const int</code> 类型。</li></ul><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">flowchart RL</span><br><span class="line">1(void * const p) --&gt; 2(const int)</span><br></pre></td></tr></table></figure><p>看到这里，那么你应该也可以自己解释上面的一些其他例子了吧，后面还会举一些更复杂的例子。</p><p><code>const int * const ** const p</code></p><p><code>const int | * const | * | * const p</code> （<code>|</code> 仅用于理解）</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">flowchart RL</span><br><span class="line">1(void * const p) --&gt; 2(void *) --&gt; 3(void * const) --&gt; 4(const int)</span><br></pre></td></tr></table></figure><p><code>const int **** p</code></p><p><code>const int | * | * | * | * p</code> （<code>|</code> 仅用于理解）</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">flowchart RL</span><br><span class="line">1(void * p) --&gt; 2(void *) --&gt; 3(void *) --&gt; 4(void *) --&gt; 5(const int)</span><br></pre></td></tr></table></figure><p>可见可以把 <code>*</code> 当作解释的分隔符从右往左解释变量的申明。</p><h2 id="如何理解数组指针">如何理解数组指针</h2><p>首先我们需要知道， <code>[]</code> 的优先级高于 <code>*</code> ，并且 <code>[]</code> 是自左向右结合的</p><p>我们现在从 <code>int (*p)[4]</code> 入手解释如何理解数组指针，通过之前对于玄学指针的解释应该可以自行从编译器角度理解这段申明，下面我想从方法论的角度分析如何理解。</p><p>考虑到 <code>[]</code> 是向左结合的，并且具有比 <code>*</code> 高的优先级，我们可以把 <code>[]</code> 翻译成向右结合的形式方便更直观的理解，上面的示例 <code>int (*p)[4]</code> 可以转化为 <code>int[4]*p</code>（将 <code>[]</code> 放到紧贴着前面的括号的前面） 。这样可以很直观的看到：<code>p</code> 首先是一个指针，指向一个包含 4 个元素的数组，数组包含的元素是 <code>int</code> 。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">flowchart RL</span><br><span class="line">1(void * p) --&gt; 2(&quot;[4]&quot;) --&gt; 3(int)</span><br></pre></td></tr></table></figure><p>后面再来举一些更复杂的例子吧。</p><p><code>const int p[4]</code></p><p><code>const int | [4] p</code></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">flowchart RL</span><br><span class="line">1(&quot;p[4]&quot;) --&gt; 2(const int)</span><br></pre></td></tr></table></figure><p><code>const int * const (* const p[4])[5][6]</code></p><p><code>const int | * const | [6] | [5] | * const | [4] p</code></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">flowchart RL</span><br><span class="line">1(&quot;p[4]&quot;) --&gt; 2(void  * const) --&gt; 3(&quot;[5]&quot;) --&gt; 4(&quot;[6]&quot;) --&gt; 5(void * const) --&gt; 6(const int)</span><br></pre></td></tr></table></figure><p><code>const char *(*p)[10][3]</code></p><p><code>const char * | [3] | [10] | * p</code></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">flowchart RL</span><br><span class="line">1(void * p) --&gt; 2(&quot;[10]&quot;) --&gt; 3(&quot;[3]&quot;) --&gt; 4(const char *)</span><br></pre></td></tr></table></figure><h2 id="多级指针的应用">多级指针的应用</h2><p>最后还是想简单介绍一下多级指针的应用，在 <code>C</code> 中没有封装的概念，因此许多用法必须要多级指针的支持；在 C++ 中，即使支持多级的封装，但是许多提供的接口同时支持 <code>C/C++</code>，因此依然是 <code>C</code> 的。</p><p>例如，我想要存储一张 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>10</mn><mo>×</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">10\times3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">10</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">3</span></span></span></span> 的表格，表格存储字符串，并且现在要求表格是静态的、字符串长度是动态的。那么就需要类似上一个示例 <code>char *p[10][3]</code> ；此时我又要求传入的指针在接口内可以任意修改，那么就必须申明为 <code>char *(*p)[10][3]</code> ；如果要求表格的行数得是动态的而列数是静态的，那么就必须申明为 <code>char *(**p)[3]</code> ；现在要求全部是动态的，<code>char ****p</code>，最后这种形式其实是十分常用的形式。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> C++ </category>
+          
+          <category> 如何理解C++顶级和低级指针和数组 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> C++ </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>WSL安装方法</title>
+      <link href="/2023/09/19/Linux/WSL%20%E5%AE%89%E8%A3%85%E6%96%B9%E6%B3%95/"/>
+      <url>/2023/09/19/Linux/WSL%20%E5%AE%89%E8%A3%85%E6%96%B9%E6%B3%95/</url>
+      
+        <content type="html"><![CDATA[<h2 id="简介">简介</h2><p>WSL 是从 Windows 10 2004 开始支持的，Microsoft 官方支持的适用于 Linux 的 Windows 子系统 (Windows Subsystem for Linux)，开发人员可以安装 Linux 发行版 (例如 Ubuntu、OpenSUSE、Kali、Debian、Arch Linux 等)，并直接在 Windows 上使用 Linux 应用程序。可以参阅 WSL 的<a href="https://learn.microsoft.com/zh-cn/windows/wsl/install">官方文档</a>。</p><p>与传统的虚拟机启动或双系统启动方式相比，由官方支持的 WSL 不仅配置方便，而且无需承担传统方式带来的巨大开销。</p><h2 id="自动安装">自动安装</h2><p>后面将介绍自动安装和手动安装，两种方式选一即可，建议优先尝试使用自动安装，此处我们以安装 Ubuntu 为例。</p><p>打开 <code>Powershell</code> 并且执行下面的命令，一键完成安装。</p><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wsl <span class="literal">--install</span> <span class="literal">-d</span> Ubuntu</span><br><span class="line"><span class="comment"># wsl --list --online  # 查看所有可安装的最新发行版本</span></span><br></pre></td></tr></table></figure><p>进入 <code>wsl</code> 系统只需打开 <code>Powershell</code> 运行 <code>wsl</code> 即可。</p><details class="toggle" style="border: 1px solid  #222222"><summary class="toggle-button" style="background-color:  #222222;color:  white">为什么我安装失败</summary><div class="toggle-content"><p>我总结的常见安装失败原因有三：</p><ul><li>挂 V 可能导致无法继续下载，如果挂着尝试关闭后重试。手动安装失败也可能是这个原因导致的。</li><li>禁用 Windows 更新可能导致部分服务不可用，请打开 Windows 更新。手动安装失败也可能是这个原因导致的。</li><li>以上两种情况对于自动安装和手动安装都是一样的，但我遇到的一种情况是单纯的自动安装不可用，原因未知，尝试手动安装。</li></ul></div></details><h2 id="手动安装">手动安装</h2><h3 id="启用相关-Windows-功能">启用相关 Windows 功能</h3><p>在搜索框找到 <code>Windows 功能</code>，或者找到 <code>控制面板 - 程序 - 启用或关闭 Windows 功能</code>，启用 <code>适用于 Windows 的 Linux 子系统</code> 和 <code>虚拟机平台</code>，这可能需要重启计算机，按照指示即可。</p><img src="https://s2.loli.net/2023/09/19/jVoluDfHGPRcKwa.png" alt=" " style="zoom:33%;" /><h3 id="设置-WSL-默认版本">设置 WSL 默认版本</h3><p>WSL 2 比 WSL 1 使用起来更方便 (我也不是很懂)，同样是在 <code>Powershell</code> 中执行命令。</p><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将 WSL 默认版本设置为 WSL 2</span></span><br><span class="line">wsl <span class="literal">--set-default-version</span> <span class="number">2</span></span><br></pre></td></tr></table></figure><h3 id="安装-WSL-发行版">安装 WSL 发行版</h3><p>打开 Microsoft Store，搜索 Ubuntu 并安装，耐心等待安装完成即可。</p><p><img src="https://s2.loli.net/2023/09/19/CTqIrevf5txiV7l.png" alt=""></p><p>按照引导设置初始用户用户名和密码。此时已经安装完成，可以在开始菜单中找到 Ubuntu，可以直接运行，而且打开速度是秒级别的。</p><h2 id="国内设置">国内设置</h2><h3 id="更换国内软件源">更换国内软件源</h3><p>这里我选择使用 <a href="https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/">清华源 Ubuntu 软件仓库镜像</a>。</p><p>使用 <code>sudo lsb_release -a</code> 查看 Ubuntu 版本，选择你的 Ubuntu 版本并复制文本框的内容。</p><p><img src="https://s2.loli.net/2023/09/19/aHeTq1GKblI39nf.png" alt=" "></p><p>使用下面的命令更新软件源：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ sudo su  <span class="comment"># 执行这行指令后，进入 root 用户</span></span><br><span class="line">[sudo] xxx 的密码：</span><br><span class="line">$ <span class="built_in">cp</span> /etc/apt/sources.list /etc/apt/sources.list.bak  <span class="comment"># 备份原文件</span></span><br><span class="line">$ <span class="built_in">echo</span> &gt; /etc/apt/sources.list  <span class="comment"># 清空原文件</span></span><br><span class="line">$ vim /etc/apt/sources.list  <span class="comment"># 如未安装使用 apt install vim 安装</span></span><br><span class="line">...  <span class="comment"># (按 i 之后将复制的文本右键粘贴进去，编辑完后按 Esc，再输入 :wq 和回车)</span></span><br><span class="line">$ apt update</span><br><span class="line">$ apt upgrade -y</span><br><span class="line">$ <span class="built_in">exit</span>  <span class="comment"># 退出 root 用户</span></span><br></pre></td></tr></table></figure><h3 id="安装中文环境">安装中文环境</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ sudo su  <span class="comment"># 执行这行指令后，进入 root 用户</span></span><br><span class="line">[sudo] xxx 的密码：</span><br><span class="line">$ apt install language-pack-zh-hans</span><br><span class="line">$ apt install fontconfig</span><br><span class="line">$ apt install fonts-noto-cjk fonts-wqy-microhei fonts-wqy-zenhei</span><br><span class="line">$ dpkg-reconfigure locales  <span class="comment"># 进入命令行图形界面</span></span><br><span class="line">$ <span class="built_in">exit</span>  <span class="comment"># 退出 root 用户</span></span><br></pre></td></tr></table></figure><p>进入命令行图形界面时，第一个界面直接回车即可，第二个界面选中 <code>zh_CN.UTF-8</code> 后回车。重启 WSL 生效。</p><h3 id="安装中文帮助文档">安装中文帮助文档</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt install manpages-zh  <span class="comment"># 完成后使用 man man 测试中文文档, 也有一些未翻译的文档如 tree</span></span><br></pre></td></tr></table></figure><details class="toggle" style="border: 1px solid  #222222"><summary class="toggle-button" style="background-color:  #222222;color:  white">避坑指南</summary><div class="toggle-content"><p>有些帮助会教你再执行一行命令以强制查看中文帮助，这样做会导致一些未被翻译的文档无法查看，原本未被翻译的文档会使用默认语言。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 错误示例 !!!</span></span><br><span class="line">$ man gcc</span><br><span class="line">...  <span class="comment"># 英文文档</span></span><br><span class="line">$ sudo sed -i <span class="string">&#x27;s|/usr/share/man|/usr/share/man/zh_CN|g&#x27;</span> /etc/manpath.config</span><br><span class="line">$ man gcc</span><br><span class="line">没有 gcc 的手册页条目</span><br></pre></td></tr></table></figure><p>如果你已经执行了该命令，请再执行一次下面的命令，撤销原有影响，最好将原文件 <code>/etc/manpath.config</code> 备份一份。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cp</span> /etc/manpath.config /etc/manpath.config.zh_CN.bak  <span class="comment"># 备份</span></span><br><span class="line">$ sudo sed -i <span class="string">&#x27;s|/usr/share/man/zh_CN|/usr/share/man|g&#x27;</span> /etc/manpath.config  </span><br><span class="line"><span class="comment"># 将所有 /usr/share/man/zh_CN 替换为 /usr/share/man</span></span><br></pre></td></tr></table></figure></div></details>]]></content>
+      
+      
+      <categories>
+          
+          <category> Linux </category>
+          
+          <category> WSL 安装方法 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Linux </tag>
+            
+            <tag> WSL </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>平衡树&amp;二叉搜索树 - B 树</title>
       <link href="/2023/09/10/%E7%AE%97%E7%AB%9E%E6%A8%A1%E6%9D%BF/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%B9%B3%E8%A1%A1%E6%A0%91&amp;%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%20-%20B%20%E6%A0%91/"/>
       <url>/2023/09/10/%E7%AE%97%E7%AB%9E%E6%A8%A1%E6%9D%BF/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E5%B9%B3%E8%A1%A1%E6%A0%91&amp;%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%20-%20B%20%E6%A0%91/</url>
@@ -952,11 +1008,11 @@
             
             <tag> 数论 </tag>
             
-            <tag> 欧拉降幂 </tag>
-            
             <tag> Miller Rabin </tag>
             
             <tag> Pollard Rho </tag>
+            
+            <tag> 欧拉降幂 </tag>
             
         </tags>
       
@@ -1409,9 +1465,9 @@
       
         <tags>
             
-            <tag> Python </tag>
-            
             <tag> 语法 </tag>
+            
+            <tag> Python </tag>
             
         </tags>
       
@@ -1438,9 +1494,9 @@
       
         <tags>
             
-            <tag> Python </tag>
-            
             <tag> 语法 </tag>
+            
+            <tag> Python </tag>
             
         </tags>
       
@@ -1744,9 +1800,9 @@
       
         <tags>
             
-            <tag> 语法 </tag>
-            
             <tag> Golang </tag>
+            
+            <tag> 语法 </tag>
             
         </tags>
       
@@ -1773,9 +1829,9 @@
       
         <tags>
             
-            <tag> 语法 </tag>
-            
             <tag> Golang </tag>
+            
+            <tag> 语法 </tag>
             
         </tags>
       
@@ -1802,9 +1858,9 @@
       
         <tags>
             
-            <tag> 语法 </tag>
-            
             <tag> Golang </tag>
+            
+            <tag> 语法 </tag>
             
         </tags>
       
@@ -1831,9 +1887,9 @@
       
         <tags>
             
-            <tag> 语法 </tag>
-            
             <tag> Golang </tag>
+            
+            <tag> 语法 </tag>
             
         </tags>
       
@@ -1860,9 +1916,9 @@
       
         <tags>
             
-            <tag> 语法 </tag>
-            
             <tag> Golang </tag>
+            
+            <tag> 语法 </tag>
             
         </tags>
       
@@ -1889,9 +1945,9 @@
       
         <tags>
             
-            <tag> 语法 </tag>
-            
             <tag> Golang </tag>
+            
+            <tag> 语法 </tag>
             
         </tags>
       
@@ -1918,9 +1974,9 @@
       
         <tags>
             
-            <tag> 语法 </tag>
-            
             <tag> Golang </tag>
+            
+            <tag> 语法 </tag>
             
         </tags>
       
@@ -1947,9 +2003,9 @@
       
         <tags>
             
-            <tag> 语法 </tag>
-            
             <tag> Golang </tag>
+            
+            <tag> 语法 </tag>
             
         </tags>
       
@@ -1976,9 +2032,9 @@
       
         <tags>
             
-            <tag> 语法 </tag>
-            
             <tag> Golang </tag>
+            
+            <tag> 语法 </tag>
             
         </tags>
       
@@ -2005,9 +2061,9 @@
       
         <tags>
             
-            <tag> 安装 </tag>
-            
             <tag> Golang </tag>
+            
+            <tag> 安装 </tag>
             
         </tags>
       
