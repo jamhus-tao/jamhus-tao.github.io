@@ -1008,11 +1008,11 @@
             
             <tag> 数论 </tag>
             
-            <tag> 欧拉降幂 </tag>
-            
             <tag> Miller Rabin </tag>
             
             <tag> Pollard Rho </tag>
+            
+            <tag> 欧拉降幂 </tag>
             
         </tags>
       
@@ -1376,9 +1376,9 @@
       
         <tags>
             
-            <tag> 安装 </tag>
-            
             <tag> Git </tag>
+            
+            <tag> 安装 </tag>
             
         </tags>
       
