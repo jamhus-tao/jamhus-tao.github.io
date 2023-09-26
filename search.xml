@@ -4,7 +4,36 @@
   
     
     <entry>
-      <title>如何理解C++顶级和低级指针和数组</title>
+      <title>如何理解 python 修饰器原理</title>
+      <link href="/2023/09/26/Python/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3%20python%20%E4%BF%AE%E9%A5%B0%E5%99%A8%E5%8E%9F%E7%90%86/"/>
+      <url>/2023/09/26/Python/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3%20python%20%E4%BF%AE%E9%A5%B0%E5%99%A8%E5%8E%9F%E7%90%86/</url>
+      
+        <content type="html"><![CDATA[<h2 id="引子">引子</h2><p>在 Python 中有一个非常重要且有特色的语法 <strong>修饰器</strong>，但是修饰器的语法也非常难懂，只有更好的理解修饰器原理才能更好掌握该语法。在网上查了不少资料，但是发现很多文章仅仅介绍了修饰器的基本使用而没有介绍其 <strong>原理</strong>，本文将分从 <strong>基本语法</strong> 和 <strong>实现原理</strong> 两个方面谈谈我对修饰器的理解。</p><h2 id="基本语法">基本语法</h2><h3 id="无参修饰器">无参修饰器</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 无参修饰器的基本格式</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decorator</span>(<span class="params">func</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">wrapper</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">        <span class="comment"># front operators</span></span><br><span class="line">        __ = func(*args, **kwargs)</span><br><span class="line">        <span class="comment"># later operators</span></span><br><span class="line">        <span class="keyword">return</span> __</span><br><span class="line">    <span class="keyword">return</span> wrapper</span><br><span class="line"></span><br><span class="line"><span class="meta">@decorator</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">    <span class="keyword">pass</span>  <span class="comment"># do something</span></span><br></pre></td></tr></table></figure><p>下面举个时间测试修饰器的例子：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">time_it</span>(<span class="params">func</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">wrapper</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">        _start_time = time.time()</span><br><span class="line">        __ = func(*args, **kwargs)</span><br><span class="line">        _end_time = time.time()</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;time_it: &#123;&#125;&quot;</span>.<span class="built_in">format</span>(end_time - start_time))</span><br><span class="line">        <span class="keyword">return</span> __</span><br><span class="line">  <span class="keyword">return</span> wrapper</span><br><span class="line"></span><br><span class="line"><span class="meta">@time_it</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test</span>(<span class="params">sec</span>):</span><br><span class="line">    time.sleep(sec)</span><br><span class="line">    </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    test()</span><br></pre></td></tr></table></figure><p>由此也可见，Python 修饰器最大的优势就是可以方便的将代码放入一个嵌套的逻辑中，而如果我们每次需要编写这个嵌套逻辑往往很繁琐的。</p><h3 id="带参修饰器">带参修饰器</h3><div class="note primary flat"><p>带参修饰器需要在无参修饰器外面再套一层壳，是不是感觉很奇怪？感觉这套语法怎么这么多嵌套？别急，我们后面会解释的。</p></div><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 有参修饰器的基本格式</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decorator</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">inner</span>(<span class="params">func</span>):</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">wrapper</span>(<span class="params">*args_, **kwargs_</span>):</span><br><span class="line">            <span class="comment"># front operators with args and kwargs</span></span><br><span class="line">            __ = func(*args_, **kwargs_)</span><br><span class="line">            <span class="comment"># later operators with args and kwargs</span></span><br><span class="line">            <span class="keyword">return</span> __</span><br><span class="line">        <span class="keyword">return</span> wrapper</span><br><span class="line">   <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line"><span class="meta">@decorator(<span class="params">*args, **kwargs</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">    <span class="keyword">pass</span>  <span class="comment"># do something</span></span><br></pre></td></tr></table></figure><p>下面举个互斥锁的例子，这样 <strong>原子操作</strong> 抽象为函数后只需简单添加修饰器即可。</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 卖票程序演示持锁的修饰器实现</span></span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line">ticket_id = <span class="number">1</span></span><br><span class="line">mutex = threading.Lock()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">WithMutex</span>(<span class="params">mutex: threading.Lock</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">decorator</span>(<span class="params">func</span>):</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">wrapper</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">            mutex.acquire()</span><br><span class="line">            __ = func(*args, **kwargs)</span><br><span class="line">            mutex.release()</span><br><span class="line">            <span class="keyword">return</span> __</span><br><span class="line">        <span class="keyword">return</span> wrapper</span><br><span class="line">    <span class="keyword">return</span> decorator</span><br><span class="line"></span><br><span class="line"><span class="meta">@WithMutex(<span class="params">mutex</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">atom</span>(<span class="params">i: <span class="built_in">int</span></span>) -&gt; <span class="built_in">bool</span>:</span><br><span class="line">    <span class="keyword">global</span> ticket_id</span><br><span class="line">    <span class="keyword">if</span> ticket_id &gt; <span class="number">100</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Thread &#123;&#125; give out ticket &#123;&#125;&quot;</span>.<span class="built_in">format</span>(i, ticket_id))</span><br><span class="line">    ticket_id += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">i: <span class="built_in">int</span></span>):</span><br><span class="line">    <span class="keyword">while</span> atom(i):</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    threads = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">        threads.append(threading.Thread(target=run, args=(i, )))</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">        threads[i].start()</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">        threads[i].join()</span><br></pre></td></tr></table></figure><h2 id="实现原理">实现原理</h2><p>感觉很抽象，非常的难记。但是解释一下原理你就懂了。</p><p>其实 <strong>无参修饰器</strong> 和 <strong>带参修饰器</strong> 在原理上是一致的，那么解释器是如何解释这两段代码的呢？可以看到不管是 <strong>无参修饰器</strong> 还是 <strong>带参修饰器</strong> 它们都有共同的特点，返回一系列的函数。其实解释器是这样解释的：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 原代码, 修饰器实现省略</span></span><br><span class="line"><span class="meta">@decorator</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">    <span class="keyword">pass</span>  <span class="comment"># do something</span></span><br><span class="line"></span><br><span class="line">func(*args, **kwargs)</span><br></pre></td></tr></table></figure><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 解释器等效代码</span></span><br><span class="line">decorator(func)(*args, **kwargs)</span><br><span class="line"><span class="comment"># 也可以理解为</span></span><br><span class="line"><span class="comment"># wrapper = decorator(func)</span></span><br><span class="line"><span class="comment"># wrapper(*args, **kwargs)</span></span><br></pre></td></tr></table></figure><p>我们来仔细理解一下这份代码。<code>decorator(func)</code> 返回了一个内嵌函数 <code>wrapper</code>（函数也是对象，请区别函数与函数返回值），而内嵌函数实际获取了参数 <code>*args, **kwargs</code>。这里还值得一提的是，内嵌函数的实现允许其保留外部函数的变量，通常外部函数生命周期结束后其局部变量都将释放，而特别的是如果存在内嵌函数被保留，外部函数的局部变量不会释放。在这个示例中，<code>func</code> 以参数的形式传入外部函数 <code>decorator</code>，而在内嵌函数 <code>wrapper</code> 中依然可用。</p><p>这样我们也可以很好解释 <strong>带参修饰器</strong>，就是多嵌套了一层函数：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 原代码, 修饰器实现省略</span></span><br><span class="line"><span class="meta">@decorator(<span class="params">*args, **kwargs</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>(<span class="params">*args_, **kwargs_</span>):</span><br><span class="line">    <span class="keyword">pass</span>  <span class="comment"># do something</span></span><br><span class="line"></span><br><span class="line">func(*args_, **kwargs_)</span><br></pre></td></tr></table></figure><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 解释器等效代码</span></span><br><span class="line">decorator(*args, **kwargs)(func)(*args_, **kwargs_)</span><br></pre></td></tr></table></figure><details class="toggle" style="border: 1px solid  #222222"><summary class="toggle-button" style="background-color:  #222222;color:  white">我个人对于修饰器的一些吐槽</summary><div class="toggle-content"><p>尽管 Python 修饰器的语法在频繁调用 “修饰” 功能时很方便，但不可否认实现一个修饰器的代码非常麻烦而且难读。</p><p>虽然实现修饰器的代码逻辑非常符合其实现原理，但 Python 完全可以使用一套更方便的语法实现修饰器。</p></div></details>]]></content>
+      
+      
+      <categories>
+          
+          <category> Python </category>
+          
+          <category> 如何理解 python 修饰器原理 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Python </tag>
+            
+            <tag> 语法 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>如何理解 C++ 顶级和低级指针和数组</title>
       <link href="/2023/09/19/C++/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3C++%E9%A1%B6%E7%BA%A7%E5%92%8C%E4%BD%8E%E7%BA%A7%E6%8C%87%E9%92%88%E5%92%8C%E6%95%B0%E7%BB%84/"/>
       <url>/2023/09/19/C++/%E5%A6%82%E4%BD%95%E7%90%86%E8%A7%A3C++%E9%A1%B6%E7%BA%A7%E5%92%8C%E4%BD%8E%E7%BA%A7%E6%8C%87%E9%92%88%E5%92%8C%E6%95%B0%E7%BB%84/</url>
       
@@ -15,7 +44,7 @@
           
           <category> C++ </category>
           
-          <category> 如何理解C++顶级和低级指针和数组 </category>
+          <category> 如何理解 C++ 顶级和低级指针和数组 </category>
           
       </categories>
       
@@ -1008,11 +1037,11 @@
             
             <tag> 数论 </tag>
             
+            <tag> 欧拉降幂 </tag>
+            
             <tag> Miller Rabin </tag>
             
             <tag> Pollard Rho </tag>
-            
-            <tag> 欧拉降幂 </tag>
             
         </tags>
       
@@ -1167,9 +1196,9 @@
       
         <tags>
             
-            <tag> Hexo </tag>
-            
             <tag> 语法 </tag>
+            
+            <tag> Hexo </tag>
             
             <tag> Markdown </tag>
             
@@ -1447,9 +1476,9 @@
     
     
     <entry>
-      <title>python变量命名规则与规范（约定）</title>
-      <link href="/2023/08/02/Python/%E6%9D%82%E9%A1%B9/python%E5%8F%98%E9%87%8F%E5%91%BD%E5%90%8D%E8%A7%84%E5%88%99%E4%B8%8E%E8%A7%84%E8%8C%83%EF%BC%88%E7%BA%A6%E5%AE%9A%EF%BC%89/"/>
-      <url>/2023/08/02/Python/%E6%9D%82%E9%A1%B9/python%E5%8F%98%E9%87%8F%E5%91%BD%E5%90%8D%E8%A7%84%E5%88%99%E4%B8%8E%E8%A7%84%E8%8C%83%EF%BC%88%E7%BA%A6%E5%AE%9A%EF%BC%89/</url>
+      <title>python 变量命名规则与规范（约定）</title>
+      <link href="/2023/08/02/Python/python%20%E5%8F%98%E9%87%8F%E5%91%BD%E5%90%8D%E8%A7%84%E5%88%99%E4%B8%8E%E8%A7%84%E8%8C%83%EF%BC%88%E7%BA%A6%E5%AE%9A%EF%BC%89/"/>
+      <url>/2023/08/02/Python/python%20%E5%8F%98%E9%87%8F%E5%91%BD%E5%90%8D%E8%A7%84%E5%88%99%E4%B8%8E%E8%A7%84%E8%8C%83%EF%BC%88%E7%BA%A6%E5%AE%9A%EF%BC%89/</url>
       
         <content type="html"><![CDATA[<div class="note warning flat"><p>建站提交历史文章，原文写作时间 2022 年 7 月 16 日。</p></div><h2 id="引子">引子</h2><p>前些日子，大大的一位友友问了我一个问题，表示了对命名规范的不解。确实如此关于命名规范有一套相对严谨而复杂的理论，大大在此特就python的变量（以及函数和对象）命名规则与规范进行讲述。</p><h2 id="规则">规则</h2><p>规则很简单，我在此也就写在前面，并且一笔带过，相信在看的朋友也不会有疑问。</p><p>python变量必须由数字、字母、下划线(0-9a-zA-Z_)组成，严格区分大小写。</p><h2 id="规范">规范</h2><h3 id="性质与意义">性质与意义</h3><p>在此为了分清规则与规范的区别，特别需要指出规则的性质。规则简洁明了，命名正确与否由编译器检查，也就是说，如果命名不符合规则，代码是跑不起来的。规则则不同，我将它概括为“程序员的自我规范”，它属于一种自我意识或者说自觉，不符合规范的程序运行起来依然没有任何问题。</p><p>那么我们就需要提到命名规范的意义了。命名规范有两方面的意义：一、使变量意义一目了然；二、表面变量的用途。这些会在后面提到；三、程序员之间的交流，良好的代码习惯有利于团队合作。</p><h3 id="声明">声明</h3><p>命名规范实际并不统一，有时也不必过度纠结规范，保留其本质的用途即可，在一些细节上存在偏差，如果作者有什么遗漏或者错误，可以在评论区留言。</p><h3 id="驼峰写法与下划线写法">驼峰写法与下划线写法</h3><p>这两种写法根据习惯选一即可，它的意义便是使变量意义一目了然。</p><p>下划线写法：所有字母小写，特殊缩写词汇可大写，所有单词之间使用下划线连接，如：is_ascii，get_abs_save_path()。</p><p>驼峰写法：首字母小写，之后每个单词首字母大写连接，如：isAscii，getAbsSavePath()。</p><p>根据习惯python变量常使用下划线写法。如果你先前习惯于驼峰写法，保留使用也无妨。</p><h3 id="根据变量的用途">根据变量的用途</h3><p>全局变量以及函数参数：标准下划线写法或者使用驼峰写法。</p><p>局部变量：以下划线开始，用来区分于全局变量，避免与外部变量冲突、混淆。如：_filepath。在对象中用作隐藏属性或行为。</p><p>系统变量：以双下划线开始，如：<strong>name</strong>，<strong>hash</strong>()。在对象中用作受保护属性或行为，拒绝外部调用。</p><p>常量：全大写下划线写法，python并没有真正意义上的常量，而是使用一个永远不被赋值的变量代替，常量的特殊写法在python中尤其重要。</p><p>函数：标准下划线写法。</p><p>对象：首字母大写的驼峰写法。</p><h3 id="特殊习惯">特殊习惯</h3><p>一、使用“2”代替“to”，用的是谐音，不仅数字“2”在变量中尤其显眼，而且省略了两条下划线，使用非常普遍。</p><p>二、使用“7”代替“and”，因为数字“7”在键盘的Shift位是“&amp;”，与“2”效果类同，使用较少。</p><p>三、散装英语，如果你某天你遇到了看不懂的变量，试试拼词或者找到形式高度相似的变量类比，事实上它很常见简洁并且好用。</p><p>四、拼音，这单词我不认识？它可能是个拼音。</p><p>五、中文，在规则中没有提到，python另外支持非ASCII码最为变量组成部分，可以使用中文做为变量名，但是这显得太不专业并且出于中文输入法的低效极少数人使用。</p><h2 id="放在最后">放在最后</h2><p>以上就是全部内容，还要提醒在看的小白们千万不要吝啬变量的长度，IDE都支持代码补全，不会因此多大几个字，20字符的变量都是正常的。</p>]]></content>
       
@@ -1458,16 +1487,16 @@
           
           <category> Python </category>
           
-          <category> 杂项 </category>
+          <category> python 变量命名规则与规范（约定） </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 语法 </tag>
-            
             <tag> Python </tag>
+            
+            <tag> 语法 </tag>
             
         </tags>
       
@@ -1476,9 +1505,9 @@
     
     
     <entry>
-      <title>python参数传递，如何让可变参数当作不可变参数传递</title>
-      <link href="/2023/08/02/Python/%E6%9D%82%E9%A1%B9/python%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92%EF%BC%8C%E5%A6%82%E4%BD%95%E8%AE%A9%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E5%BD%93%E4%BD%9C%E4%B8%8D%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92/"/>
-      <url>/2023/08/02/Python/%E6%9D%82%E9%A1%B9/python%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92%EF%BC%8C%E5%A6%82%E4%BD%95%E8%AE%A9%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E5%BD%93%E4%BD%9C%E4%B8%8D%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92/</url>
+      <title>python 参数传递，如何让可变参数当作不可变参数传递</title>
+      <link href="/2023/08/02/Python/python%20%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92%EF%BC%8C%E5%A6%82%E4%BD%95%E8%AE%A9%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E5%BD%93%E4%BD%9C%E4%B8%8D%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92/"/>
+      <url>/2023/08/02/Python/python%20%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92%EF%BC%8C%E5%A6%82%E4%BD%95%E8%AE%A9%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E5%BD%93%E4%BD%9C%E4%B8%8D%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92/</url>
       
         <content type="html"><![CDATA[<div class="note warning flat"><p>建站提交历史文章，原文写作时间 2022 年 1 月 30 日。</p></div><h2 id="引子">引子</h2><p>众所周知，python中参数传递方式有很多，这些在其他文章中都有所详细陈述，在此不做赘述。（如果你需要了解python参数传递的基本知识，请绕路，相关文章在CSDN很丰富。）但是小编遇到一个问题便是可变参数的传递无法被当作不可变参数处理（python3.8），而我们常常需要这么做。这个问题的解决方案在全站没有找到解决方案，小编特写此文为有需要的人士介绍。</p><h2 id="错误示例">错误示例</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">demo</span>(<span class="params">x</span>):</span><br><span class="line">    _x = x</span><br><span class="line">    _x[<span class="string">&#x27;python&#x27;</span>] = <span class="string">&#x27;v3.8&#x27;</span></span><br><span class="line">   <span class="built_in">print</span>(<span class="string">&#x27;_x =&#x27;</span>, _x)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">x = &#123;<span class="string">&#x27;visual basic&#x27;</span>: <span class="string">&#x27;v6.0&#x27;</span>&#125;  <span class="comment"># 字典是可变参数</span></span><br><span class="line">demo(x)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;x =&#x27;</span>, x)</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">输出结果:</span></span><br><span class="line"><span class="string">_x = &#123;&#x27;visual basic&#x27;: &#x27;v6.0&#x27;, &#x27;python&#x27;: &#x27;v3.8&#x27;&#125;</span></span><br><span class="line"><span class="string">x = &#123;&#x27;visual basic&#x27;: &#x27;v6.0&#x27;, &#x27;python&#x27;: &#x27;v3.8&#x27;&#125;</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure><p>如图所示，虽然我们改变的是_x，但是奇怪的是x的值也发生了改变。看似我们对x变量进行了拷贝，但事实上python内部做的却只是引用了x变量的内存地址（因为设计者认为这样做更加快速且节约内存），这样也就可以理解为什么x和_x的值同时改变了。</p><h2 id="解决方案">解决方案</h2><p>呼，终于到了解决方案了。</p><p>我们知道可变参数有且仅有：list，set，dict 三种，针对第一种我们有非常容易想到的解决方案。</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">demo</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">x = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line">demo(<span class="built_in">tuple</span>(x))</span><br></pre></td></tr></table></figure><p>将不可变参数转换为可变参数传入，如果我们仅仅将列表参数当作元组使用，这个方案够用，并且更好。但是我们可见set和dict是无法不可变化的，于是python为我们留了解决方案。</p><p>list，set，dict 都是有copy()方法的，只需对代码进行微小修改。</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">demo</span>(<span class="params">x</span>):</span><br><span class="line">    _x = x.copy()</span><br><span class="line">    _x[<span class="string">&#x27;python&#x27;</span>] = <span class="string">&#x27;v3.8&#x27;</span></span><br><span class="line">   <span class="built_in">print</span>(<span class="string">&#x27;_x =&#x27;</span>, _x)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">x = &#123;<span class="string">&#x27;visual basic&#x27;</span>: <span class="string">&#x27;v6.0&#x27;</span>&#125;  <span class="comment"># 字典是可变参数</span></span><br><span class="line">demo(x)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;x =&#x27;</span>, x)</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">输出结果:</span></span><br><span class="line"><span class="string">_x = &#123;&#x27;visual basic&#x27;: &#x27;v6.0&#x27;, &#x27;python&#x27;: &#x27;v3.8&#x27;&#125;</span></span><br><span class="line"><span class="string">x = &#123;&#x27;visual basic&#x27;: &#x27;v6.0&#x27;, &#x27;python&#x27;: &#x27;v3.8&#x27;&#125;</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure><p>copy() 方法强制变量开辟新的内存空间，并进行拷贝。</p>]]></content>
       
@@ -1487,16 +1516,16 @@
           
           <category> Python </category>
           
-          <category> 杂项 </category>
+          <category> python 参数传递，如何让可变参数当作不可变参数传递 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 语法 </tag>
-            
             <tag> Python </tag>
+            
+            <tag> 语法 </tag>
             
         </tags>
       
@@ -1506,8 +1535,8 @@
     
     <entry>
       <title>pynput 键盘鼠标事件抑制（拦截输出）</title>
-      <link href="/2023/08/02/Python/%E6%9D%82%E9%A1%B9/pynput%20%E9%94%AE%E7%9B%98%E9%BC%A0%E6%A0%87%E4%BA%8B%E4%BB%B6%E6%8A%91%E5%88%B6%EF%BC%88%E6%8B%A6%E6%88%AA%E8%BE%93%E5%87%BA%EF%BC%89/"/>
-      <url>/2023/08/02/Python/%E6%9D%82%E9%A1%B9/pynput%20%E9%94%AE%E7%9B%98%E9%BC%A0%E6%A0%87%E4%BA%8B%E4%BB%B6%E6%8A%91%E5%88%B6%EF%BC%88%E6%8B%A6%E6%88%AA%E8%BE%93%E5%87%BA%EF%BC%89/</url>
+      <link href="/2023/08/02/Python/pynput%20%E9%94%AE%E7%9B%98%E9%BC%A0%E6%A0%87%E4%BA%8B%E4%BB%B6%E6%8A%91%E5%88%B6%EF%BC%88%E6%8B%A6%E6%88%AA%E8%BE%93%E5%87%BA%EF%BC%89/"/>
+      <url>/2023/08/02/Python/pynput%20%E9%94%AE%E7%9B%98%E9%BC%A0%E6%A0%87%E4%BA%8B%E4%BB%B6%E6%8A%91%E5%88%B6%EF%BC%88%E6%8B%A6%E6%88%AA%E8%BE%93%E5%87%BA%EF%BC%89/</url>
       
         <content type="html"><![CDATA[<div class="note warning flat"><p>建站提交历史文章，原文写作时间 2021 年 8 月 15 日。</p></div><h1>pynput 键盘鼠标事件抑制</h1><h2 id="前言">前言</h2><p>最近想用pynput做一个键盘映射，但是遇到的了一些问题，键盘映射有时需要抑制原输出。本人在CSDN找了很久，但是发现没有相关的文章。在查找了官方文档，并做了一些测试后，想写一篇文章来扩充一下。<br>在这里我提供了两种方案，各有优劣。相比较而言，方法二方便、稳定（<strong>推荐</strong>）；方法一更加灵活，在特殊场合适用。</p><h2 id="方案一">方案一</h2><p>pynput的官方文档中有简单提到，Listener类的参数中有一项suppress(抑制)。</p><blockquote><p>“suppress(逻辑型) - 是否抑制事件，将此参数设置成True，就可以阻止事件传递到你的操作系统。”</p></blockquote><p>也就是说，pynput提供的抑制必须在启动监听的时候设置，这里我们以键盘事件为例，因为往往它是我们要拦截的对象，当然鼠标事件的抑制用法也是完全相同的。</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pynput <span class="keyword">import</span> keyboard</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">on_press</span>(<span class="params">key</span>):</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">on_release</span>(<span class="params">key</span>):</span><br><span class="line">   <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> keyboard.Listener(on_press=on_press, on_release=on_release, suppress=<span class="literal">True</span>) <span class="keyword">as</span> lis:</span><br><span class="line">    lis.join()</span><br></pre></td></tr></table></figure><p>如上我们抑制了所有键盘事件。<br>但是问题接踵而至，<strong>pynput的抑制原事件的同时，也抑制了包括回调函数内的输出，这并不是我们期待的。</strong><br><em>注意以下是错误示例</em></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pynput <span class="keyword">import</span> keyboard</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">on_press</span>(<span class="params">key</span>):</span><br><span class="line">    <span class="keyword">if</span> key == keyboard.Key.enter:</span><br><span class="line">        c.press(key)</span><br><span class="line">    <span class="keyword">elif</span> key == keyboard.Key.delete:</span><br><span class="line">        c.press(keyboard.Key.backspace)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">on_release</span>(<span class="params">key</span>):</span><br><span class="line">    <span class="comment"># 代码略</span></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">c = keyboard.Controller()</span><br><span class="line"><span class="keyword">with</span> keyboard.Listener(on_press=on_press, on_release=on_release, suppress=<span class="literal">True</span>) <span class="keyword">as</span> lis:</span><br><span class="line">    lis.join()</span><br></pre></td></tr></table></figure><p>如上图，我们希望enter不被拦截，delete被映射到backspace，但是都失败了。这很好理解，在键盘监听开启的时候，模拟的键盘事件同样会首先传递到监听器，而无法穿透监听器的抑制，监听器无法区分模拟与真实的键盘事件。<br>那么我们该怎么做？<br><strong>pynput提供了一个终止监听的方法</strong>，在回调函数中使用：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># return False</span></span><br><span class="line"><span class="comment"># 或者 lis.stop()</span></span><br></pre></td></tr></table></figure><p>思路来了，既然事件无法穿透监听器，那么我们就暂时关闭监听器，注意是暂时。记下我们要执行的事件，终止监听，提交事件，重启监听，Replay…<br>完整示例:</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pynput <span class="keyword">import</span> keyboard</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">on_press</span>(<span class="params">key</span>):</span><br><span class="line">    <span class="keyword">if</span> key == keyboard.Key.enter:  <span class="comment"># 不抑制enter</span></span><br><span class="line">    tmp_events.append((key, <span class="literal">True</span>))  <span class="comment"># 一个事件用按键名+ 按下还是释放 来描述</span></span><br><span class="line">    <span class="keyword">elif</span> key == keyboard.Key.delete:  <span class="comment"># delete到backspace的映射</span></span><br><span class="line">    tmp_events.append((keyboard.Key.backspace, <span class="literal">True</span>))</span><br><span class="line">    <span class="keyword">elif</span> key == keyboaed.Key.space:  <span class="comment"># 按10下空格</span></span><br><span class="line">    <span class="keyword">for</span> __ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">    tmp_events.append((key, <span class="literal">True</span>))</span><br><span class="line">    tmp_events.append((key, <span class="literal">False</span>))</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">on_release</span>(<span class="params">key</span>):</span><br><span class="line">    <span class="keyword">if</span> key == keyboard.Key.enter:</span><br><span class="line">    tmp_events.append((key, <span class="literal">False</span>))</span><br><span class="line">    <span class="keyword">elif</span> key == keyboard.Key.delete:</span><br><span class="line">    tmp_events.append((keyboard.Key.backspace, <span class="literal">False</span>))</span><br><span class="line">    <span class="comment"># 释放空格不需要添加到列表，因为在on_press我们已经释放了space。</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">tmp_events = []  <span class="comment"># 存储待执行的事件</span></span><br><span class="line">c = keyboard.Controller()</span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line"><span class="keyword">with</span> keyboard.Listener(on_press=on_press, on_release=on_release, suppress=<span class="literal">True</span>) <span class="keyword">as</span> lis:</span><br><span class="line">    lis.join()</span><br><span class="line"><span class="keyword">for</span> event <span class="keyword">in</span> tmp_events:  <span class="comment"># 提交待执行的事件</span></span><br><span class="line"><span class="keyword">if</span> event[<span class="number">1</span>]:</span><br><span class="line">c.press(event[<span class="number">0</span>])</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">c.release(event[<span class="number">0</span>])</span><br></pre></td></tr></table></figure><p>但是这样做有一个特别严重的问题，如果我们同时按下两个键，其中一个事件不会被监听到，也就是其中一个不会被抑制。问题来源于结束监听后的操作花费了大约10ms的时间。</p><h2 id="方案二">方案二</h2><p>如果抑制全部事件，我们一定需要结束监听，然后花费一点时间提交我们希望输出的事件。<br>再查官方文档，发现pynput官方文档解答了这个问题。</p><blockquote><p>“suppress=True抑制所有事件，适用所有造作系统。如果这无法满足你的需求，针对不同系统，有不同的解决方案。”<br>文档下面简略的写了关于mac与Windows的解决方案。</p></blockquote><p>针对Windows，我完善了官方的代码示例。</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">win32_event_filter</span>(<span class="params">msg, data</span>):</span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">:param msg: 按下时为256，松开时为257</span></span><br><span class="line"><span class="string">:param data: data.vkCode是按键的vk值</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> data.vkCode == <span class="number">0x58</span>:  <span class="comment"># 0x58是x的键值(16进制)</span></span><br><span class="line">    <span class="comment"># 抑制&quot;x&quot;</span></span><br><span class="line">        lis.suppress_event()</span><br><span class="line">        <span class="comment"># lis.suppress_event必须放在最后，因为它在拦截事件的同时有等价于return True的作用</span></span><br><span class="line">        <span class="comment"># lis.suppress_event只在win32_event_filter()中起效</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 不需要on_press()和on_release()</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> pynput.keyboard.Listener(win32_event_filter=win32_event_filter) <span class="keyword">as</span> lis:</span><br><span class="line">       lis.join()</span><br></pre></td></tr></table></figure><p>win32_event_filter必须有两个参数：msg和data，而data.vkCode就是要拦截的键的vk值。<br>这里我们就<strong>不需要on_press()和on_release()</strong> 这两个回调了，因为我们发现通过msg已经可以判断按键的状态了。<br><strong>至于vk值如何获取，本人不建议pynput官方提供的Microsoft文档网址，因为使用下面的这个函数就可以直接获取。</strong></p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">get_vk</span>(<span class="params">key</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    返回key的vk值.</span></span><br><span class="line"><span class="string">    :param key: 必须是 &lt;class &#x27;pynput.keyboard._win32.KeyCode&#x27;&gt; 类, 或者 &lt;enum &#x27;Key&#x27;&gt; 类.</span></span><br><span class="line"><span class="string">    :return: vk值.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">isinstance</span>(key, pynput.keyboard.Key):</span><br><span class="line">        <span class="keyword">return</span> key.value.vk</span><br><span class="line">    <span class="keyword">elif</span> <span class="built_in">isinstance</span>(key, pynput.keyboard._win32.KeyCode):</span><br><span class="line">        <span class="keyword">return</span> key.vk</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span></span><br></pre></td></tr></table></figure><p>通过这种方法，把前面的案例再做一遍。</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">get_vk</span>(<span class="params">key</span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">isinstance</span>(key, pynput.keyboard.Key):</span><br><span class="line">        <span class="keyword">return</span> key.value.vk</span><br><span class="line">    <span class="keyword">elif</span> <span class="built_in">isinstance</span>(key, pynput.keyboard._win32.KeyCode):</span><br><span class="line">        <span class="keyword">return</span> key.vk</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">        </span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">win32_event_filter</span>(<span class="params">msg, data</span>):</span><br><span class="line"><span class="comment"># data与keyboard.Key不是一个类的实例，因此不能直接划等号，我们使用vk值来识别</span></span><br><span class="line">    <span class="keyword">if</span> data.vkCode == get_vk(keyboard.Key.enter):  <span class="comment"># 不抑制enter</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">elif</span> data.vkCode == get_vk(keyboard.Key.delete):  <span class="comment"># delete到backspace的映射</span></span><br><span class="line">    <span class="keyword">if</span> msg == <span class="number">256</span>:</span><br><span class="line">    ctrl.press(keyboard.Key.backspace)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">    ctrl.release(keyboard.Key.backspace)</span><br><span class="line">    lis.suppress_event()</span><br><span class="line">    <span class="keyword">elif</span> data.vkCode == get_vk(keyboard.Key.space):  <span class="comment"># space敲10下</span></span><br><span class="line">    <span class="keyword">if</span> msg == <span class="number">256</span>:</span><br><span class="line">    <span class="keyword">for</span> __ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">9</span>):  <span class="comment"># 额外敲9下</span></span><br><span class="line">    ctrl.press(keyboard.Key.space)</span><br><span class="line">    ctrl.release(keyboard.Key.space)</span><br><span class="line">    <span class="keyword">else</span>:  <span class="comment"># 其他一律拦截</span></span><br><span class="line">    lis.suppress_event()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">ctrl = keyboard.Controller()</span><br><span class="line"><span class="keyword">with</span> pynput.keyboard.Listener(win32_event_filter=win32_event_filter) <span class="keyword">as</span> lis:</span><br><span class="line">       lis.join()</span><br></pre></td></tr></table></figure><p>THE END.<br>参考资料：<a href="https://pynput.readthedocs.io/en/latest/">pynput官方文档</a></p>]]></content>
       
@@ -1516,7 +1545,7 @@
           
           <category> Python </category>
           
-          <category> 杂项 </category>
+          <category> pynput 键盘鼠标事件抑制（拦截输出） </category>
           
       </categories>
       
@@ -1800,9 +1829,9 @@
       
         <tags>
             
-            <tag> Golang </tag>
-            
             <tag> 语法 </tag>
+            
+            <tag> Golang </tag>
             
         </tags>
       
@@ -1829,9 +1858,9 @@
       
         <tags>
             
-            <tag> Golang </tag>
-            
             <tag> 语法 </tag>
+            
+            <tag> Golang </tag>
             
         </tags>
       
@@ -1858,9 +1887,9 @@
       
         <tags>
             
-            <tag> Golang </tag>
-            
             <tag> 语法 </tag>
+            
+            <tag> Golang </tag>
             
         </tags>
       
@@ -1887,9 +1916,9 @@
       
         <tags>
             
-            <tag> Golang </tag>
-            
             <tag> 语法 </tag>
+            
+            <tag> Golang </tag>
             
         </tags>
       
@@ -1916,9 +1945,9 @@
       
         <tags>
             
-            <tag> Golang </tag>
-            
             <tag> 语法 </tag>
+            
+            <tag> Golang </tag>
             
         </tags>
       
@@ -1945,9 +1974,9 @@
       
         <tags>
             
-            <tag> Golang </tag>
-            
             <tag> 语法 </tag>
+            
+            <tag> Golang </tag>
             
         </tags>
       
@@ -1974,9 +2003,9 @@
       
         <tags>
             
-            <tag> Golang </tag>
-            
             <tag> 语法 </tag>
+            
+            <tag> Golang </tag>
             
         </tags>
       
@@ -2003,9 +2032,9 @@
       
         <tags>
             
-            <tag> Golang </tag>
-            
             <tag> 语法 </tag>
+            
+            <tag> Golang </tag>
             
         </tags>
       
@@ -2032,9 +2061,9 @@
       
         <tags>
             
-            <tag> Golang </tag>
-            
             <tag> 语法 </tag>
+            
+            <tag> Golang </tag>
             
         </tags>
       
@@ -2061,9 +2090,9 @@
       
         <tags>
             
-            <tag> Golang </tag>
-            
             <tag> 安装 </tag>
+            
+            <tag> Golang </tag>
             
         </tags>
       
@@ -2167,9 +2196,9 @@
       
         <tags>
             
-            <tag> Github </tag>
-            
             <tag> Hexo </tag>
+            
+            <tag> Github </tag>
             
         </tags>
       
@@ -2256,11 +2285,11 @@
       
         <tags>
             
+            <tag> Hexo </tag>
+            
             <tag> Butterfly </tag>
             
             <tag> Github </tag>
-            
-            <tag> Hexo </tag>
             
         </tags>
       
