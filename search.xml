@@ -113,11 +113,11 @@
       
         <tags>
             
-            <tag> 语法 </tag>
-            
             <tag> Database </tag>
             
             <tag> SQL </tag>
+            
+            <tag> 语法 </tag>
             
         </tags>
       
@@ -177,13 +177,13 @@
       
         <tags>
             
-            <tag> 安装 </tag>
-            
             <tag> Database </tag>
             
             <tag> Mysql </tag>
             
             <tag> SQL </tag>
+            
+            <tag> 安装 </tag>
             
         </tags>
       
@@ -208,13 +208,13 @@
       
         <tags>
             
-            <tag> Butterfly </tag>
-            
             <tag> Github </tag>
             
-            <tag> Git </tag>
+            <tag> Butterfly </tag>
             
             <tag> Bugfix </tag>
+            
+            <tag> Git </tag>
             
         </tags>
       
@@ -270,9 +270,9 @@
       
         <tags>
             
-            <tag> Python </tag>
-            
             <tag> 语法 </tag>
+            
+            <tag> Python </tag>
             
         </tags>
       
@@ -564,9 +564,9 @@
       
         <tags>
             
-            <tag> Butterfly </tag>
-            
             <tag> Github </tag>
+            
+            <tag> Butterfly </tag>
             
         </tags>
       
@@ -1281,8 +1281,6 @@
             
             <tag> 题解 </tag>
             
-            <tag> 多校 </tag>
-            
             <tag> 数论 </tag>
             
             <tag> Miller Rabin </tag>
@@ -1290,6 +1288,8 @@
             <tag> Pollard Rho </tag>
             
             <tag> 欧拉降幂 </tag>
+            
+            <tag> 多校 </tag>
             
         </tags>
       
@@ -1415,9 +1415,9 @@
             
             <tag> 小工具 </tag>
             
-            <tag> 转换 </tag>
-            
             <tag> FFmpeg </tag>
+            
+            <tag> 转换 </tag>
             
         </tags>
       
@@ -1479,9 +1479,9 @@
             
             <tag> 题解 </tag>
             
-            <tag> 多校 </tag>
-            
             <tag> 优化 </tag>
+            
+            <tag> 多校 </tag>
             
             <tag> 博弈论 </tag>
             
@@ -1742,9 +1742,9 @@
       
         <tags>
             
-            <tag> Python </tag>
-            
             <tag> 语法 </tag>
+            
+            <tag> Python </tag>
             
         </tags>
       
@@ -1771,9 +1771,9 @@
       
         <tags>
             
-            <tag> Python </tag>
-            
             <tag> 语法 </tag>
+            
+            <tag> Python </tag>
             
         </tags>
       
@@ -1895,9 +1895,9 @@
             
             <tag> 题解 </tag>
             
-            <tag> 多校 </tag>
-            
             <tag> 构造 </tag>
+            
+            <tag> 多校 </tag>
             
             <tag> GCD </tag>
             
@@ -2338,9 +2338,9 @@
       
         <tags>
             
-            <tag> Golang </tag>
-            
             <tag> 安装 </tag>
+            
+            <tag> Golang </tag>
             
         </tags>
       
@@ -2365,9 +2365,9 @@
       
         <tags>
             
-            <tag> Butterfly </tag>
-            
             <tag> Github </tag>
+            
+            <tag> Butterfly </tag>
             
         </tags>
       
@@ -2392,9 +2392,9 @@
       
         <tags>
             
-            <tag> Butterfly </tag>
-            
             <tag> Github </tag>
+            
+            <tag> Butterfly </tag>
             
         </tags>
       
@@ -2444,9 +2444,9 @@
       
         <tags>
             
-            <tag> Hexo </tag>
-            
             <tag> Github </tag>
+            
+            <tag> Hexo </tag>
             
         </tags>
       
@@ -2533,11 +2533,11 @@
       
         <tags>
             
+            <tag> Github </tag>
+            
             <tag> Butterfly </tag>
             
             <tag> Hexo </tag>
-            
-            <tag> Github </tag>
             
         </tags>
       
