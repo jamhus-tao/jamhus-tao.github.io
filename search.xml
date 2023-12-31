@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>随笔 - 十二月随笔</title>
+      <link href="/2023/12/31/%E9%9A%8F%E7%AC%94/2023/%E9%9A%8F%E7%AC%94%20-%20%E5%8D%81%E4%BA%8C%E6%9C%88%E9%9A%8F%E7%AC%94/"/>
+      <url>/2023/12/31/%E9%9A%8F%E7%AC%94/2023/%E9%9A%8F%E7%AC%94%20-%20%E5%8D%81%E4%BA%8C%E6%9C%88%E9%9A%8F%E7%AC%94/</url>
+      
+        <content type="html"><![CDATA[<p>十二月可以用两个字 <code>&quot;痛苦&quot;</code> 来形容。为什么用这个词来形容，主要是因为到了期末周。今天是 12 月 31 日，同时也是 16 周的最后一天，这也意味着从下周开始，本学期的考试将接踵而至。之所以说十二月是痛苦的，倒不是因为有太多功课要补，而是学习那些毫无意义的课程令人痛苦。</p><p><code>大物</code>、<code>普物实验</code>、<code>毛概</code>、<code>形策</code>、<code>军理</code>、<code>数电课设</code>（焊板子），我实在不知道这些课程对于培养一个计算机专业的大学生有什么意义，而是无谓的消费我的时间，尤其是其中不下少数的 <code>一节课不落，一节课不听</code> 的课程，完全是在约束一个大学生的人身自由。前面几个月虽然也在学习这些课程，但并不觉得什么痛苦。十一月的大多时间都在比赛中度过，没有太多时间想这些事情，但也在计划着将来半年的打算，可以说未来的半年将是更加忙碌的。当时虽然也有很多事情想做而不能做，但至少我觉得当时正在做的，是一件对我而言有意义的事，也是当下最重要的事。到了十二月，也有当下最重要的事要做，我也和多数人认知的一样，这件事理所应当是准备期末考试，但正是因为这样的想法令我痛苦：<code>期末复习是重要的，但又是无意义的，是我不得不做的无意义的事</code>。</p><p>我当下迫不及待的想做的，是能在明年暑期找到一个实习：</p><ul><li>深入学习 <code>C++ 11</code>，读完 <code>C++ 11 Primer</code>，但可能来不及读得很仔细，目前进度 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mn>1</mn><mn>3</mn></mfrac></mrow><annotation encoding="application/x-tex">\frac13</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1901em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">3</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span>。</li><li>完成 <code>CMU 15445</code>，也可以完成前半部分，计划寒假开始，目前进度 <code>0</code>。</li><li>对 <code>小林coding</code> 的内容结构有一个了解，方便后面进行计划。</li><li>在实习前快速复习去年寒假学的，已经忘光了的 <code>Linux</code> 与并发相关知识点。</li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> 随笔 </category>
+          
+          <category> 2023 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 随笔 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>C++ 与三种智能指针</title>
       <link href="/2023/12/30/C++/C++%20%20%E4%B8%8E%E4%B8%89%E7%A7%8D%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/"/>
       <url>/2023/12/30/C++/C++%20%20%E4%B8%8E%E4%B8%89%E7%A7%8D%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/</url>
