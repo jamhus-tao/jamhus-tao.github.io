@@ -64,6 +64,37 @@
     
     
     <entry>
+      <title>Python 虚拟 SSD 项目</title>
+      <link href="//posts/project-virtual-ssd/"/>
+      <url>//posts/project-virtual-ssd/</url>
+      
+        <content type="html"><![CDATA[<div class="note default flat"><p>Python 虚拟 SSD 项目 | 项目介绍：<a href="/asset/VirtualSSDPython.pdf">基于 socket 通信和存储管理优化的虚拟 SSD</a> | 源码地址：<a href="https://github.com/jamhus-tao/VirtualSSDbyPython">Github 仓库: jamhus-tao/VirtualSSDbyPython</a></p></div>]]></content>
+      
+      
+      <categories>
+          
+          <category> 项目 </category>
+          
+          <category> Python 虚拟 SSD 项目 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Python </tag>
+            
+            <tag> 项目 </tag>
+            
+            <tag> 并发 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>随笔 - 十二月随笔</title>
       <link href="//posts/free-23-12/"/>
       <url>//posts/free-23-12/</url>
