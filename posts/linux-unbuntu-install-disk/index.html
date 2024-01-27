@@ -1,0 +1,268 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>移动硬盘中的 Ubuntu 安装 | JamhusTao の Blog</title><meta name="author" content="Jamhus Tao"><meta name="copyright" content="Jamhus Tao"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="参考资料 移动硬盘中的 Ubuntu 安装笔记 - smallC233 的博客 - 洛谷博客 作修改  安装 Ubuntu 花絮这个移动硬盘中的 Ubuntu 系统是我和 smallC233 一起捣鼓了两天半才装好的，中间找了很多教程，试用了许多方法，也寻求了帮助，自己也思考和尝试了许多奇奇怪怪的解决方案。 为什么要安装 Ubuntu 系统？smallC233 是我的 ACM 队友，得知 ICPC">
+<meta property="og:type" content="article">
+<meta property="og:title" content="移动硬盘中的 Ubuntu 安装">
+<meta property="og:url" content="https://jamhus-tao.github.io/posts/linux-unbuntu-install-disk/">
+<meta property="og:site_name" content="JamhusTao の Blog">
+<meta property="og:description" content="参考资料 移动硬盘中的 Ubuntu 安装笔记 - smallC233 的博客 - 洛谷博客 作修改  安装 Ubuntu 花絮这个移动硬盘中的 Ubuntu 系统是我和 smallC233 一起捣鼓了两天半才装好的，中间找了很多教程，试用了许多方法，也寻求了帮助，自己也思考和尝试了许多奇奇怪怪的解决方案。 为什么要安装 Ubuntu 系统？smallC233 是我的 ACM 队友，得知 ICPC">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://jamhus-tao.github.io/img/default_cover.png">
+<meta property="article:published_time" content="2023-10-24T05:05:00.000Z">
+<meta property="article:modified_time" content="2023-10-24T05:05:00.000Z">
+<meta property="article:author" content="Jamhus Tao">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Ubuntu">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://jamhus-tao.github.io/img/default_cover.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://jamhus-tao.github.io/posts/linux-unbuntu-install-disk/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":600},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '移动硬盘中的 Ubuntu 安装',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-10-24 13:05:00'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/my.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">100</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">73</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">54</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/default_cover.png')"><nav id="nav"><span id="blog-info"><a href="/" title="JamhusTao の Blog"><span class="site-name">JamhusTao の Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">移动硬盘中的 Ubuntu 安装</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-10-24T05:05:00.000Z" title="发表于 2023-10-24 13:05:00">2023-10-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-10-24T05:05:00.000Z" title="更新于 2023-10-24 13:05:00">2023-10-24</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Linux/">Linux</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Linux/%E7%A7%BB%E5%8A%A8%E7%A1%AC%E7%9B%98%E4%B8%AD%E7%9A%84-Ubuntu-%E5%AE%89%E8%A3%85/">移动硬盘中的 Ubuntu 安装</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">949</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>2分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="移动硬盘中的 Ubuntu 安装"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><div class="note success flat"><p>参考资料 <a target="_blank" rel="noopener" href="https://www.luogu.com.cn/blog/smallC233/yi-dong-ying-pan-zhong-di-ubuntu-an-zhuang-bi-ji">移动硬盘中的 Ubuntu 安装笔记 - smallC233 的博客 - 洛谷博客</a> 作修改</p>
+</div>
+<details class="toggle" style="border: 1px solid  #222222"><summary class="toggle-button" style="background-color:  #222222;color:  white">安装 Ubuntu 花絮</summary><div class="toggle-content"><p>这个移动硬盘中的 Ubuntu 系统是我和 smallC233 一起捣鼓了两天半才装好的，中间找了很多教程，试用了许多方法，也寻求了帮助，自己也思考和尝试了许多奇奇怪怪的解决方案。</p>
+<p>为什么要安装 Ubuntu 系统？smallC233 是我的 ACM 队友，得知 ICPC 比赛是在 Ubuntu 上进行的，于是想到了安装 Ubuntu 系统用来熟悉环境。我们想要在 smallC233 的移动硬盘上安装 Ubuntu 系统，即插即用，并且移动硬盘的多余空间依然可以用于常规存储。</p>
+</div></details>
+<h2 id="刻录-Ubuntu-镜像文件">刻录 Ubuntu 镜像文件</h2>
+<ol>
+<li>首先需要从官网 <a target="_blank" rel="noopener" href="https://cn.ubuntu.com/download/desktop">下载Ubuntu桌面系统</a> 镜像文件，或者从 <a target="_blank" rel="noopener" href="https://mirrors.tuna.tsinghua.edu.cn/ubuntu-releases/">清华大学开源软件镜像站</a> 等国内源下载，建议下载 22.04.3 版本。</li>
+<li>准备一个系统安装 U 盘（不是你的移动硬盘），将下载得到的 <code>.iso</code> 文件刻录到 U 盘中，注意刻录会格式化你的 U 盘。刻录用的软件有很多，如 Ubuntu 官方推荐的 <a target="_blank" rel="noopener" href="https://github.com/balena-io/etcher/releases/tag/v1.18.11">balenaEtcher-Portable-1.18.11</a>，还有一些社区推荐的 <a target="_blank" rel="noopener" href="http://rufus.ie/zh/">Rufus</a> 和 UltraISO 等。</li>
+<li>使用 DiskGenius 在移动硬盘中分出足够大小的未分配分区，并将分区格式更改为 <code>GUID</code>（如果不是）。需要特别注意，一定不能将新分区格式化，需要是未分配的。</li>
+</ol>
+<h2 id="在移动硬盘分区安装-Ubuntu-系统">在移动硬盘分区安装 Ubuntu 系统</h2>
+<p>重启电脑，进入系统安装 U 盘中的系统，然后一路选择适合的配置，直到选择安装位置。我们选择使用自定义安装，找到未分配的移动硬盘空间进行分区，一种可行的分区方式是：</p>
+<ul>
+<li><code>EFI</code> 分区：512 MB</li>
+<li><code>swap</code> 分区：10 GB，最好略大于常用设备的内存大小</li>
+<li><code>/</code> 根挂载点：剩余的全部空间</li>
+</ul>
+<p>注意更改下方的启动位置，将启动位置设置为 <code>EFI</code> 分区的标识。重启设备，即可进入移动硬盘系统。</p>
+<h2 id="引导路径修复">引导路径修复</h2>
+<p>前面的步骤都算是常规操作，这一步开始才是重点。完成前面的操作后，我们可以在自己的设备中正常使用 Ubuntu 系统，但是无法在其他设备上使用，原因是 Ubuntu 将引导安装在了你设备的硬盘上，而非移动硬盘，而 Ubuntu 似乎并不支持将引导安装在其他硬盘。这时我们需要使用引导路径修复工具，将引导迁移到你的移动硬盘上。</p>
+<p>在刚刚进入的移动硬盘 Ubuntu 系统中，使用下面的方法进行引导修复：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-add-repository ppa:yannubuntu/boot-repair</span><br><span class="line">sudo apt update</span><br><span class="line">sudo apt install boot-repair  <span class="comment"># 安装</span></span><br><span class="line">boot-repair  <span class="comment"># 会打开一个窗口，选择 &quot;Recommended repair&quot; ，等待修复完成</span></span><br></pre></td></tr></table></figure>
+<p>如果修复完成，在 ESP 分区会出现一个名为 EFI 的目录，里面有 BOOT 和 ubuntu 两个子目录，用来启动 Ubuntu 系统的引导文件就是位于 ubuntu 目录中的 shimx64.efi 文件。这时关闭设备，然后尝试在其他设备上使用即可。</p>
+<details class="toggle" style="border: 1px solid  #222222"><summary class="toggle-button" style="background-color:  #222222;color:  white">一种未成功的思路</summary><div class="toggle-content"><p>之前我们尝试在虚拟机中安装 Ubuntu 系统，因为 Ubuntu 系统会将引导安装在默认引导盘中，这时使用虚拟机可以模拟将默认盘弹出，于是引导成功安装到移动硬盘上。但是这样操作确实将引导安装到了移动硬盘上，系统却在启动时奔溃，原因不明。猜测可能是安装时系统自动适应了虚拟机环境，在常用的设备上却不适用。</p>
+</div></details>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Linux/">Linux</a><a class="post-meta__tags" href="/tags/Ubuntu/">Ubuntu</a></div><div class="post_share"><div class="social-share" data-image="/img/default_cover.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/db-four-nf/" title="数据库中的范式"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">数据库中的范式</div></div></a></div><div class="next-post pull-right"><a href="/posts/db-key-index/" title="使用键与索引"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">使用键与索引</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/linux-abc-ubuntu/" title="Linux 入门笔记 - Ubuntu"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-22</div><div class="title">Linux 入门笔记 - Ubuntu</div></div></a></div><div><a href="/posts/linux-dev-0-preface/" title="Linux 开发系列笔记(0) - 前言"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-24</div><div class="title">Linux 开发系列笔记(0) - 前言</div></div></a></div><div><a href="/posts/linux-dev-1-1-install/" title="Linux 开发系列笔记(1.1) - Linux 开发环境搭建"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-24</div><div class="title">Linux 开发系列笔记(1.1) - Linux 开发环境搭建</div></div></a></div><div><a href="/posts/linux-dev-1-4-make/" title="Linux 开发系列笔记(1.4) - Makefile 基本使用"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-24</div><div class="title">Linux 开发系列笔记(1.4) - Makefile 基本使用</div></div></a></div><div><a href="/posts/linux-dev-1-2-gcc/" title="Linux 开发系列笔记(1.2) - GCC&#x2F;G++ 基本使用"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-24</div><div class="title">Linux 开发系列笔记(1.2) - GCC&#x2F;G++ 基本使用</div></div></a></div><div><a href="/posts/linux-dev-1-5-gdb/" title="Linux 开发系列笔记(1.5) - GDB 基本使用"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-24</div><div class="title">Linux 开发系列笔记(1.5) - GDB 基本使用</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Jamhus Tao</div><div class="author-info__description">找点好玩的去！</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">100</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">73</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">54</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/jamhus-tao"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/img/qq.jpg" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/img/weixin.jpg" target="_blank" title="Weixin"><i class="fab fa-weixin"></i></a><a class="social-icon" href="mailto:jamhus_tao@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="https://github.com/jamhus-tao" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%BB%E5%BD%95-Ubuntu-%E9%95%9C%E5%83%8F%E6%96%87%E4%BB%B6"><span class="toc-number">1.</span> <span class="toc-text">刻录 Ubuntu 镜像文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E7%A7%BB%E5%8A%A8%E7%A1%AC%E7%9B%98%E5%88%86%E5%8C%BA%E5%AE%89%E8%A3%85-Ubuntu-%E7%B3%BB%E7%BB%9F"><span class="toc-number">2.</span> <span class="toc-text">在移动硬盘分区安装 Ubuntu 系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E5%AF%BC%E8%B7%AF%E5%BE%84%E4%BF%AE%E5%A4%8D"><span class="toc-number">3.</span> <span class="toc-text">引导路径修复</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/project-cmu15445-note/" title="CMU15445 Note">CMU15445 Note</a><time datetime="2024-01-26T16:36:00.000Z" title="更新于 2024-01-27 00:36:00">2024-01-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cpp-generic-algorithm/" title="泛型算法 - 从泛型到函数绑定与迭代器拓展">泛型算法 - 从泛型到函数绑定与迭代器拓展</a><time datetime="2024-01-22T06:26:00.000Z" title="更新于 2024-01-22 14:26:00">2024-01-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/db-four-nf/" title="数据库中的范式">数据库中的范式</a><time datetime="2024-01-08T15:26:00.000Z" title="更新于 2024-01-08 23:26:00">2024-01-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/db-trigger-view/" title="使用触发器与视图">使用触发器与视图</a><time datetime="2024-01-06T10:10:00.000Z" title="更新于 2024-01-06 18:10:00">2024-01-06</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/db-mysql-postgresql/" title="从 MySQL 学习 PostgreSQL">从 MySQL 学习 PostgreSQL</a><time datetime="2024-01-06T10:00:00.000Z" title="更新于 2024-01-06 18:00:00">2024-01-06</time></div></div></div></div></div></div></main><footer id="footer" style="background: #171717"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2024 By Jamhus Tao</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.umd.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="/pluginsSrc/katex/dist/katex.min.css"><script src="/pluginsSrc/katex/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('/pluginsSrc/mermaid/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addModeChange('mermaid', runMermaid)
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: 'f5ab0e5f4c6139f6fc66',
+      clientSecret: '34afc0f7b7a9086e590fbcb099bae698933ed074',
+      repo: 'jamhus-tao.github.io.gitalk',
+      owner: 'jamhus-tao',
+      admin: ['jamhus-tao'],
+      id: '20bf87efb162265779028a71d2f03ffe',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    getCSS('/pluginsSrc/gitalk/dist/gitalk.css')
+    getScript('/pluginsSrc/gitalk/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.textContent= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !false) {
+  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script data-pjax defer src="/js/my.js"></script><script defer="defer" id="ribbon" src="/pluginsSrc/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
