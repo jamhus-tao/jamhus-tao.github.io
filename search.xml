@@ -4,6 +4,19 @@
   
     
     <entry>
+      <title>猜你喜欢</title>
+      <link href="//posts/recommend/"/>
+      <url>//posts/recommend/</url>
+      
+        <content type="html"><![CDATA[<h2 id="关于">关于</h2><ul><li><a href="/about/">我的详细经历</a></li><li>联系我：jamhus_tao@qq.com</li></ul><h2 id="面经">面经</h2><ul><li><a href="/posts/interview-datan-240220/">面经 - 达坦科技 一面挂 240220</a></li><li><a href="/posts/interview-bytedance-infra-ads-240223/">面经 - 字节 广告基架实习 一面挂 240223</a></li><li><a href="/posts/interview-tencent-backend-wxg-240313/">面经 - 腾讯 微信后台实习 OFFER 240313</a></li></ul><h2 id="C">C++</h2><ul><li><a href="/posts/cpp-diff-level-const/">如何理解 C++ 顶层和底层 const 下复杂类型</a></li><li><a href="/posts/cpp-four-cast/">四种 cast 强制类型转换</a></li><li><a href="/posts/cpp-shared-ptr/">C++ 与三种智能指针 - 代码复现与辨析</a></li><li><a href="/posts/cpp-template-complie-branch/">模板元 - 三种条件编译汇总</a></li><li><a href="/posts/cpp-move-forward/">从引用折叠到 move 与 forward 代码复现</a></li><li><a href="/posts/cpp-cmake-abc/">CMake 项目构建和代码测试</a></li><li><a href="/posts/cpp-in-assembly/">逐行解析 - 从汇编看 C 语言</a></li></ul><h2 id="Database">Database</h2><ul><li><a href="/posts/db-aicd-mvcc/">事务隔离级别与 MVCC 机制</a></li><li><a href="/posts/db-trx-lock/">梳理事务中的锁</a></li><li>SQL<ul><li><a href="/posts/db-clause-opt/">SELECT 中的子句与运算</a></li><li><a href="/posts/db-subquery-join/">SELECT 中的子查询与联结</a></li><li><a href="/posts/db-select-set/">SELECT 中的合并、交集与差集</a></li><li><a href="/posts/db-key-index/">使用键与索引</a></li></ul></li></ul><h2 id="Linux">Linux</h2><ul><li><a href="/posts/linux-abc-ubuntu/">Linux 入门笔记 - Ubuntu</a></li><li><a href="/posts/linux-unbuntu-install-disk/">移动硬盘中的 Ubuntu 安装 (搬运)</a></li></ul><h2 id="系列文章">系列文章</h2><ul><li><a href="/posts/md-abc-0-preface/">Markdown 学习笔记</a></li><li><a href="/posts/linux-dev-0-preface/">Linux 开发系列笔记</a></li><li><a href="/posts/go-abc-0-preface/">Golang 入门基础</a></li><li><a href="/posts/git-abc-0-preface/">Git 学习笔记</a></li><li><a href="/posts/blog-hexo-0-preface/">Github + Hexo + Butterfly 建站笔记</a></li></ul><p>基本都是些入门教学… 萌新时期的写作。</p><h2 id="项目">项目</h2><ul><li><a href="/posts/project-cmu15445-note/">CMU15445 Note</a></li></ul><p>拿不出什么高水平的项目…</p><br><p>欢迎发现更多作品~</p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>逐行解析 - 从汇编看 C 语言</title>
       <link href="//posts/cpp-in-assembly/"/>
       <url>//posts/cpp-in-assembly/</url>
