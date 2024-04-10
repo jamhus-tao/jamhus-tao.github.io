@@ -4,11 +4,65 @@
   
     
     <entry>
+      <title>2024 - 一月随笔</title>
+      <link href="//posts/free-24-1/"/>
+      <url>//posts/free-24-1/</url>
+      
+        <content type="html"><![CDATA[<div class="note info flat"><p>记录时为 2 月 14 日。</p></div><p>虽已二月中旬，回头补下 1 月的总结。</p><p>回应 12 月自己立下的 TODO：</p><ul><li><code>CMU 15-445</code>，做到 <code>p2</code>，不继续做了，感觉继续收获有限。</li><li><code>C++ Primer</code>，截至此刻，完成面向对象章，写相关文 8 篇，收获满满。</li><li><code>小林 Coding</code>，美赛备赛期，趁队友不在，偷品网络两章，之后计划读下数据库。</li></ul><p>2 月 TODO (好吧，二月过半)：</p><ul><li>美赛，<code>C++ Primer</code>，淘汰赛和晋级赛验题。</li><li>2 月初规划实习前期准备。</li><li>2 月末开学，请教课程学习路线，规划课程学习。</li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> 随笔 </category>
+          
+          <category> 2024 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 随笔 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>2024 - 三月随笔</title>
+      <link href="//posts/free-24-3/"/>
+      <url>//posts/free-24-3/</url>
+      
+        <content type="html"><![CDATA[<p>将三月总结为面试月，这个月主要在面试的焦躁中度过，但也迎来的收获。</p><p>其实这个三月应该从 2 月 19 日开始，我整理了如下的面试时间线：</p> <div class="timeline  blue"><div class='timeline-item headline'><div class='timeline-item-title'><div class='item-circle'><p>面试时间线</p></div></div></div><div class='timeline-item'><div class='timeline-item-title'><div class='item-circle'><p>2 月 19 日</p></div></div><div class='timeline-item-content'><p>投出第一份简历，后续不断海投简历，后面几乎每天都在关注一些新的机会，投出一些新的简历。</p></div></div><div class='timeline-item'><div class='timeline-item-title'><div class='item-circle'><p>2 月 20 日</p></div></div><div class='timeline-item-content'><p>达坦科技，Rust 厂，一面挂。拷打项目。</p></div></div><div class='timeline-item'><div class='timeline-item-title'><div class='item-circle'><p>2 月 23 日</p></div></div><div class='timeline-item-content'><p>字节跳动广告基础架构，一面口头过。之后很长时间没有后续。</p></div></div><div class='timeline-item'><div class='timeline-item-title'><div class='item-circle'><p>2 月 26 日</p></div></div><div class='timeline-item-content'><p>开学。</p></div></div><div class='timeline-item'><div class='timeline-item-title'><div class='item-circle'><p>3 月 4 日</p></div></div><div class='timeline-item-content'><p>字节跳动广告基础架构，正式感谢信。估计是没有 hc 了。</p></div></div><div class='timeline-item'><div class='timeline-item-title'><div class='item-circle'><p>3 月 7 日</p></div></div><div class='timeline-item-content'><p>英飞流数据库。直接丢个 Lab 作为一面考核，选择放弃。</p></div></div><div class='timeline-item'><div class='timeline-item-title'><div class='item-circle'><p>3 月 13 日</p></div></div><div class='timeline-item-content'><p>腾讯微信事业群技术架构，一面过。</p></div></div><div class='timeline-item'><div class='timeline-item-title'><div class='item-circle'><p>3 月 21 日</p></div></div><div class='timeline-item-content'><p>腾讯微信事业群技术架构，二面过。</p></div></div><div class='timeline-item'><div class='timeline-item-title'><div class='item-circle'><p>3 月 22 日</p></div></div><div class='timeline-item-content'><p>腾讯微信事业群技术架构，三面过。</p></div></div><div class='timeline-item'><div class='timeline-item-title'><div class='item-circle'><p>3 月 25 日</p></div></div><div class='timeline-item-content'><p>腾讯微信事业群技术架构，OFFER CALL。</p></div></div></div><p>随着腾讯的 OC，我的三月也就此结束。三月的剩余时间，开始享受喜悦，开始水群。这个过程也享受从与群友的陌生到熟悉，在群友眼中有了存在感，当然也感受群友 OFFER 有无的情感交织。六月将是新的启程，将是全新的世界，或许这一切也从认识群友就已开始。</p><p><img src="https://s2.loli.net/2024/04/10/nfEGSdqew3UDMsk.png" alt=" "></p><br><p>三月还有最后一件事，我成功争取到了校内 CCPC Final 的名额，这场比赛以打铁告终。在三月也贯穿了准备 CCPC Final 的过程，虽然我已心不在焉，但仍每周 VP。ACM 的难度在我眼中逐年递增，打铁这个结果超乎我的想象，我也不是第一次怀疑是否要在这条道路上继续坚持。我的心中也大概早有了答案。</p><br><p>三月的最后，是该思考四月的规划。今天是 4 月 10 日，这件事已被我搁置半个月，水群终究不能提升技能，是时候该考虑后面的规划。四月上中旬，依然需要花费一些心思在一些比赛上，或者再允许自己摆烂一段时间。四月下旬和整个五月从 MIT6.824 入手学习分布式，这是组长和总监面点名的薄弱点，我希望自己可以在入职前补充。点名的另外两个方面：计网和系统，我计划在大三上学期补齐。</p><p>我不确定完成这些内容究竟需要花费多少时间，在我的计划里要为五月留下一些额外的娱乐时间，我不确定自己是否允许自己这么做。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 随笔 </category>
+          
+          <category> 2024 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 随笔 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>猜你喜欢</title>
       <link href="//posts/recommend/"/>
       <url>//posts/recommend/</url>
       
-        <content type="html"><![CDATA[<h2 id="关于">关于</h2><ul><li><a href="/about/">我的详细经历</a></li><li>联系我：jamhus_tao@qq.com</li></ul><h2 id="面经">面经</h2><ul><li><a href="/posts/interview-datan-240220/">面经 - 达坦科技 一面挂 240220</a></li><li><a href="/posts/interview-bytedance-infra-ads-240223/">面经 - 字节 广告基架实习 一面挂 240223</a></li><li><a href="/posts/interview-tencent-backend-wxg-240313/">面经 - 腾讯 微信后台实习 OFFER 240313</a></li></ul><h2 id="C">C++</h2><ul><li><a href="/posts/cpp-diff-level-const/">如何理解 C++ 顶层和底层 const 下复杂类型</a></li><li><a href="/posts/cpp-four-cast/">四种 cast 强制类型转换</a></li><li><a href="/posts/cpp-shared-ptr/">C++ 与三种智能指针 - 代码复现与辨析</a></li><li><a href="/posts/cpp-template-complie-branch/">模板元 - 三种条件编译汇总</a></li><li><a href="/posts/cpp-move-forward/">从引用折叠到 move 与 forward 代码复现</a></li><li><a href="/posts/cpp-cmake-abc/">CMake 项目构建和代码测试</a></li><li><a href="/posts/cpp-in-assembly/">逐行解析 - 从汇编看 C 语言</a></li></ul><h2 id="Database">Database</h2><ul><li><a href="/posts/db-aicd-mvcc/">事务隔离级别与 MVCC 机制</a></li><li><a href="/posts/db-trx-lock/">梳理事务中的锁</a></li><li>SQL<ul><li><a href="/posts/db-clause-opt/">SELECT 中的子句与运算</a></li><li><a href="/posts/db-subquery-join/">SELECT 中的子查询与联结</a></li><li><a href="/posts/db-select-set/">SELECT 中的合并、交集与差集</a></li><li><a href="/posts/db-key-index/">使用键与索引</a></li></ul></li></ul><h2 id="Linux">Linux</h2><ul><li><a href="/posts/linux-abc-ubuntu/">Linux 入门笔记 - Ubuntu</a></li><li><a href="/posts/linux-unbuntu-install-disk/">移动硬盘中的 Ubuntu 安装 (搬运)</a></li></ul><h2 id="系列文章">系列文章</h2><ul><li><a href="/posts/md-abc-0-preface/">Markdown 学习笔记</a></li><li><a href="/posts/linux-dev-0-preface/">Linux 开发系列笔记</a></li><li><a href="/posts/go-abc-0-preface/">Golang 入门基础</a></li><li><a href="/posts/git-abc-0-preface/">Git 学习笔记</a></li><li><a href="/posts/blog-hexo-0-preface/">Github + Hexo + Butterfly 建站笔记</a></li></ul><p>基本都是些入门教学… 萌新时期的写作。</p><h2 id="项目">项目</h2><ul><li><a href="/posts/project-cmu15445-note/">CMU15445 Note</a></li></ul><p>拿不出什么高水平的项目…</p><br><p>欢迎发现更多作品~</p>]]></content>
+        <content type="html"><![CDATA[<h2 id="关于">关于</h2><ul><li><a href="/about/">我的详细经历</a></li><li>联系我：jamhus_tao@qq.com</li></ul><h2 id="面经">面经</h2><ul><li><a href="/posts/interview-datan-240220/">面经 - 达坦科技 一面挂 240220</a></li><li><a href="/posts/interview-bytedance-infra-ads-240223/">面经 - 字节 广告基架实习 一面挂 240223</a></li><li><a href="/posts/interview-tencent-backend-wxg-240313/">面经 - 腾讯 微信后台实习 OFFER 240313</a></li></ul><h2 id="C">C++</h2><ul><li><a href="/posts/cpp-diff-level-const/">如何理解 C++ 顶层和底层 const 下复杂类型</a></li><li><a href="/posts/cpp-four-cast/">四种 cast 强制类型转换</a></li><li><a href="/posts/cpp-shared-ptr/">C++ 与三种智能指针 - 代码复现与辨析</a></li><li><a href="/posts/cpp-template-complie-branch/">模板元 - 三种条件编译汇总</a></li><li><a href="/posts/cpp-move-forward/">从引用折叠到 move 与 forward 代码复现</a></li><li><a href="/posts/cpp-cmake-abc/">CMake 项目构建和代码测试</a></li><li><a href="/posts/cpp-in-assembly/">逐行解析 - 从汇编看 C 语言</a></li></ul><h2 id="Database">Database</h2><ul><li><a href="/posts/db-aicd-mvcc/">事务隔离级别与 MVCC 机制</a></li><li><a href="/posts/db-trx-lock/">梳理事务中的锁</a></li><li>SQL<ul><li><a href="/posts/db-clause-opt/">SELECT 中的子句与运算</a></li><li><a href="/posts/db-subquery-join/">SELECT 中的子查询与联结</a></li><li><a href="/posts/db-select-set/">SELECT 中的合并、交集与差集</a></li><li><a href="/posts/db-key-index/">使用键与索引</a></li></ul></li></ul><h2 id="Linux">Linux</h2><ul><li><a href="/posts/linux-abc-ubuntu/">Linux 入门笔记 - Ubuntu</a></li><li><a href="/posts/linux-unbuntu-install-disk/">移动硬盘中的 Ubuntu 安装 (搬运)</a></li></ul><h2 id="系列文章">系列文章</h2><ul><li><a href="/posts/md-abc-0-preface/">Markdown 学习笔记</a></li><li><a href="/posts/linux-dev-0-preface/">Linux 开发系列笔记</a></li><li><a href="/posts/go-abc-0-preface/">Golang 入门基础</a></li><li><a href="/posts/git-abc-0-preface/">Git 学习笔记</a></li><li><a href="/posts/blog-hexo-0-preface/">Github + Hexo + Butterfly 建站笔记</a></li></ul><p>基本都是些入门教学… 萌新时期的写作。</p><h2 id="项目">项目</h2><ul><li><a href="/posts/project-cmu15445-note/">CMU15445 Note</a></li></ul><p>拿不出什么高水平的项目…</p><h2 id="个人随笔">个人随笔</h2><ul><li>2023<ul><li><a href="/posts/free-23-7/">随笔 - 七月随笔</a></li><li><a href="/posts/free-23-8/">随笔 - 八月随笔</a></li><li><a href="/posts/free-23-9/">随笔 - 九月随笔</a></li><li><a href="/posts/free-23-10/">随笔 - 十月随笔</a></li><li><a href="/posts/free-23-11/">随笔 - 十一月随笔</a></li><li><a href="/posts/free-23-12/">随笔 - 十二月随笔</a></li></ul></li><li>2024<ul><li><a href="/posts/free-24-1/">2024 - 一月随笔</a></li><li>二月鸽了~</li><li><a href="/posts/free-24-3/">2024 - 三月随笔</a></li></ul></li></ul><br><p>欢迎发现更多作品~</p>]]></content>
       
       
       
@@ -458,6 +512,33 @@
     
     
     <entry>
+      <title>随笔 - 十二月随笔</title>
+      <link href="//posts/free-23-12/"/>
+      <url>//posts/free-23-12/</url>
+      
+        <content type="html"><![CDATA[<p>十二月可以用两个字 <code>&quot;痛苦&quot;</code> 来形容。为什么用这个词来形容，主要是因为到了期末周。今天是 12 月 31 日，同时也是 16 周的最后一天，这也意味着从下周开始，本学期的考试将接踵而至。之所以说十二月是痛苦的，倒不是因为有太多功课要补，而是学习那些毫无意义的课程令人痛苦。</p><p><code>大物</code>、<code>普物实验</code>、<code>毛概</code>、<code>形策</code>、<code>军理</code>、<code>数电课设</code>（焊板子），我实在不知道这些课程对于培养一个计算机专业的大学生有什么意义，而是无谓的消费我的时间，尤其是其中不下少数的 <code>一节课不落，一节课不听</code> 的课程，完全是在约束一个大学生的人身自由。前面几个月虽然也在学习这些课程，但并不觉得什么痛苦。十一月的大多时间都在比赛中度过，没有太多时间想这些事情，但也在计划着将来半年的打算，可以说未来的半年将是更加忙碌的。当时虽然也有很多事情想做而不能做，但至少我觉得当时正在做的，是一件对我而言有意义的事，也是当下最重要的事。到了十二月，也有当下最重要的事要做，我也和多数人认知的一样，这件事理所应当是准备期末考试，但正是因为这样的想法令我痛苦：<code>期末复习是重要的，但又是无意义的，是我不得不做的无意义的事</code>。</p><p>我当下迫不及待的想做的，是能在明年暑期找到一个实习：</p><ul><li>深入学习 <code>C++ 11</code>，读完 <code>C++ 11 Primer</code>，但可能来不及读得很仔细，目前进度 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mn>1</mn><mn>3</mn></mfrac></mrow><annotation encoding="application/x-tex">\frac13</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1901em;vertical-align:-0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">3</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span>。</li><li>完成 <code>CMU 15445</code>，也可以完成前半部分，计划寒假开始，目前进度 <code>0</code>。</li><li>对 <code>小林coding</code> 的内容结构有一个了解，方便后面进行计划。</li><li>在实习前快速复习去年寒假学的，已经忘光了的 <code>Linux</code> 与并发相关知识点。</li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> 随笔 </category>
+          
+          <category> 2023 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 随笔 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>C++ 与三种智能指针 - 代码复现与辨析</title>
       <link href="//posts/cpp-shared-ptr/"/>
       <url>//posts/cpp-shared-ptr/</url>
@@ -654,6 +735,33 @@
     
     
     <entry>
+      <title>随笔 - 十一月随笔</title>
+      <link href="//posts/free-23-11/"/>
+      <url>//posts/free-23-11/</url>
+      
+        <content type="html"><![CDATA[<h2 id="11-月-5-日-2023-ICPC-南京-后">11 月 5 日 <code>2023 ICPC 南京</code> 后</h2><p>非常失败的一站，只写出 3 题，比赛刚结束感觉要打铁了，但是仔细一算还是有戏的。滚榜还没结束，比赛志愿者提前安排到后场排队，当时提前知道铜牌保住了。</p><p>先说说 A 题袋鼠题，有一个错误找了一个多小时没有找出来，赛后一对拍，发现一维模拟二维的偏移量乘错了。</p><p>然后是 G 题，贪心 + DP，我个人对贪心没有一点感觉，然后开赛 1 小时我还说这个像 DP，smallC 也没怎么看这道题，曼姐给了个很接近的思路，不是很懂，最后没有通过。</p><p>L 算是签到贪心吧，但是代码似乎不是很好写，前期榜向 G 题歪的很严重，然后封榜后打算写完 A 去 L 题的，结果 A 题代码没调出来。</p><p>还是说很惊讶，三题铜，铜倒四。感觉 6 题都可写，甚至可以 7 题，但是代码都调不出来。这就是南京站的诅咒吗？VP 去年南京站也是这个情况，思路都有，但是代码调不通，基础代码能力不过关吧。</p><h2 id="11-月-12-日-2023-CCPC-深圳-后">11 月 12 日 <code>2023 CCPC 深圳</code> 后</h2><p>依然很失败，又是三题，但是这把的三题比南京的三题要好些。</p><p>感觉是抽象场了，前期过题数第 4 的 L 题，至今看不懂题解，看不懂的式子推了 4 页 PPT，上了很多不认识的定理。曼姐在那勤勤恳恳推了至少 3 个小时，没有推出来。还有很多推式子题一堆，这就是 THU？</p><p>然后说 I 题，是终榜过题数第 4，思路很简单，就是枚举，怎么枚举都能过，但是一堆队伍都 try 不过去，我们也没过，由于最近 XCPC 特别喜欢憋着不发补题，至今不知道问题在哪里。这题应该算我的锅。</p><p>再讲讲我们过了的 G 题，字符串二分 hash，smallC 大概两个小时出的思路，当场感觉智商被侮辱了，我最擅长的 hash 居然没看出来。感觉最近不在状态，南京队友挂机，这场我挂机，哈哈。然后就是这场共三个 hash，还是那句话，这就是 THU？</p><p>唉唉唉，还有一站合肥。</p><h2 id="11-月-26-日-2023-ICPC-合肥-后">11 月 26 日 <code>2023 ICPC 合肥</code> 后</h2><p>参与感比较强的一场，四题铜首，从开场写到了四小时，之后没有开出题。</p><p>封榜后开的两题，一题我卡着，一题曼姐卡着。我开的题据题解说是 dp 但我一直没往那方面想；曼姐开的题说是回文自动机板子，她看出来了但一直没写出来，感觉回文自动机作为银尾题多少命题有点问题。还有一题难度偏低，但榜没发现那题。</p><p>关于评测机事故，不作评价，对我队影响不是很明显。</p><p>总结一下最后一站是打的最好的，但因为一些原因还是铜，明年还得继续。</p><br><p>最后，合肥回来后很快得了重感冒，可能是流感。今天在寝室待了一天，真不错。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 随笔 </category>
+          
+          <category> 2023 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 随笔 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>python 面向对象编程备忘</title>
       <link href="//posts/python-oop-note/"/>
       <url>//posts/python-oop-note/</url>
@@ -675,6 +783,33 @@
             <tag> 语法 </tag>
             
             <tag> Python </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>随笔 - 十月随笔</title>
+      <link href="//posts/free-23-10/"/>
+      <url>//posts/free-23-10/</url>
+      
+        <content type="html"><![CDATA[<p>十月是 VP 月，每周在两场 VP 中度过，不是很顺利。</p><table><thead><tr><th>VP 比赛</th><th>VP 时间</th><th>结果</th><th>总结</th></tr></thead><tbody><tr><td>2022 ICPC Asia Shenyang</td><td>Sep 13</td><td>三题铜</td><td>敢猜敢试，第四题 F 贪心，几页纸莫比乌斯反演证明</td></tr><tr><td>2022 ICPC Asia Nanjing</td><td>Oct 15</td><td>三题铜</td><td>敢对拍，很好拍很难写的题都是，也是实现能力不足</td></tr><tr><td>2022 ICPC Asia Jinan</td><td>Oct 22</td><td>四题铜</td><td>至少读 +1 题，个人感觉 G &lt; C，但没读，思维不够宽</td></tr><tr><td>2022 CCPC Guangzhou</td><td>Oct 25</td><td>三题铜</td><td>很妙的构造，很妙的数位</td></tr><tr><td>2022 CCPC Weihai</td><td>Oct 29</td><td>四题铁</td><td>不要过早考虑任何算法，两道题都被过早打上 tag，没想好宁可让机子空着</td></tr><tr><td>2021 ICPC Asia Nanjing</td><td>Nov 1</td><td>五题银</td><td>赛前打气吧属于，感觉看发挥金到铁都有可能</td></tr></tbody></table>]]></content>
+      
+      
+      <categories>
+          
+          <category> 随笔 </category>
+          
+          <category> 2023 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 随笔 </tag>
             
         </tags>
       
@@ -898,6 +1033,33 @@
             <tag> 栈 </tag>
             
             <tag> 单调栈 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>随笔 - 九月随笔</title>
+      <link href="//posts/free-23-9/"/>
+      <url>//posts/free-23-9/</url>
+      
+        <content type="html"><![CDATA[<p>写起日记来，总感觉时间过的很快。开学一个月了，现在则是国庆集训期间。</p><p>这一个月以来，感觉最好的形容是欢乐与放松。说到这里也感觉有些焦虑、不知方向、懈怠了。这一个月基本仅仅完成了日常的学业任务，在 ACM 算法竞赛方面也没有进一步的突破，然后就是做一些集训队与班级的日常事务。目前的打算就是打完下半年的 ICPC 与 CCPC 比赛就去找其他方向了，方向也很多吧，要做的事情也很多。</p><p>但是最近一个月发生很多事，也有一些总结展望：</p><ul><li>上学年的综测排名出来了，虽然绩点成绩在班级第三，但是由于前一学年主攻竞赛与学校最新二类竞赛政策，最终综测排名勉强班级第一。从大二学年来，专业课比重相对于大一大幅增加，我也希望可以在这一学年绩点排名往前凑一凑。</li><li>我队下半年 ICPC 与 CCPC 比赛日程已基本确定，最终拿到了 1 个 CCPC 名额与 2 个 ICPC 名额，也算满意，希望在之后两个月的比赛中能够拿到好成绩，也可以安心退役，抱一颗平常心，银首是我对我队的期望。最近我队比较浮躁，也是从我带的节奏，可能需要降一降。</li></ul><p>最近一个月见闻很多事：</p><ul><li>919 是推免正式录取时间，也见证了一位 ACM 退役队员，一位 互联网+ 学长，还有另外两位学长的保研成功。</li><li>水了很多群，也看到了许多不同出生（学历学校、在校经历）的人关于就业形式的讨论。</li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> 随笔 </category>
+          
+          <category> 2023 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 随笔 </tag>
             
         </tags>
       
@@ -1334,6 +1496,33 @@
             <tag> 数据结构 </tag>
             
             <tag> 平衡树 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>随笔 - 八月随笔</title>
+      <link href="//posts/free-23-8/"/>
+      <url>//posts/free-23-8/</url>
+      
+        <content type="html"><![CDATA[<p>翻了翻日历，七月中旬到八月中旬大概都是在牛客多校和杭电多校中度过，中间还抽空写了几篇<a href="/categories/%E7%AE%97%E7%AB%9E%E9%A2%98%E8%A7%A3/%E7%89%9B%E5%AE%A2%E5%A4%9A%E6%A0%A1-%E6%9D%AD%E7%94%B5%E5%A4%9A%E6%A0%A1/2023/">相关题解</a>，中间也抽空继续写我的博客。牛客多校和杭电多校虽然考察的知识点非常的偏和奇怪，但是也可以说是收获很多的，督促我去学了很多新东西。杭电多校没有 Rating 机制，因此下面只附了牛客多校。</p><p><img src="https://s2.loli.net/2023/08/28/Wm25uhLoVzxdH4k.png" alt=" "></p><p>按照这个排名，对下半年区域赛的定位大概是银牌靠前。</p><br><p>8 月 20 日 CCPC 网络预选赛，纯纯坐牢局，这场比赛歪榜严重，多数人跟榜都只有一题，还好中间队友开出了另一道题，也算为学校打了一个名额。今年 CCPC 估计名额为 5 个，后面还有两场 ICPC 网络预选赛，吸取教训不乱跟榜。</p><br><p>谈谈八月下旬如何度过，除了算法竞赛方面，继续偷学 <code>Golang</code> 相关，虽然才过去了四五天就开摆了，如果我能坚持下来，后面会看到一个新的系列文章，当然很大概率会被鸽掉。</p><br><p>​<mark class="hl-label default">这一个月来体会颇深：</mark> </p><p>打了这么一段时间的竞赛也有感觉精力不足，力不从心。之前去看了字节跳动的青训营，进去才发现里面要做的并不简单，暑假时间大部分被集训占用了，集训时间之余还要各种补题和打 Codeforces。时常想要挤时间去学一些 Golang 的知识，但第二天的多校训练赛强度也很高，这样坚持一段时间后，开始头痛，是真的头痛。刚入学的时候想法很简单，时间很多，想做好可以把所有事做好。一年过去了，现在看来不是，需要好好抉择一下该做什么事了。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 随笔 </category>
+          
+          <category> 2023 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 随笔 </tag>
             
         </tags>
       
@@ -2692,6 +2881,33 @@
             <tag> 图论 </tag>
             
             <tag> 哈密顿图 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>随笔 - 七月随笔</title>
+      <link href="//posts/free-23-7/"/>
+      <url>//posts/free-23-7/</url>
+      
+        <content type="html"><![CDATA[<p>总是感觉时间过的很慢，但转眼又过去了很久。没什么时间在这个随笔录上经常唠嗑，每次翻开，都是一个月过去。但是上次写日记，还是在 6 月 2 日，从湘潭 CCPC 回来。很高兴，这次的随笔出现在了我的个人博客上，要记录两个月发生的事情。</p><p>六月的第一周，大概是在白兰中度过，刚结束一场比赛，后面是蓝桥杯国赛。</p><p>6 月 10 日，蓝桥杯国赛，表现不是很好，国二，失误很多，倒也无所谓。</p><p>六月的第二周是考试周，要准备各种考试，因此基本没有做什么事情。期末周倒是最清闲的时光，什么事都不用做，因为看那些课内的资料也看不进去。这段时间大概在各种跑酷小游戏中度过。</p><p>大概是六月底，被推举为了学校 ACM 集训队的副队长（之一），其实到现在什么事都没干，毕竟集训队的重心是训练，顶多当个榜样吧。好吧，说实话最近感觉自己挺开摆的。</p><p>其实六月都处在一种白兰的状态，直到七月才紧张起来。</p><p>七月初的两周是军训，这段时间忙里偷闲学习了 Go 语言的入门语法，并整理了大概 4 万字的笔记。可以在我的分类中找到 <code>Golang</code> 入门笔记，其实是那段时间整理的，直到后面才转移上来的。还是说，忙里偷闲的那种感觉让我很快乐。军训期间，每天只有晚上有时间，有时候晚上有各种活动都偷偷润回寝室学 <code>Golang</code>。</p><p>七月的后面两周在集训中度过，集训队统一组织报名了牛客多校和杭电多校，两个加起来强度挺高的，每周四场比赛，总共有二十场比赛。虽然题很怪，但是收获也是蛮丰厚的，比如牛客的一道二维字符串答辩题，杭电的 bitset 优化答辩题，杭电的 Miller-Robin 答辩题，牛客一道构造题，还有刚开始几天的打表找结论题都令人印象深刻。虽然我称之为答辩，但是想想这些其实都是可能用到的技巧，只是这些个多校可不像正式赛友好。</p><p>七月后面两周也是忙里偷闲。我的博客已经运行一周了，我还在陆续上传之前写的一些文章到我的博客。我的博客还有很多地方需要完善，虽然并不有多少人在看。同时感谢大佬的 <a href="https://nickxu.me/2022/02/13/Hexo%20+%20Butterfly%20%E5%BB%BA%E7%AB%99%E6%8C%87%E5%8D%97%EF%BC%88%E3%80%87%EF%BC%89%E5%89%8D%E8%A8%80/">这篇文章</a> 全程教学如何从零搭建博客。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 随笔 </category>
+          
+          <category> 2023 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 随笔 </tag>
             
         </tags>
       
