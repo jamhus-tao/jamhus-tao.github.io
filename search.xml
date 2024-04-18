@@ -180,9 +180,9 @@
       
         <tags>
             
-            <tag> Database </tag>
-            
             <tag> 原理 </tag>
+            
+            <tag> Database </tag>
             
             <tag> MySQL </tag>
             
@@ -650,13 +650,13 @@
       
         <tags>
             
-            <tag> Database </tag>
-            
             <tag> 原理 </tag>
             
-            <tag> MVCC </tag>
+            <tag> Database </tag>
             
             <tag> MySQL </tag>
+            
+            <tag> MVCC </tag>
             
             <tag> 事务 </tag>
             
@@ -685,15 +685,15 @@
       
         <tags>
             
+            <tag> 语法 </tag>
+            
             <tag> Database </tag>
+            
+            <tag> MySQL </tag>
             
             <tag> SQL </tag>
             
-            <tag> 语法 </tag>
-            
             <tag> PostgreSQL </tag>
-            
-            <tag> MySQL </tag>
             
         </tags>
       
@@ -720,13 +720,13 @@
       
         <tags>
             
-            <tag> Database </tag>
-            
-            <tag> SQL </tag>
-            
             <tag> 语法 </tag>
             
+            <tag> Database </tag>
+            
             <tag> MySQL </tag>
+            
+            <tag> SQL </tag>
             
         </tags>
       
@@ -836,13 +836,13 @@
       
         <tags>
             
-            <tag> Database </tag>
-            
-            <tag> SQL </tag>
-            
             <tag> 语法 </tag>
             
+            <tag> Database </tag>
+            
             <tag> MySQL </tag>
+            
+            <tag> SQL </tag>
             
         </tags>
       
@@ -898,11 +898,11 @@
       
         <tags>
             
+            <tag> 原理 </tag>
+            
             <tag> Database </tag>
             
             <tag> SQL </tag>
-            
-            <tag> 原理 </tag>
             
         </tags>
       
@@ -929,13 +929,13 @@
       
         <tags>
             
-            <tag> Database </tag>
-            
-            <tag> SQL </tag>
-            
             <tag> 语法 </tag>
             
+            <tag> Database </tag>
+            
             <tag> MySQL </tag>
+            
+            <tag> SQL </tag>
             
         </tags>
       
@@ -962,13 +962,13 @@
       
         <tags>
             
-            <tag> Database </tag>
-            
-            <tag> SQL </tag>
-            
             <tag> 语法 </tag>
             
+            <tag> Database </tag>
+            
             <tag> MySQL </tag>
+            
+            <tag> SQL </tag>
             
         </tags>
       
@@ -995,13 +995,13 @@
       
         <tags>
             
-            <tag> Database </tag>
-            
-            <tag> SQL </tag>
-            
             <tag> 语法 </tag>
             
+            <tag> Database </tag>
+            
             <tag> MySQL </tag>
+            
+            <tag> SQL </tag>
             
         </tags>
       
@@ -1119,13 +1119,13 @@
       
         <tags>
             
-            <tag> Database </tag>
-            
-            <tag> SQL </tag>
-            
             <tag> 语法 </tag>
             
+            <tag> Database </tag>
+            
             <tag> MySQL </tag>
+            
+            <tag> SQL </tag>
             
         </tags>
       
@@ -1156,9 +1156,9 @@
             
             <tag> Database </tag>
             
-            <tag> SQL </tag>
-            
             <tag> MySQL </tag>
+            
+            <tag> SQL </tag>
             
         </tags>
       
@@ -1187,11 +1187,11 @@
             
             <tag> Database </tag>
             
+            <tag> MySQL </tag>
+            
             <tag> SQL </tag>
             
             <tag> 安装 </tag>
-            
-            <tag> MySQL </tag>
             
         </tags>
       
@@ -1549,11 +1549,11 @@
       
         <tags>
             
-            <tag> 小工具 </tag>
-            
             <tag> Python </tag>
             
             <tag> 项目 </tag>
+            
+            <tag> 小工具 </tag>
             
         </tags>
       
