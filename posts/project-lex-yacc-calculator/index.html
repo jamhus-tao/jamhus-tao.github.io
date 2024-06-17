@@ -1,0 +1,329 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>LEX + YACC 计算器语法分析器 | JamhusTao の Blog</title><meta name="author" content="Jamhus Tao"><meta name="copyright" content="Jamhus Tao"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="前言 实现一个计算器语法分析器的方法有两种：  第一种是使用单调栈建立后缀表达式，这样的方法不用借助任何工具，基于笛卡尔树的理论基础。 第二种方式是使用 LEX 和 YACC 等词法文法分析工具，它们的支持更加灵活，基于文法分析的理论基础。  本文将要介绍的是第二种方法，它不仅可以用于构建计算器，其实更能构建编程语言，所以这是大学中的一门课程叫作 ​编译原理 。而关于第一种方法，我之前写过一篇文章">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LEX + YACC 计算器语法分析器">
+<meta property="og:url" content="https://jamhus-tao.github.io/posts/project-lex-yacc-calculator/">
+<meta property="og:site_name" content="JamhusTao の Blog">
+<meta property="og:description" content="前言 实现一个计算器语法分析器的方法有两种：  第一种是使用单调栈建立后缀表达式，这样的方法不用借助任何工具，基于笛卡尔树的理论基础。 第二种方式是使用 LEX 和 YACC 等词法文法分析工具，它们的支持更加灵活，基于文法分析的理论基础。  本文将要介绍的是第二种方法，它不仅可以用于构建计算器，其实更能构建编程语言，所以这是大学中的一门课程叫作 ​编译原理 。而关于第一种方法，我之前写过一篇文章">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://jamhus-tao.github.io/img/default_cover.png">
+<meta property="article:published_time" content="2024-06-17T06:08:00.000Z">
+<meta property="article:modified_time" content="2024-06-17T12:40:00.000Z">
+<meta property="article:author" content="Jamhus Tao">
+<meta property="article:tag" content="项目">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="编译原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://jamhus-tao.github.io/img/default_cover.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://jamhus-tao.github.io/posts/project-lex-yacc-calculator/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-FQ4L3WN8LH"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-FQ4L3WN8LH');
+</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":600},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'LEX + YACC 计算器语法分析器',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-06-17 20:40:00'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/my.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">117</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">84</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">75</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/default_cover.png')"><nav id="nav"><span id="blog-info"><a href="/" title="JamhusTao の Blog"><span class="site-name">JamhusTao の Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">LEX + YACC 计算器语法分析器</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-06-17T06:08:00.000Z" title="发表于 2024-06-17 14:08:00">2024-06-17</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-06-17T12:40:00.000Z" title="更新于 2024-06-17 20:40:00">2024-06-17</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%A1%B9%E7%9B%AE/">项目</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%A1%B9%E7%9B%AE/LEX-YACC-%E8%AE%A1%E7%AE%97%E5%99%A8%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90%E5%99%A8/">LEX + YACC 计算器语法分析器</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>6分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="LEX + YACC 计算器语法分析器"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="前言">前言</h2>
+<p>实现一个计算器语法分析器的方法有两种：</p>
+<ul>
+<li>第一种是使用单调栈建立后缀表达式，这样的方法不用借助任何工具，基于笛卡尔树的理论基础。</li>
+<li>第二种方式是使用 LEX 和 YACC 等词法文法分析工具，它们的支持更加灵活，基于文法分析的理论基础。</li>
+</ul>
+<p>本文将要介绍的是第二种方法，它不仅可以用于构建计算器，其实更能构建编程语言，所以这是大学中的一门课程叫作 ​<mark class="hl-label default">编译原理</mark> 。而关于第一种方法，我之前写过一篇文章 <a href="/posts/acm-think-suffix-expression/">对于后缀表达式的思考 - 栈</a>。</p>
+<p>好吧，这其实就是我们编译原理课的一个实验，写着感觉挺有意思的，于是写了这篇文章。</p>
+<p><a href="/asset/lex-yacc-calculator.zip">下载项目附件📎</a></p>
+<br>
+<h2 id="相关工具">相关工具</h2>
+<div class="note info flat"><p>建议使用 Linux 系统进行实验会方便很多，我使用的 Ubuntu22.04。</p>
+</div>
+<ul>
+<li>
+<p><code>g++</code>：一种 C++ 编译器。</p>
+<p>编译原理课程老师可能会教你使用 C 编写，但我想说你其实可以使用 C++ 编写。</p>
+<p>本文还会建议你将词法分析、文法分析、语法分析三者分离，然后使用 <code>g++</code> 编译链接。</p>
+</li>
+<li>
+<p><code>flex</code>：一种词法分析器。</p>
+<blockquote>
+<p>Lexical analyzer generator. A rewrite of lex with extensions to the POSIX specification.Given the specification for a lexical analyzer, generates C code implementing it.NOTE: long options don’t work on OpenBSD.More information: <a target="_blank" rel="noopener" href="https://manned.org/flex">https://manned.org/flex</a>.</p>
+</blockquote>
+</li>
+<li>
+<p><code>bison</code>：一种文法分析器。</p>
+<blockquote>
+<p>GNU parser generator. Bison is a general-purpose parser generator that converts an annotated context-free grammar into a deterministic LR or generalized LR (GLR) parser employing LALR(1) parser tables. As an experimental feature, Bison can also generate IELR(1) or canonical LR(1) parser tables. Once you are proficient with Bison, you can use it to develop a wide range of language parsers, from those used in simple desk calculators to complex programming languages. More information: <a target="_blank" rel="noopener" href="https://www.gnu.org/software/bison/">https://www.gnu.org/software/bison/</a>.</p>
+</blockquote>
+</li>
+<li>
+<p><code>graphviz</code>：一种代码绘图工具，用于绘制表达式的抽象语法树。</p>
+<blockquote>
+<p>Render an image of a linear directed network graph from a graphviz file.Layouts: dot, neato, twopi, circo, fdp, sfdp, osage &amp; patchwork.More information: <a target="_blank" rel="noopener" href="https://graphviz.org/doc/info/command.html">https://graphviz.org/doc/info/command.html</a>.</p>
+</blockquote>
+<p>我另外推荐一种代码绘图工具： <a target="_blank" rel="noopener" href="https://mermaid-js.github.io/mermaid/">mermaid</a>。画出的图更好看，文档更加简明易读。但需要使用 <code>npm</code> 安装，因此没有在这里使用。</p>
+</li>
+</ul>
+<p>​<mark class="hl-label default">安装相关工具：</mark> </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">which</span> g++ || sudo apt install build-essential</span><br><span class="line"><span class="built_in">which</span> flex || sudo apt install flex</span><br><span class="line"><span class="built_in">which</span> bison || sudo apt install bison</span><br><span class="line"><span class="built_in">which</span> dot || sudo apt install graphviz</span><br></pre></td></tr></table></figure>
+<br>
+<h2 id="总体结构">总体结构</h2>
+<p>学过编译原理的都知道，语法分析分为三个部分：词法分析、文法分析、语法分析。其中词法分析由 <code>flex</code> 完成，文法分析由 <code>bison</code> 完成。而语法分析和数据结构较为复杂，则由额外的文件 <code>calculator.cpp</code> 完成。</p>
+<p>​<mark class="hl-label default">不要将词法分析和文法分析与语法分析和数据结构放在同一文件中</mark> ，因为通常词法分析和文法分析只需定义正则表达式和执行简单的语句。而数据结构的定义则相对复杂，这可能需要数百行代码。我们知道文法分析会产生 <code>book.y</code> 文件，它具有自己独特的语法，当然你也可以在里面写 <code>C++</code> 语法，但是你的 <code>IDE</code> 对其的自动补全和代码高亮支持通常不好。因此在 <code>book.y</code> 中进行简单的函数调用，而在 <code>calculator.cpp</code> 中书写主要语法分析和数据结构可以很好的解决这个问题，同时大大提高你的编程效率。</p>
+<p>来看我们的项目组织结构，主要由 <code>book.l</code>、<code>book.y</code>、<code>calculator.cpp</code> 三个文件组成：</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart BT
+	subgraph g++
+        s1(lex.yy.cpp) &amp; s2(book.tab.cpp) &amp; s3(calculator.cpp) --&gt; 0(main)
+        h2(book.tab.hpp) &amp; h3(calculator.hpp) --&gt; s1
+        h3 --&gt; s2 &amp; s3
+	end
+	subgraph &quot;lex &#x2F; yaac&quot;
+        g1(book.l) -.-&gt; s1
+        g2(book.y) -.-&gt; h2 &amp; s2
+	end
+	subgraph run.sh
+		t1(test.in) -.-&gt;|&quot;.&#x2F;run.sh &lt; test.in&quot;| 0 -.-&gt;|&quot;.&#x2F;main &gt; book.gv&quot;| t2(book.gv)
+		t2 -.-&gt;|graphviz| p1(&quot;book.gv.png\nbook.gv.svg&quot;)
+	end
+  </pre></div>
+<p>​<mark class="hl-label default">尝试运行项目：</mark> </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">./env.sh    <span class="comment"># 检查并安装环境支持</span></span><br><span class="line">./build.sh  <span class="comment"># 编译链接相关代码</span></span><br><span class="line">./run.sh &lt; test.in  <span class="comment"># 运行测试用例, test.in 查看分析效果</span></span><br><span class="line"><span class="comment"># 查看 book.gv.png 和 book.gv.svg 分析效果</span></span><br></pre></td></tr></table></figure>
+<br>
+<h2 id="flex-与-bison-的链接">flex 与 bison 的链接</h2>
+<p><code>flex</code> 在项目中扮演词法分析的角色（即 <code>book.l</code> 文件），使用正则表达式识别对应的 <code>token</code> 并返回对应的 <code>token</code> 编号。而这里的 <code>token</code> 编号包含在 <code>bison</code> 额外生成在 <code>book.tab.hpp</code> 文件中，这是 <code>bison</code> 专门用于链接 <code>flex</code> 而生成的文件，因此你还需要在 <code>book.l</code> 文件中 <code>#include &quot;book.tab.hpp&quot;</code>。另外，<code>flex</code> 还需要 <code>#include &quot;calculator.hpp&quot;</code>，这实际不是 <code>book.l</code> 需要而是 <code>book.tab.hpp</code> 需要，因为 <code>bison</code> 不会将头部宏定义复制到 <code>book.tab.hpp</code> 中。</p>
+<p>同时 <code>flex</code> 中进行的 <code>yylval.str = yytext;</code> 会向 <code>bison</code> 传递，<code>bison</code> 中只需定义这些 <code>token</code> 类型为 <code>str</code> 即可使用形如 <code>$1</code> 获取 <code>flex</code> 捕获的文本。</p>
+<p>另外，事实上 <code>flex</code> 和 <code>bison</code> 在 <code>C++</code> 支持方面都仅仅是宏支持。它不会检查用户书写的 <code>C++</code> 或 <code>C</code> 代码是否正确，只是将它连同分析器生成的代码一同复制到外部文件中，因此你可能只会在使用 <code>g++</code> 进行编译链接时才会发现奇怪的编译错误。</p>
+<br>
+<h2 id="bison-与-calculator-的链接">bison 与 calculator 的链接</h2>
+<p><code>bison</code> 在项目中扮演文法分析的角色（即 <code>book.y</code> 文件），它使用 <code>LALR(1)</code> 文法分析并调用相应 <code>C++</code> 代码。<code>bison</code> 负责了项目的主要调用逻辑，你可以看到 <code>bison</code> 中大量的 <code>$$ = new NodeExp(..., $1, ...)</code>，实际就是在组织抽象语法树的结构，这里定义 <code>$$</code> 对应的 <code>type</code> 为 <code>NodeExp *</code> 因此可以接收 <code>new NodeExp</code> 返回；最后在每次识别结束时，调用 <code>draw($1);</code> 实际是对已经建立完成的抽象语法树进行语法检查和计算输出等其他操作。</p>
+<p>我们可以看到 <code>bison</code> 虽然仅仅包含了少量 <code>C++</code> 代码，但是实际上组织了整个调用链路，它实际上是整个项目的骨架。而再看 <code>calculator</code>，它里面包含 <code>bison</code> 需要的所有调用的具体实现。这些实现可以非常复杂，而编写 <code>bison</code> 时都无需关心，同样整个抽象语法树的数据结构都对于 <code>bison</code> 是隐藏的。</p>
+<br>
+<h2 id="graphviz-的角色">graphviz 的角色</h2>
+<p>这个实验的主要目的并不是计算结果这么简单，我们希望将表达式绘制成抽象语法树的形式。通过这种方式方便展示项目的工作，同时也方便检查其中的计算顺序等是否存在问题。</p>
+<p><code>graphviz</code> 实际是一个将代码转换成图片的工具，它拥有一套自己的绘制代码，而作为绘图程序，只需要向文件中输出代码，最后编译成图片即可。关于 <code>graphviz</code> 这套工具的使用，简单阅读程序输出的代码就能读懂，相关拓展询问 GPT 效率更高。</p>
+<p><code>calculator</code> 会在调用 <code>draw</code> 时将绘图代码向重定向文件输出，其中绘制表达式的树形结构、每一步的运算操作和计算结果等。</p>
+<p><img src="https://s2.loli.net/2024/06/17/K1XISJOm38wG5bv.png" alt="book.gv.png"></p>
+<br>
+<h2 id="具体代码逻辑">具体代码逻辑</h2>
+<p>在这里我不想过多解释具体的代码逻辑。它们包括：<code>flex</code> 中正则表达式的书写，<code>bison</code> 中上下文无关文法的书写，<code>calculator</code> 构建抽象语法树和进行语法分析、计算、检查。这是一项繁琐的工作，尤其是最后一项，但是它们组织良好，通过阅读代码和上面的解释相信你可以理解。</p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E9%A1%B9%E7%9B%AE/">项目</a><a class="post-meta__tags" href="/tags/C/">C++</a><a class="post-meta__tags" href="/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/">编译原理</a></div><div class="post_share"><div class="social-share" data-image="/img/default_cover.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-full"><a href="/posts/acm-lanqiaocup-24cbg/" title="2024 年第十五届蓝桥杯 C/C++ B组国赛题解"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">2024 年第十五届蓝桥杯 C/C++ B组国赛题解</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/project-cmu15445-note/" title="CMU15445 Note"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-01-27</div><div class="title">CMU15445 Note</div></div></a></div><div><a href="/posts/project-cpps2md-tool/" title="cpps2md 实用小工具项目"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-28</div><div class="title">cpps2md 实用小工具项目</div></div></a></div><div><a href="/posts/project-virtual-ssd/" title="Python 虚拟 SSD 项目"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-01-01</div><div class="title">Python 虚拟 SSD 项目</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Jamhus Tao</div><div class="author-info__description">找点好玩的去！</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">117</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">84</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">75</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/jamhus-tao"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/img/qq.jpg" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/img/weixin.jpg" target="_blank" title="Weixin"><i class="fab fa-weixin"></i></a><a class="social-icon" href="mailto:jamhus_tao@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="https://github.com/jamhus-tao" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E5%B7%A5%E5%85%B7"><span class="toc-number">2.</span> <span class="toc-text">相关工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E4%BD%93%E7%BB%93%E6%9E%84"><span class="toc-number">3.</span> <span class="toc-text">总体结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flex-%E4%B8%8E-bison-%E7%9A%84%E9%93%BE%E6%8E%A5"><span class="toc-number">4.</span> <span class="toc-text">flex 与 bison 的链接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#bison-%E4%B8%8E-calculator-%E7%9A%84%E9%93%BE%E6%8E%A5"><span class="toc-number">5.</span> <span class="toc-text">bison 与 calculator 的链接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#graphviz-%E7%9A%84%E8%A7%92%E8%89%B2"><span class="toc-number">6.</span> <span class="toc-text">graphviz 的角色</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E4%BB%A3%E7%A0%81%E9%80%BB%E8%BE%91"><span class="toc-number">7.</span> <span class="toc-text">具体代码逻辑</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/project-lex-yacc-calculator/" title="LEX + YACC 计算器语法分析器">LEX + YACC 计算器语法分析器</a><time datetime="2024-06-17T12:40:00.000Z" title="更新于 2024-06-17 20:40:00">2024-06-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/recommend/" title="猜你喜欢">猜你喜欢</a><time datetime="2024-06-17T05:24:00.000Z" title="更新于 2024-06-17 13:24:00">2024-06-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/acm-lanqiaocup-24cbg/" title="2024 年第十五届蓝桥杯 C/C++ B组国赛题解">2024 年第十五届蓝桥杯 C/C++ B组国赛题解</a><time datetime="2024-06-08T05:49:00.000Z" title="更新于 2024-06-08 13:49:00">2024-06-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/linux-abc-ubuntu/" title="Linux 入门笔记 - Ubuntu">Linux 入门笔记 - Ubuntu</a><time datetime="2024-05-23T08:01:18.000Z" title="更新于 2024-05-23 16:01:18">2024-05-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ds-mit6824-raft/" title="Raft 论文研读 - MIT6.824">Raft 论文研读 - MIT6.824</a><time datetime="2024-05-21T15:21:00.000Z" title="更新于 2024-05-21 23:21:00">2024-05-21</time></div></div></div></div></div></div></main><footer id="footer" style="background: #171717"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2024 By Jamhus Tao</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.umd.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="/pluginsSrc/katex/dist/katex.min.css"><script src="/pluginsSrc/katex/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('/pluginsSrc/mermaid/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addModeChange('mermaid', runMermaid)
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: 'f5ab0e5f4c6139f6fc66',
+      clientSecret: '34afc0f7b7a9086e590fbcb099bae698933ed074',
+      repo: 'jamhus-tao.github.io.gitalk',
+      owner: 'jamhus-tao',
+      admin: ['jamhus-tao'],
+      id: '0b976b974eb37da4366eec18370f3c40',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    getCSS('/pluginsSrc/gitalk/dist/gitalk.css')
+    getScript('/pluginsSrc/gitalk/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.textContent= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !false) {
+  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script data-pjax defer src="/js/my.js"></script><script defer="defer" id="ribbon" src="/pluginsSrc/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
