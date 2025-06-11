@@ -1,0 +1,279 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>MapReduce 论文研读 - MIT6.824 | JamhusTao の Blog</title><meta name="author" content="Jamhus Tao"><meta name="copyright" content="Jamhus Tao"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="前言 这个部分来自课程 MIT6.824，这门课每节课都会精读一篇分布式系统领域的经典论文，并由此传授分布式系统设计与实现的重要原则和关键技术。 个人认为阅读论文比课程本身更加重要，课程围绕论文展开，可以快速获取论文的核心观点，课程的一切细节以及未提及的内容在论文中具有最详细的解释。另外教授会从当今立场（2022）评价论文的意义和缺陷，同时可能补全论文中缺失的信息解释，教授对学生提问的一些回答具有">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MapReduce 论文研读 - MIT6.824">
+<meta property="og:url" content="https://jamhus-tao.github.io/posts/ds-mit6824-mapreduce/">
+<meta property="og:site_name" content="JamhusTao の Blog">
+<meta property="og:description" content="前言 这个部分来自课程 MIT6.824，这门课每节课都会精读一篇分布式系统领域的经典论文，并由此传授分布式系统设计与实现的重要原则和关键技术。 个人认为阅读论文比课程本身更加重要，课程围绕论文展开，可以快速获取论文的核心观点，课程的一切细节以及未提及的内容在论文中具有最详细的解释。另外教授会从当今立场（2022）评价论文的意义和缺陷，同时可能补全论文中缺失的信息解释，教授对学生提问的一些回答具有">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://jamhus-tao.github.io/img/default_cover.png">
+<meta property="article:published_time" content="2024-05-21T14:53:00.000Z">
+<meta property="article:modified_time" content="2024-05-21T15:03:00.000Z">
+<meta property="article:author" content="Jamhus Tao">
+<meta property="article:tag" content="分布式系统">
+<meta property="article:tag" content="MIT6.824">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://jamhus-tao.github.io/img/default_cover.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://jamhus-tao.github.io/posts/ds-mit6824-mapreduce/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-FQ4L3WN8LH"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-FQ4L3WN8LH');
+</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":600},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'MapReduce 论文研读 - MIT6.824',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-05-21 23:03:00'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/my.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">113</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">83</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">72</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/default_cover.png')"><nav id="nav"><span id="blog-info"><a href="/" title="JamhusTao の Blog"><span class="site-name">JamhusTao の Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">MapReduce 论文研读 - MIT6.824</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-05-21T14:53:00.000Z" title="发表于 2024-05-21 22:53:00">2024-05-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-05-21T15:03:00.000Z" title="更新于 2024-05-21 23:03:00">2024-05-21</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/">分布式系统</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/MapReduce-%E8%AE%BA%E6%96%87%E7%A0%94%E8%AF%BB-MIT6-824/">MapReduce 论文研读 - MIT6.824</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>6分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="MapReduce 论文研读 - MIT6.824"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="前言">前言</h2>
+<p>这个部分来自课程 MIT6.824，这门课每节课都会精读一篇分布式系统领域的经典论文，并由此传授分布式系统设计与实现的重要原则和关键技术。</p>
+<p>个人认为阅读论文比课程本身更加重要，课程围绕论文展开，可以快速获取论文的核心观点，课程的一切细节以及未提及的内容在论文中具有最详细的解释。另外教授会从当今立场（2022）评价论文的意义和缺陷，同时可能补全论文中缺失的信息解释，教授对学生提问的一些回答具有很好的启发意义，这些内容不被包含在论文中。</p>
+<p>本文综合课程内容和论文核心观点，并参考一些其他资料整理，希望对你学习课程有所帮助。</p>
+<p>课程官方：<a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.824/">https://pdos.csail.mit.edu/6.824/</a></p>
+<p>博主整理：<a target="_blank" rel="noopener" href="https://mit-public-courses-cn-translatio.gitbook.io/mit6-824">https://mit-public-courses-cn-translatio.gitbook.io/mit6-824</a></p>
+<p>B 站录屏：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1qk4y197bB">https://www.bilibili.com/video/BV1qk4y197bB</a></p>
+<p>​<mark class="hl-label default">请阅读论文 MapReduce：</mark> <a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.824/papers/mapreduce.pdf">https://pdos.csail.mit.edu/6.824/papers/mapreduce.pdf</a></p>
+<h2 id="什么是-MapReduce？">什么是 MapReduce？</h2>
+<p>MapReduce 是一个运行在分布式系统上的计算模型，它允许用户在不了解分布式系统的情况下，轻松使用该模型并发挥出分布式系统的性能。MapReduce 将分布式系统的操作做了高度的抽象，它相较于前人提出的计算模型更加简单易用。</p>
+<p>MapReduce 由 Google 设计，在 2004 年提出。那时 Google 急需一种高效的计算模型，例如为数 TB 的网页数据创建索引，进行排序。因此当时 Google 需要一种可以利用分布式资源的计算模型，这样 Google 的工程师也不再需要花费大量的时间看报纸等待运行结果。Google 具有大量优秀的工程师可以熟练的使用分布式系统，并完成这样的大型计算。然而 Google 想雇佣各方面有特长的人，而不是花费大量的时间用于运行分布式系统，它希望一种简单易用且稳定的计算模型，这样具有各方面特长的工程师可以轻易的使用分布式资源。</p>
+<p>因此 MapReduce 反复强调其设计初衷是简单易用和抽象，用户只需实现 Map 和 Reduce 函数即可将它运行在分布式系统上。</p>
+<h2 id="基本工作方式">基本工作方式</h2>
+<img src="https://s2.loli.net/2024/04/26/zOtDTBsaYSGhJjZ.png" alt=" " style="zoom:50%;" />
+<p>MapReduce 由 master、map worker、reduce worker 三个角色组成，数据在其中经历 Input、Intermediate (Shuffle)、Output 三个阶段，所有数据以键值对的形式存在。</p>
+<ul>
+<li>Input：首先 user 将启动 master，然后 master 指定离输入文件网络距离最近的一些机器为 map worker。map worker 对指定的切片进行用户定义的 Map 操作并将结果保存在本地，然后向 master 发送中间结果位置信息。</li>
+<li>Shuffle：master 会将剩余的 worker 指定为 reduce worker。master 将 map worker 发送的中间结果位置信息转发所有 reduce worker，reduce worker 从这些数据中抽取满足分布函数的数据到本机。分布函数是指，例如共有 R 个 reduce worker，则 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mi>a</mi><mi>s</mi><mi>h</mi><mo stretchy="false">(</mo><mi>k</mi><mi>e</mi><mi>y</mi><mo stretchy="false">)</mo><mi mathvariant="normal">%</mi><mi>R</mi><mo>=</mo><mi>i</mi></mrow><annotation encoding="application/x-tex">hash(key) \% R=i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">ha</span><span class="mord mathnormal">s</span><span class="mord mathnormal">h</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mord mathnormal" style="margin-right:0.03588em;">ey</span><span class="mclose">)</span><span class="mord">%</span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> 的数据应该被抽取到 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> 号 reduce worker。</li>
+<li>Output：reduce worker 将所有数据抽取到本地后，先对这些数据进行排序聚合，再进行用户定义的 Reduce 操作，最后写入全局的输出文件中。</li>
+</ul>
+<h2 id="Map-函数和-Reduce-函数">Map 函数和 Reduce 函数</h2>
+<p>上面我们讲到了 MapReduce 具有两个用户自定义函数：Map 函数和 Reduce 函数，但并未介绍它们的功能，这个部分我们将从两个示例介绍如何使用 MapReduce，完成 Map 函数和 Reduce 函数就完成了 MapReduce 的编写。</p>
+<p>Map 函数是从 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mi>n</mi><mi>y</mi><mo>→</mo><mo stretchy="false">(</mo><mi>k</mi><mo separator="true">,</mo><mtext> </mtext><mi>v</mi><mo stretchy="false">)</mo><mi mathvariant="normal">/</mi><mi>N</mi><mi>o</mi><mi>n</mi><mi>e</mi></mrow><annotation encoding="application/x-tex">any \to (k,~v)/None</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">an</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mpunct">,</span><span class="mspace nobreak"> </span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">)</span><span class="mord">/</span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mord mathnormal">o</span><span class="mord mathnormal">n</span><span class="mord mathnormal">e</span></span></span></span> 的映射，而 Reduce 函数是从 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>k</mi><mo separator="true">,</mo><mtext> </mtext><mi>l</mi><mi>i</mi><mi>s</mi><mi>t</mi><mo stretchy="false">(</mo><mi>v</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo>→</mo><mi>a</mi><mi>n</mi><mi>y</mi></mrow><annotation encoding="application/x-tex">(k,~list(v)) \to any</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mpunct">,</span><span class="mspace nobreak"> </span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">i</span><span class="mord mathnormal">s</span><span class="mord mathnormal">t</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">))</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal">an</span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span></span></span></span> 的映射。在调用 Reduce 函数之前，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>k</mi><mo separator="true">,</mo><mtext> </mtext><mi>v</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(k,~v)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mpunct">,</span><span class="mspace nobreak"> </span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">)</span></span></span></span> 已经进行了排序聚合，即将具有相同键的值放在一个列表中并按键排序。因此，Reduce 函数调用时保证 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> 是有序传入的。</p>
+<p>一个示例是从大量字符串集中筛选符合样式的字符串。Map 函数对符合样式的原样返回，不符合的不返回即可，而 Reduce 函数直接返回 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> 即可。因为符合样式的字符串通常不会太多，我们设置 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">R=1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span> 即可将它们输出到同一文件。</p>
+<p>另一个示例是计数大量样本中的词频。这里 Map 函数返回 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>k</mi><mo separator="true">,</mo><mtext> </mtext><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(k,~1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mpunct">,</span><span class="mspace nobreak"> </span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span>，而 Reduce 函数返回 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>k</mi><mo separator="true">,</mo><mtext> </mtext><mi>l</mi><mi>e</mi><mi>n</mi><mo stretchy="false">(</mo><mi>l</mi><mi>i</mi><mi>s</mi><mi>t</mi><mo stretchy="false">(</mo><mi>v</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(k,~len(list(v)))</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mpunct">,</span><span class="mspace nobreak"> </span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">e</span><span class="mord mathnormal">n</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">i</span><span class="mord mathnormal">s</span><span class="mord mathnormal">t</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mclose">)))</span></span></span></span> 即可。不过对于这个问题，我们发现网络开销远大于处理开销，MapReduce 提供了在跨越网络前进行 Reduce 的方法，它称为 Combiner (论文 4.3)。</p>
+<p>通过大量实践，我们发现多数数据处理问题都可以分离成 Map 和 Reduce 两个过程，这也使得高度抽象的 MapReduce 模型依然实用。如果对于 MapReduce 的过程还有疑问，论文的附录包含了词频统计的示例代码，它对理解如何定义 MapReduce 非常有帮助。</p>
+<h2 id="容错和优化">容错和优化</h2>
+<p>master 会将整个 MapReduce 任务 (Job) 切分为多个 map 任务 (Task) 和 reduce 任务 (Task)，于是每个任务具有一个状态：空闲 (idle)、处理中 (in-progress)、完成 (completed)，如果任务处于后面两种状态状态将记录其执行者 (worker)。</p>
+<p>master 会周期性的 ping worker。如果 worker 未在周期内响应，master 会认为该 worker 故障。这时 master 会重新执行属于该 worker 的所有 in-progress 任务，如果是 map worker 还将重执行所有属于其的 completed 任务，因为 map worker 的处理结果存储在本地，这些资源都将离线。由于 master 进行了重执行，可能存在网络延迟被误判为故障而导致多次提交。对于 map 任务，master 会忽略其重复提交请求；而 reduce 任务的提交动作是将本地文件重命名到全局，这个行为是原子的，具体行为由底层分布式系统 (GFS) 定义。</p>
+<p>在优化方面，前面提到 master 会将 map worker 分配在与输入数据网络距离最近的位置。不过 reduce worker 无法这么做，因为它会从所有 map worker 抽取数据。另一方面，少数机器可能由于运行缓慢而严重拖慢整个任务 (Job) 的结束。为解决这个问题，当整个任务 (Job) 即将结束时，master 会重执行所有进行中任务 (Task) 从而绕过运行缓慢的任务 (Task)。</p>
+<h2 id="MapReduce-的缺陷">MapReduce 的缺陷</h2>
+<p>MapReduce 存在它的不足之处，MapReduce 为用户提供抽象的同时，做出了限定性。例如，你只能通过实现 Map 和 Reduce 函数实现分布式。</p>
+<p>Robert 教授提到：无论如何 MapReduce 在 Shuffle 和 Output 阶段不可避免的存在网络传输。在 2004 年，网络带宽成为制约 MapReduce 的主要瓶颈；而 2020 年 Root 交换机不再是一台，通过多根负载均衡（Spine-Leaf 架构），现在的网络吞吐量远超从前。我认为 Google 几年前就不再使用 MapReduce，不过在那之前现代的 MapReduce 已经不再使用 GFS，因为网络带宽不再在乎我们从何处读取。</p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/">分布式系统</a><a class="post-meta__tags" href="/tags/MIT6-824/">MIT6.824</a></div><div class="post_share"><div class="social-share" data-image="/img/default_cover.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/ds-bloom-filter/" title="布隆过滤器及其误判率推导"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">布隆过滤器及其误判率推导</div></div></a></div><div class="next-post pull-right"><a href="/posts/ds-mit6824-gfs/" title="Google File System 论文研读 - MIT6.824"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Google File System 论文研读 - MIT6.824</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/ds-mit6824-gfs/" title="Google File System 论文研读 - MIT6.824"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-21</div><div class="title">Google File System 论文研读 - MIT6.824</div></div></a></div><div><a href="/posts/ds-mit6824-vmft/" title="VMware FT 论文研读 - MIT6.824"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-21</div><div class="title">VMware FT 论文研读 - MIT6.824</div></div></a></div><div><a href="/posts/ds-mit6824-raft/" title="Raft 论文研读 - MIT6.824"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-21</div><div class="title">Raft 论文研读 - MIT6.824</div></div></a></div><div><a href="/posts/ds-bloom-filter/" title="布隆过滤器及其误判率推导"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-21</div><div class="title">布隆过滤器及其误判率推导</div></div></a></div><div><a href="/posts/ds-consistent-hash/" title="浅析几种一致性哈希算法"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-07-14</div><div class="title">浅析几种一致性哈希算法</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Jamhus Tao</div><div class="author-info__description">找点好玩的去！</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">113</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">83</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">72</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/jamhus-tao"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/img/qq.jpg" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/img/weixin.jpg" target="_blank" title="Weixin"><i class="fab fa-weixin"></i></a><a class="social-icon" href="mailto:jamhus_tao@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="https://github.com/jamhus-tao" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-MapReduce%EF%BC%9F"><span class="toc-number">2.</span> <span class="toc-text">什么是 MapReduce？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F"><span class="toc-number">3.</span> <span class="toc-text">基本工作方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Map-%E5%87%BD%E6%95%B0%E5%92%8C-Reduce-%E5%87%BD%E6%95%B0"><span class="toc-number">4.</span> <span class="toc-text">Map 函数和 Reduce 函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%B9%E9%94%99%E5%92%8C%E4%BC%98%E5%8C%96"><span class="toc-number">5.</span> <span class="toc-text">容错和优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MapReduce-%E7%9A%84%E7%BC%BA%E9%99%B7"><span class="toc-number">6.</span> <span class="toc-text">MapReduce 的缺陷</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cpp-cmake-abc/" title="CMake 项目构建和代码测试">CMake 项目构建和代码测试</a><time datetime="2024-09-27T13:01:00.000Z" title="更新于 2024-09-27 21:01:00">2024-09-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ds-consistent-hash/" title="浅析几种一致性哈希算法">浅析几种一致性哈希算法</a><time datetime="2024-09-11T09:58:00.000Z" title="更新于 2024-09-11 17:58:00">2024-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ds-bloom-filter/" title="布隆过滤器及其误判率推导">布隆过滤器及其误判率推导</a><time datetime="2024-07-14T06:28:00.000Z" title="更新于 2024-07-14 14:28:00">2024-07-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cs-hanmming-check/" title="海明校验码 - 计算机网络">海明校验码 - 计算机网络</a><time datetime="2024-06-26T05:24:00.000Z" title="更新于 2024-06-26 13:24:00">2024-06-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/acm-lanqiaocup-24cbg/" title="2024 年第十五届蓝桥杯 C/C++ B组国赛题解">2024 年第十五届蓝桥杯 C/C++ B组国赛题解</a><time datetime="2024-06-08T05:49:00.000Z" title="更新于 2024-06-08 13:49:00">2024-06-08</time></div></div></div></div></div></div></main><footer id="footer" style="background: #171717"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2025 By Jamhus Tao</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.umd.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="/pluginsSrc/katex/dist/katex.min.css"><script src="/pluginsSrc/katex/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('/pluginsSrc/mermaid/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addModeChange('mermaid', runMermaid)
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: 'f5ab0e5f4c6139f6fc66',
+      clientSecret: '34afc0f7b7a9086e590fbcb099bae698933ed074',
+      repo: 'jamhus-tao.github.io.gitalk',
+      owner: 'jamhus-tao',
+      admin: ['jamhus-tao'],
+      id: 'bcbb68ad3c40390926c612d0843f487f',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    getCSS('/pluginsSrc/gitalk/dist/gitalk.css')
+    getScript('/pluginsSrc/gitalk/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.textContent= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !false) {
+  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script data-pjax defer src="/js/my.js"></script><script defer="defer" id="ribbon" src="/pluginsSrc/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

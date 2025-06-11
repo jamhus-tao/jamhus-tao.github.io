@@ -1,0 +1,661 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>SELECT 中的子句与运算 | JamhusTao の Blog</title><meta name="author" content="Jamhus Tao"><meta name="copyright" content="Jamhus Tao"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="本文将详细介绍 SQL 中的四种子句 WHERE &#x2F; ORDER BY &#x2F; GROUP BY &#x2F; HAVING，以及基本运算 &#x2F; 特殊条件表达式 &#x2F; 函数 &#x2F; 聚集函数。  数据过滤 WHERE 基本格式 SELECT 语句可以使用 WHERE 进行数据过滤。格式为： 1&amp;#123;SELECT 语句&amp;#125; WHERE &amp;#123;条件表达式&amp;#125;; 示例输出1SELECT * FRO">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SELECT 中的子句与运算">
+<meta property="og:url" content="https://jamhus-tao.github.io/posts/db-clause-opt/">
+<meta property="og:site_name" content="JamhusTao の Blog">
+<meta property="og:description" content="本文将详细介绍 SQL 中的四种子句 WHERE &#x2F; ORDER BY &#x2F; GROUP BY &#x2F; HAVING，以及基本运算 &#x2F; 特殊条件表达式 &#x2F; 函数 &#x2F; 聚集函数。  数据过滤 WHERE 基本格式 SELECT 语句可以使用 WHERE 进行数据过滤。格式为： 1&amp;#123;SELECT 语句&amp;#125; WHERE &amp;#123;条件表达式&amp;#125;; 示例输出1SELECT * FRO">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://jamhus-tao.github.io/img/default_cover.png">
+<meta property="article:published_time" content="2023-10-11T06:32:00.000Z">
+<meta property="article:modified_time" content="2023-10-11T06:32:00.000Z">
+<meta property="article:author" content="Jamhus Tao">
+<meta property="article:tag" content="语法">
+<meta property="article:tag" content="Database">
+<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="SQL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://jamhus-tao.github.io/img/default_cover.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://jamhus-tao.github.io/posts/db-clause-opt/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-FQ4L3WN8LH"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-FQ4L3WN8LH');
+</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":600},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'SELECT 中的子句与运算',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-10-11 14:32:00'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/my.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">113</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">83</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">72</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/default_cover.png')"><nav id="nav"><span id="blog-info"><a href="/" title="JamhusTao の Blog"><span class="site-name">JamhusTao の Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">SELECT 中的子句与运算</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-10-11T06:32:00.000Z" title="发表于 2023-10-11 14:32:00">2023-10-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-10-11T06:32:00.000Z" title="更新于 2023-10-11 14:32:00">2023-10-11</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Database/">Database</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Database/SELECT-%E4%B8%AD%E7%9A%84%E5%AD%90%E5%8F%A5%E4%B8%8E%E8%BF%90%E7%AE%97/">SELECT 中的子句与运算</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>17分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="SELECT 中的子句与运算"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><div class="note info flat"><p>本文将详细介绍 SQL 中的四种子句 <code>WHERE</code> / <code>ORDER BY</code> / <code>GROUP BY</code> / <code>HAVING</code>，以及基本运算 / 特殊条件表达式 / 函数 / 聚集函数。</p>
+</div>
+<h2 id="数据过滤-WHERE">数据过滤 WHERE</h2>
+<h3 id="基本格式">基本格式</h3>
+<p><code>SELECT</code> 语句可以使用 <code>WHERE</code> 进行数据过滤。格式为：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="keyword">SELECT</span> 语句&#125; <span class="keyword">WHERE</span> &#123;条件表达式&#125;;</span><br></pre></td></tr></table></figure>
+<div class="tabs" id="简单筛选示例"><ul class="nav-tabs"><li class="tab active"><button type="button" data-href="#简单筛选示例-1">示例</button></li><li class="tab"><button type="button" data-href="#简单筛选示例-2">输出</button></li></ul><div class="tab-contents"><div class="tab-item-content active" id="简单筛选示例-1"><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> MovieStar <span class="keyword">WHERE</span> birthDATE <span class="operator">&gt;=</span> &quot;19700101&quot;;</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="简单筛选示例-2"><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">+--------------+-------------+--------+------------+</span><br><span class="line">| name         | address     | gender | birthDate  |</span><br><span class="line">+--------------+-------------+--------+------------+</span><br><span class="line">| Alec Baldwin | Baldwin Av. | M      | 1977-06-07 |</span><br><span class="line">| Kim Basinger | Baldwin Av. | F      | 1979-05-07 |</span><br><span class="line">| Debra Winger | A way       | F      | 1978-05-06 |</span><br><span class="line">| Jane Fonda   | Turner Av.  | F      | 1977-07-07 |</span><br><span class="line">+--------------+-------------+--------+------------+</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div></div>
+<p>其中条件表达式同样支持常用编程语言中的基本运算。</p>
+<h3 id="运算符">运算符</h3>
+<table>
+<thead>
+<tr>
+<th>基本运算符</th>
+<th>语义</th>
+<th>补充</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>=</code> / <code>&lt;&gt;</code> / <code>&lt;</code> / <code>&gt;</code> / <code>&lt;=</code> / <code>&gt;=</code></td>
+<td>比较运算符</td>
+<td>注意 <code>=</code> 而非 <code>==</code> ，部分 <code>SQL</code> 支持 <code>!=</code></td>
+</tr>
+<tr>
+<td><code>NOT</code> / <code>AND</code> / <code>OR</code></td>
+<td>逻辑运算符</td>
+<td>优先级 <code>NOT</code> &gt; <code>AND</code> &gt; <code>OR</code></td>
+</tr>
+</tbody>
+</table>
+<p>SQL 支持基本的运算符，如四则运算与括号等，此处略去。</p>
+<table>
+<thead>
+<tr>
+<th>特殊运算符</th>
+<th>语义</th>
+<th>示例</th>
+<th>补充说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>IN</code></td>
+<td>多值查找</td>
+<td><code>WHERE movieType IN (&quot;drama&quot;, &quot;sciFic&quot;)</code></td>
+<td>常用于子查询，将在其他章节介绍。</td>
+</tr>
+<tr>
+<td><code>EXISTS</code></td>
+<td>集合非空</td>
+<td><code>WHERE EXISTS &#123;子查询&#125;</code></td>
+<td>检测子查询返回是否为空，将在其他章节介绍。</td>
+</tr>
+<tr>
+<td><code>BETWEEN AND</code></td>
+<td>区间比较</td>
+<td><code>WHERE length BETWEEN 120 AND 150</code></td>
+<td>等价于 <code> WHERE 120 &lt;= length AND length &lt;= 150</code></td>
+</tr>
+<tr>
+<td><code>LIKE</code></td>
+<td>模式匹配</td>
+<td><code>WHERE title LIKE &quot;star %&quot;</code></td>
+<td><code>Mysql</code> 的模式匹配仅支持 <code>%</code> 匹配 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\ge 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7719em;vertical-align:-0.136em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span> 个字符，<code>_</code> 匹配 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span> 个字符</td>
+</tr>
+<tr>
+<td><code>IS NULL</code></td>
+<td>为空</td>
+<td><code>WHERE length IS NULL</code></td>
+<td>由于 <code>NULL</code> 在运算中的特殊性，必要时使用 <code>IS NULL</code></td>
+</tr>
+</tbody>
+</table>
+<p>使用运算符进行组合筛选的示例：</p>
+<div class="tabs" id="组合筛选示例"><ul class="nav-tabs"><li class="tab active"><button type="button" data-href="#组合筛选示例-1">示例</button></li><li class="tab"><button type="button" data-href="#组合筛选示例-2">输出</button></li></ul><div class="tab-contents"><div class="tab-item-content active" id="组合筛选示例-1"><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 语句过长使用换行可以更加直观</span></span><br><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">    <span class="operator">*</span> </span><br><span class="line"><span class="keyword">FROM</span> </span><br><span class="line">    Movies </span><br><span class="line"><span class="keyword">WHERE</span> </span><br><span class="line">    title <span class="keyword">LIKE</span> &quot;star %&quot; <span class="keyword">AND</span> </span><br><span class="line">    (<span class="keyword">year</span> <span class="operator">&lt;=</span> <span class="number">2000</span> <span class="keyword">OR</span> studioName <span class="operator">=</span> &quot;Paramount&quot;);</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="组合筛选示例-2"><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">+--------------------+------+--------+-----------+------------+-----------+</span><br><span class="line">| title              | year | length | movieType | studioName | producerC |</span><br><span class="line">+--------------------+------+--------+-----------+------------+-----------+</span><br><span class="line">| Star Trek          | 1979 |   NULL | sciFic    | Paramount  |       444 |</span><br><span class="line">| Star Trek: Nemesis | 2002 |    116 | sciFic    | Paramount  |       321 |</span><br><span class="line">| Star Wars          | 1977 |    124 | sciFic    | Fox        |       555 |</span><br><span class="line">+--------------------+------+--------+-----------+------------+-----------+</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div></div>
+<h2 id="计算字段">计算字段</h2>
+<h3 id="计算字段与物理字段">计算字段与物理字段</h3>
+<p><code>计算字段</code> 不存在于物理表中更不占用磁盘，它是在执行查询语句时，基于物理表中的已有字段得到的字段。从效率的角度，<code>计算字段</code> 在执行语句时计算，这样做既节约了内存又方便修改，但在查询时耗费了额外的之间。</p>
+<p><code>计算字段</code> 直接在 <code>SELECT</code> 语句中与物理字段直接替换使用即可，另外建议给计算字段设置别名。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> &#123;计算表达式&#125; [<span class="keyword">AS</span> &#123;别名&#125;] <span class="keyword">FROM</span> &#123;表名&#125;;</span><br></pre></td></tr></table></figure>
+<div class="tabs" id="计算字段示例"><ul class="nav-tabs"><li class="tab active"><button type="button" data-href="#计算字段示例-1">示例</button></li><li class="tab"><button type="button" data-href="#计算字段示例-2">输出</button></li></ul><div class="tab-contents"><div class="tab-item-content active" id="计算字段示例-1"><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">    title,</span><br><span class="line">    CONCAT(studioName, &quot; &quot;, movieType, &quot; &quot;, <span class="keyword">year</span>)</span><br><span class="line">        <span class="keyword">AS</span> description</span><br><span class="line">    <span class="comment">-- CONCAT 是字符串连接函数, 不同 SQL 版本各不相同</span></span><br><span class="line"><span class="keyword">FROM</span> </span><br><span class="line">    Movies;</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">    title,</span><br><span class="line">    CONCAT(studioName, &quot; &quot;, movieType, &quot; &quot;, <span class="keyword">year</span>)</span><br><span class="line">    <span class="comment">-- 没有别名的版本</span></span><br><span class="line"><span class="keyword">FROM</span> </span><br><span class="line">    Movies;</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">    <span class="operator">*</span>,  <span class="comment">-- 依然可以使用 *</span></span><br><span class="line">    CONCAT(studioName, &quot; &quot;, movieType, &quot; &quot;, <span class="keyword">year</span>)</span><br><span class="line">        <span class="keyword">AS</span> description </span><br><span class="line"><span class="keyword">FROM</span> </span><br><span class="line">    Movies;</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="计算字段示例-2"><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">+--------------------------+----------------------------+</span><br><span class="line">| title                    | description                |</span><br><span class="line">+--------------------------+----------------------------+</span><br><span class="line">| Empire Strikes Back      | Fox drama 1980             |</span><br><span class="line">| My people,My country     | huaxia feature 2019        |</span><br><span class="line">| Gone With the Wind       | MGM drama 1938             |</span><br><span class="line">| Logan&#x27;s run              | MGM drama 1977             |</span><br><span class="line">| Pretty Woman             | Disney drama 1990          |</span><br><span class="line">| Star Trek                | Paramount sciFic 1979      |</span><br><span class="line">| Star Trek: Nemesis       | Paramount sciFic 2002      |</span><br><span class="line">| Star Wars                | Fox sciFic 1977            |</span><br><span class="line">| Terms of Endearment      | MGM drama 1983             |</span><br><span class="line">| The Man Who Wasn&#x27;t There | USA Entertainm comedy 2001 |</span><br><span class="line">| The Usual Suspects       | MGM drama 1995             |</span><br><span class="line">+--------------------------+----------------------------+</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">+--------------------------+-----------------------------------------------+</span><br><span class="line">| title                    | CONCAT(studioName, &quot; &quot;, movieType, &quot; &quot;, year) |</span><br><span class="line">+--------------------------+-----------------------------------------------+</span><br><span class="line">| Empire Strikes Back      | Fox drama 1980                                |</span><br><span class="line">| My people,My country     | huaxia feature 2019                           |</span><br><span class="line">| Gone With the Wind       | MGM drama 1938                                |</span><br><span class="line">| Logan&#x27;s run              | MGM drama 1977                                |</span><br><span class="line">| Pretty Woman             | Disney drama 1990                             |</span><br><span class="line">| Star Trek                | Paramount sciFic 1979                         |</span><br><span class="line">| Star Trek: Nemesis       | Paramount sciFic 2002                         |</span><br><span class="line">| Star Wars                | Fox sciFic 1977                               |</span><br><span class="line">| Terms of Endearment      | MGM drama 1983                                |</span><br><span class="line">| The Man Who Wasn&#x27;t There | USA Entertainm comedy 2001                    |</span><br><span class="line">| The Usual Suspects       | MGM drama 1995                                |</span><br><span class="line">+--------------------------+-----------------------------------------------+</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">+--------------------------+------+--------+-----------+----------------+-----------+----------------------------+</span><br><span class="line">| title                    | year | length | movieType | studioName     | producerC | description                |</span><br><span class="line">+--------------------------+------+--------+-----------+----------------+-----------+----------------------------+</span><br><span class="line">| Empire Strikes Back      | 1980 |    111 | drama     | Fox            |       555 | Fox drama 1980             |</span><br><span class="line">| My people,My country     | 2019 |    158 | feature   | huaxia         |       100 | huaxia feature 2019        |</span><br><span class="line">| Gone With the Wind       | 1938 |    238 | drama     | MGM            |       123 | MGM drama 1938             |</span><br><span class="line">| Logan&#x27;s run              | 1977 |    120 | drama     | MGM            |       888 | MGM drama 1977             |</span><br><span class="line">| Pretty Woman             | 1990 |    119 | drama     | Disney         |       999 | Disney drama 1990          |</span><br><span class="line">| Star Trek                | 1979 |   NULL | sciFic    | Paramount      |       444 | Paramount sciFic 1979      |</span><br><span class="line">| Star Trek: Nemesis       | 2002 |    116 | sciFic    | Paramount      |       321 | Paramount sciFic 2002      |</span><br><span class="line">| Star Wars                | 1977 |    124 | sciFic    | Fox            |       555 | Fox sciFic 1977            |</span><br><span class="line">| Terms of Endearment      | 1983 |    132 | drama     | MGM            |       123 | MGM drama 1983             |</span><br><span class="line">| The Man Who Wasn&#x27;t There | 2001 |    116 | comedy    | USA Entertainm |       777 | USA Entertainm comedy 2001 |</span><br><span class="line">| The Usual Suspects       | 1995 |    106 | drama     | MGM            |       999 | MGM drama 1995             |</span><br><span class="line">+--------------------------+------+--------+-----------+----------------+-----------+----------------------------+</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div></div>
+<h3 id="函数">函数</h3>
+<p>此外，各类 <code>SQL</code> 均提供了相关的函数用于计算，这通常被用于计算字段或筛选条件中，例如上面使用到的 <code>CONCAT</code> 函数。但是各类 <code>SQL</code> 中的函数各不相同，因此从可移植性的角度，我们应该尽量减少函数的使用。</p>
+<p>下面以 <code>MySQL</code> 为例，举例一些常用函数。</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>作用</th>
+<th>补充</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CONVERT(expr, type)</code></td>
+<td>数据类型转换</td>
+<td>在其他 <code>SQL</code> 中有 <code>CAST</code>，也有使用多函数的。</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>作用</th>
+<th>补充</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SUBSTR(field, start, length)</code></td>
+<td>截取子串</td>
+<td><code>start</code> 是 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span> 索引的，<code>field</code> 自动转为字符型。</td>
+</tr>
+<tr>
+<td><code>CONCAT(field1, field2)</code></td>
+<td>拼接字符串</td>
+<td><code>field</code> 自动转为字符型。</td>
+</tr>
+<tr>
+<td><code>LENGTH(field)</code></td>
+<td>获取字符串长度</td>
+<td><code>field</code> 自动转为字符型。</td>
+</tr>
+<tr>
+<td><code>LOWER(field)</code> / <code>LOWER(field)</code></td>
+<td>获取字符串大写 / 小写</td>
+<td><code>field</code> 自动转为字符型。</td>
+</tr>
+<tr>
+<td><code>LTRIM(field)</code> / <code>RTRIM(field)</code> / <code>TRIM(field)</code></td>
+<td>去除左 / 右 / 左右空字符</td>
+<td><code>field</code> 自动转为字符型。</td>
+</tr>
+<tr>
+<td><code>SOUNDEX(field)</code></td>
+<td>获取发音，用于查找发音</td>
+<td><code>field</code> 自动转为字符型。</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>作用</th>
+<th>补充</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NOW()</code></td>
+<td>获取当前日期时间</td>
+<td><code>2023-10-11 14:32:17</code></td>
+</tr>
+<tr>
+<td><code>CURDATE()</code></td>
+<td>获取当前日期</td>
+<td><code>2023-10-11</code></td>
+</tr>
+<tr>
+<td><code>CURTIME()</code></td>
+<td>获取当前时间</td>
+<td><code>14:32:17</code></td>
+</tr>
+<tr>
+<td><code>DATE(datetime)</code> / <code>TIME(datetime)</code></td>
+<td>获取日期 / 时间</td>
+<td><code>1970-01-01</code> / <code>08:00:00</code></td>
+</tr>
+<tr>
+<td><code>YEAR(datetime)</code> / <code>MONTH(datetime)</code> / <code>DAY(datetime)</code></td>
+<td>获取年 / 月 / 日</td>
+<td><code>1970</code> / <code>1</code> / <code>1</code></td>
+</tr>
+<tr>
+<td><code>HOUR(datetime)</code> / <code>MINUTE(datetime)</code> / <code>SECOND(datetime)</code></td>
+<td>获取时 / 分 / 秒</td>
+<td><code>8</code> / <code>0</code> / <code>0</code></td>
+</tr>
+<tr>
+<td><code>MONTHNAME(datetime)</code> / <code>DAYNAME(datetime)</code></td>
+<td>获取月份名 / 工作日名</td>
+<td><code>January</code> / <code>Thursday</code></td>
+</tr>
+<tr>
+<td><code>DATE_FORMAT(datetime, format)</code></td>
+<td>格式化时间输出</td>
+<td><code>%Y-%m-%d %H:%i:%s</code></td>
+</tr>
+<tr>
+<td><code>UNIX_TIMESTAMP(datetime)</code></td>
+<td>时间类型转时间戳</td>
+<td></td>
+</tr>
+<tr>
+<td><code>FROM_UNIXTIME(datetime)</code></td>
+<td>时间戳转时间类型</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>作用</th>
+<th>补充</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ABS(num)</code></td>
+<td>绝对值</td>
+<td></td>
+</tr>
+<tr>
+<td><code>ROUND(num)</code> / <code>ROUND(num, digit)</code></td>
+<td>四舍五入 / 四舍五入到若干小数</td>
+<td></td>
+</tr>
+<tr>
+<td><code>SIN(num)</code> / <code>COS(num)</code> / <code>TAN(num)</code></td>
+<td>三角函数</td>
+<td></td>
+</tr>
+<tr>
+<td><code>EXP(num)</code> / <code>LOG(num)</code></td>
+<td>自然指数与自然对数</td>
+<td></td>
+</tr>
+<tr>
+<td><code>POW(base, exponent)</code> / <code>LOG(base, real)</code> / <code>SQRT(base)</code></td>
+<td>指数与对数与开方</td>
+<td></td>
+</tr>
+<tr>
+<td><code>EXP(1)</code> / <code>PI()</code></td>
+<td>自然底数与圆周率</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="数据排序-ORDER-BY">数据排序 ORDER BY</h2>
+<h3 id="基本格式-2">基本格式</h3>
+<p><code>SELECT</code> 语句可以使用 <code>ORDER BY</code> 进行数据排序。格式为：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="keyword">SELECT</span> 语句&#125; [<span class="keyword">WHERE</span> &#123;条件表达式&#125;] <span class="keyword">ORDER</span> <span class="keyword">BY</span> &#123;排序关键字&#125;;</span><br></pre></td></tr></table></figure>
+<p>​<mark class="hl-label default">注意事项：</mark> </p>
+<ul>
+<li>排序关键字可以是计算字段，即一个表达式。</li>
+<li>如果未使用 <code>ORDER BY</code>，关键字应当被假定是无序的；但主键总是排序的。</li>
+</ul>
+<div class="tabs" id="基本排序示例"><ul class="nav-tabs"><li class="tab active"><button type="button" data-href="#基本排序示例-1">示例</button></li><li class="tab"><button type="button" data-href="#基本排序示例-2">输出</button></li></ul><div class="tab-contents"><div class="tab-item-content active" id="基本排序示例-1"><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> MovieStar;  <span class="comment">-- 未排序前的状态</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> MovieStar <span class="keyword">ORDER</span> <span class="keyword">BY</span> birthDate;</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> Movies <span class="keyword">ORDER</span> <span class="keyword">BY</span> length <span class="operator">*</span> producerC;  <span class="comment">-- 可以是计算字段</span></span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="基本排序示例-2"><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">+----------------+-------------+--------+------------+</span><br><span class="line">| name           | address     | gender | birthDate  |</span><br><span class="line">+----------------+-------------+--------+------------+</span><br><span class="line">| Alec Baldwin   | Baldwin Av. | M      | 1977-06-07 |</span><br><span class="line">| Kim Basinger   | Baldwin Av. | F      | 1979-05-07 |</span><br><span class="line">| Debra Winger   | A way       | F      | 1978-05-06 |</span><br><span class="line">| Harrison Ford  | Prefect Rd. | M      | 1955-05-05 |</span><br><span class="line">| Jack Nicholson | X path      | M      | 1949-05-05 |</span><br><span class="line">| Jane Fonda     | Turner Av.  | F      | 1977-07-07 |</span><br><span class="line">+----------------+-------------+--------+------------+</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">+----------------+-------------+--------+------------+</span><br><span class="line">| name           | address     | gender | birthDate  |</span><br><span class="line">+----------------+-------------+--------+------------+</span><br><span class="line">| Jack Nicholson | X path      | M      | 1949-05-05 |</span><br><span class="line">| Harrison Ford  | Prefect Rd. | M      | 1955-05-05 |</span><br><span class="line">| Alec Baldwin   | Baldwin Av. | M      | 1977-06-07 |</span><br><span class="line">| Jane Fonda     | Turner Av.  | F      | 1977-07-07 |</span><br><span class="line">| Debra Winger   | A way       | F      | 1978-05-06 |</span><br><span class="line">| Kim Basinger   | Baldwin Av. | F      | 1979-05-07 |</span><br><span class="line">+----------------+-------------+--------+------------+</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">+--------------------------+------+--------+-----------+----------------+-----------+</span><br><span class="line">| title                    | year | length | movieType | studioName     | producerC |</span><br><span class="line">+--------------------------+------+--------+-----------+----------------+-----------+</span><br><span class="line">| Star Trek                | 1979 |   NULL | sciFic    | Paramount      |       444 |</span><br><span class="line">| My people,My country     | 2019 |    158 | feature   | huaxia         |       100 |</span><br><span class="line">| Terms of Endearment      | 1983 |    132 | drama     | MGM            |       123 |</span><br><span class="line">| Gone With the Wind       | 1938 |    238 | drama     | MGM            |       123 |</span><br><span class="line">| Star Trek: Nemesis       | 2002 |    116 | sciFic    | Paramount      |       321 |</span><br><span class="line">| Empire Strikes Back      | 1980 |    111 | drama     | Fox            |       555 |</span><br><span class="line">| Star Wars                | 1977 |    124 | sciFic    | Fox            |       555 |</span><br><span class="line">| The Man Who Wasn&#x27;t There | 2001 |    116 | comedy    | USA Entertainm |       777 |</span><br><span class="line">| The Usual Suspects       | 1995 |    106 | drama     | MGM            |       999 |</span><br><span class="line">| Logan&#x27;s run              | 1977 |    120 | drama     | MGM            |       888 |</span><br><span class="line">| Pretty Woman             | 1990 |    119 | drama     | Disney         |       999 |</span><br><span class="line">+--------------------------+------+--------+-----------+----------------+-----------+</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div></div>
+<h3 id="升序与降序">升序与降序</h3>
+<p><code>ORDER BY</code> 可以使用 <code>ASC</code>（默认）/ <code>DESC</code> 表示升序和降序，将其放在排序关键字后面。</p>
+<div class="tabs" id="升序与降序示例"><ul class="nav-tabs"><li class="tab active"><button type="button" data-href="#升序与降序示例-1">示例</button></li><li class="tab"><button type="button" data-href="#升序与降序示例-2">输出</button></li></ul><div class="tab-contents"><div class="tab-item-content active" id="升序与降序示例-1"><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> MovieStar <span class="keyword">ORDER</span> <span class="keyword">BY</span> birthDate <span class="keyword">ASC</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> MovieStar <span class="keyword">ORDER</span> <span class="keyword">BY</span> birthDate <span class="keyword">DESC</span>;</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="升序与降序示例-2"><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">+----------------+-------------+--------+------------+</span><br><span class="line">| name           | address     | gender | birthDate  |</span><br><span class="line">+----------------+-------------+--------+------------+</span><br><span class="line">| Jack Nicholson | X path      | M      | 1949-05-05 |</span><br><span class="line">| Harrison Ford  | Prefect Rd. | M      | 1955-05-05 |</span><br><span class="line">| Alec Baldwin   | Baldwin Av. | M      | 1977-06-07 |</span><br><span class="line">| Jane Fonda     | Turner Av.  | F      | 1977-07-07 |</span><br><span class="line">| Debra Winger   | A way       | F      | 1978-05-06 |</span><br><span class="line">| Kim Basinger   | Baldwin Av. | F      | 1979-05-07 |</span><br><span class="line">+----------------+-------------+--------+------------+</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">+----------------+-------------+--------+------------+</span><br><span class="line">| name           | address     | gender | birthDate  |</span><br><span class="line">+----------------+-------------+--------+------------+</span><br><span class="line">| Kim Basinger   | Baldwin Av. | F      | 1979-05-07 |</span><br><span class="line">| Debra Winger   | A way       | F      | 1978-05-06 |</span><br><span class="line">| Jane Fonda     | Turner Av.  | F      | 1977-07-07 |</span><br><span class="line">| Alec Baldwin   | Baldwin Av. | M      | 1977-06-07 |</span><br><span class="line">| Harrison Ford  | Prefect Rd. | M      | 1955-05-05 |</span><br><span class="line">| Jack Nicholson | X path      | M      | 1949-05-05 |</span><br><span class="line">+----------------+-------------+--------+------------+</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div></div>
+<h3 id="多关键字排序">多关键字排序</h3>
+<p><code>ORDER BY</code> 可以添加多个排序关键字，直接使用 <code>,</code> 分割即可：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="keyword">SELECT</span> 语句&#125; [<span class="keyword">WHERE</span> &#123;条件表达式&#125;] <span class="keyword">ORDER</span> <span class="keyword">BY</span> &#123;排序关键字&#125; [<span class="keyword">ASC</span> <span class="operator">/</span> <span class="keyword">DESC</span>] [, &#123;排序关键字&#125; [<span class="keyword">ASC</span> <span class="operator">/</span> <span class="keyword">DESC</span>] ...];</span><br></pre></td></tr></table></figure>
+<div class="tabs" id="多关键字排序示例"><ul class="nav-tabs"><li class="tab active"><button type="button" data-href="#多关键字排序示例-1">示例</button></li><li class="tab"><button type="button" data-href="#多关键字排序示例-2">输出</button></li></ul><div class="tab-contents"><div class="tab-item-content active" id="多关键字排序示例-1"><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> MovieExec <span class="keyword">ORDER</span> <span class="keyword">BY</span> netWorth <span class="keyword">ASC</span>, address <span class="keyword">DESC</span>;</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="多关键字排序示例-2"><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">+-------------------+-------------+------+-----------+</span><br><span class="line">| name              | address     | cert | netWorth  |</span><br><span class="line">+-------------------+-------------+------+-----------+</span><br><span class="line">| Huangjianxin      | NULL        |  100 |      NULL |</span><br><span class="line">| Calvin Coolidge   | Fast Lane   |  123 |  20000000 |</span><br><span class="line">| Stephen Spielberg | 123 ET road |  222 | 100000000 |</span><br><span class="line">| Merv Griffin      | Riot Rd.    |  199 | 112000000 |</span><br><span class="line">| Ted Turner        | Turner Av.  |  333 | 125000000 |</span><br><span class="line">| Jane Fonda        | Turner Av.  |  567 | 200000000 |</span><br><span class="line">| George Lucas      | Oak Rd.     |  555 | 200000000 |</span><br><span class="line">+-------------------+-------------+------+-----------+</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div></div>
+<h2 id="分页查询-LIMIT-OFFSET">分页查询 LIMIT OFFSET</h2>
+<p>当数据表很大时，直接显示整张数据表不太现实，例如直接查询千万记录级别的数据表，可能直接导致内存爆炸。这时我们可以使用分页查询，仅显示数据表中一定数量的行。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="keyword">SELECT</span> 语句&#125; LIMIT &#123;显示行数&#125; [<span class="keyword">OFFSET</span> &#123;首行行号&#125;]</span><br></pre></td></tr></table></figure>
+<p>注意行号是 <code>0</code> 索引的，<code>LIMIT OFFSET</code> 的两个参数都是非负数，<code>OFFSET</code> 可缺省为 <code>0</code>。</p>
+<div class="tabs" id="分页查询的示例"><ul class="nav-tabs"><li class="tab active"><button type="button" data-href="#分页查询的示例-1">示例</button></li><li class="tab"><button type="button" data-href="#分页查询的示例-2">输出</button></li></ul><div class="tab-contents"><div class="tab-item-content active" id="分页查询的示例-1"><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">FROM</span> test;</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> test LIMIT <span class="number">10</span> <span class="keyword">OFFSET</span> <span class="number">0</span>;</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> test LIMIT <span class="number">10</span> <span class="keyword">OFFSET</span> <span class="number">10</span>;  <span class="comment">-- 一般 OFFSET 是 LIMIT 的倍数</span></span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="分页查询的示例-2"><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+----------+</span><br><span class="line">| COUNT(*) |</span><br><span class="line">+----------+</span><br><span class="line">|   511232 |</span><br><span class="line">+----------+</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">+----+----------+------+</span><br><span class="line">| id | name     | age  |</span><br><span class="line">+----+----------+------+</span><br><span class="line">|  0 | wangwu   |   11 |</span><br><span class="line">|  1 | wangwu   |   33 |</span><br><span class="line">|  2 | wangwu   |   10 |</span><br><span class="line">|  3 | lisi     |   21 |</span><br><span class="line">|  4 | zhangsan |   43 |</span><br><span class="line">|  5 | zhangsan |   48 |</span><br><span class="line">|  6 | zhangsan |   30 |</span><br><span class="line">|  7 | lisi     |   50 |</span><br><span class="line">|  8 | lisi     |   20 |</span><br><span class="line">|  9 | zhangsan |   29 |</span><br><span class="line">+----+----------+------+</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">+----+----------+------+</span><br><span class="line">| id | name     | age  |</span><br><span class="line">+----+----------+------+</span><br><span class="line">| 10 | zhangsan |   10 |</span><br><span class="line">| 11 | lisi     |   24 |</span><br><span class="line">| 12 | zhangsan |   27 |</span><br><span class="line">| 13 | lisi     |   36 |</span><br><span class="line">| 14 | zhangsan |   14 |</span><br><span class="line">| 15 | wangwu   |   47 |</span><br><span class="line">| 16 | wangwu   |   16 |</span><br><span class="line">| 17 | zhangsan |   40 |</span><br><span class="line">| 18 | wangwu   |   19 |</span><br><span class="line">| 19 | zhangsan |   23 |</span><br><span class="line">+----+----------+------+</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div></div>
+<h2 id="聚集函数与分组">聚集函数与分组</h2>
+<h3 id="聚集函数">聚集函数</h3>
+<p>聚集函数用于汇总数据，<code>SQL</code> 提供了 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>5</mn></mrow><annotation encoding="application/x-tex">5</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">5</span></span></span></span> 种聚集函数。另外，在不同 <code>SQL</code> 版本中，函数名可能各有不同。</p>
+<table>
+<thead>
+<tr>
+<th>聚集函数</th>
+<th>功能</th>
+<th>补充</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>COUNT(field)</code></td>
+<td>字段非空值数量</td>
+<td>参数可为 <code>*</code>，计数表格行数，即使整行均为 <code>NULL</code> 也计数，使用 <code>DISTINCT</code> 也计数全部行数。仅 <code>COUNT</code> 参数可 <code>*</code></td>
+</tr>
+<tr>
+<td><code>MIN(field)</code></td>
+<td>字段最小值</td>
+<td><code>NULL</code> 值忽略，全 <code>NULL</code> 返回 <code>NULL</code></td>
+</tr>
+<tr>
+<td><code>MAX(field)</code></td>
+<td>字段最大值</td>
+<td><code>NULL</code> 值忽略，全 <code>NULL</code> 返回 <code>NULL</code></td>
+</tr>
+<tr>
+<td><code>SUM(field)</code></td>
+<td>字段求和</td>
+<td><code>NULL</code> 值忽略，全 <code>NULL</code> 返回 <code>NULL</code></td>
+</tr>
+<tr>
+<td><code>AVG(field)</code></td>
+<td>字段平均值</td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>=</mo><mfrac><mrow><mtext>SUM</mtext><mo stretchy="false">(</mo><mo stretchy="false">)</mo></mrow><mrow><mtext>COUNT</mtext><mo stretchy="false">(</mo><mo stretchy="false">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">=\frac{\text{SUM}()}{\text{COUNT}()}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.53em;vertical-align:-0.52em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.01em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">COUNT</span></span><span class="mopen mtight">(</span><span class="mclose mtight">)</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.485em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">SUM</span></span><span class="mopen mtight">(</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.52em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span>，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>COUNT</mtext><mo stretchy="false">(</mo><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\text{COUNT}()=0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">COUNT</span></span><span class="mopen">(</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span> 返回 <code>NULL</code></td>
+</tr>
+<tr>
+<td><code>VAR_POP(field)</code></td>
+<td>字段标准差</td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>=</mo><mtext>AVG</mtext><mo stretchy="false">(</mo><mtext>POW</mtext><mo stretchy="false">(</mo><mi>X</mi><mo>−</mo><mtext>AVG</mtext><mo stretchy="false">(</mo><mo stretchy="false">)</mo><mo separator="true">,</mo><mtext> </mtext><mn>2</mn><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">= \text{AVG}(\text{POW}(X - \text{AVG}(),~2))</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">AVG</span></span><span class="mopen">(</span><span class="mord text"><span class="mord">POW</span></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">AVG</span></span><span class="mopen">(</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mspace nobreak"> </span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">2</span><span class="mclose">))</span></span></span></span>，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>COUNT</mtext><mo stretchy="false">(</mo><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\text{COUNT}()=0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">COUNT</span></span><span class="mopen">(</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span> 返回 <code>NULL</code></td>
+</tr>
+<tr>
+<td><code>STDDEV(field)</code></td>
+<td>字段标准差</td>
+<td><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>=</mo><mtext>SQRT</mtext><mo stretchy="false">(</mo><mtext>VAR_POP</mtext><mo stretchy="false">(</mo><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">= \text{SQRT}(\text{VAR\_POP}())</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.06em;vertical-align:-0.31em;"></span><span class="mord text"><span class="mord">SQRT</span></span><span class="mopen">(</span><span class="mord text"><span class="mord">VAR_POP</span></span><span class="mopen">(</span><span class="mclose">))</span></span></span></span>，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>COUNT</mtext><mo stretchy="false">(</mo><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\text{COUNT}()=0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">COUNT</span></span><span class="mopen">(</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span> 返回 <code>NULL</code></td>
+</tr>
+<tr>
+<td><code>GROUP_CONCAT(field [SEPARATOR separator])</code></td>
+<td>字段值连接</td>
+<td>将该分组该字段的值按分隔符连接，分隔符可缺省为 <code>,</code></td>
+</tr>
+</tbody>
+</table>
+<p>​<mark class="hl-label default">注释：</mark>  聚集函数的对象为分组，分组使用下一章节中的 <code>GROUP BY</code> 创建，是一些具有相同属性的行的集合。未创建分组的，全部行为一个分组，因此在目前的示例中我们都只能看到一行输出。</p>
+<div class="tabs" id="聚集函数示例"><ul class="nav-tabs"><li class="tab active"><button type="button" data-href="#聚集函数示例-1">示例</button></li><li class="tab"><button type="button" data-href="#聚集函数示例-2">输出</button></li></ul><div class="tab-contents"><div class="tab-item-content active" id="聚集函数示例-1"><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="built_in">MIN</span>(<span class="keyword">year</span>), <span class="built_in">MAX</span>(<span class="keyword">year</span>), <span class="built_in">COUNT</span>(length), <span class="built_in">SUM</span>(producerC), <span class="built_in">AVG</span>(producerC) <span class="keyword">FROM</span> Movies;</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">    <span class="built_in">MIN</span>(<span class="keyword">year</span>) <span class="keyword">AS</span> minYear, </span><br><span class="line">    <span class="built_in">MAX</span>(<span class="keyword">year</span>) <span class="keyword">AS</span> maxYear, </span><br><span class="line">    <span class="built_in">COUNT</span>(length) <span class="keyword">AS</span> cntLength, </span><br><span class="line">    <span class="built_in">SUM</span>(producerC) <span class="keyword">AS</span> sumProducerC, </span><br><span class="line">    <span class="built_in">AVG</span>(producerC) <span class="keyword">AS</span> avgProducerC </span><br><span class="line"><span class="keyword">FROM</span> </span><br><span class="line">    Movies;</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="聚集函数示例-2"><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+-----------+-----------+---------------+----------------+----------------+</span><br><span class="line">| MIN(year) | MAX(year) | COUNT(length) | SUM(producerC) | AVG(producerC) |</span><br><span class="line">+-----------+-----------+---------------+----------------+----------------+</span><br><span class="line">|      1938 |      2019 |            10 |           5884 |       534.9091 |</span><br><span class="line">+-----------+-----------+---------------+----------------+----------------+</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+---------+---------+-----------+--------------+--------------+</span><br><span class="line">| minYear | maxYear | cntLength | sumProducerC | avgProducerC |</span><br><span class="line">+---------+---------+-----------+--------------+--------------+</span><br><span class="line">|    1938 |    2019 |        10 |         5884 |     534.9091 |</span><br><span class="line">+---------+---------+-----------+--------------+--------------+</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div></div>
+<h3 id="分组聚集-GROUP-BY">分组聚集 GROUP BY</h3>
+<h4 id="基本格式-3">基本格式</h4>
+<p><code>GROUP BY</code> 用于设置分组，分组是一些具有相同属性的行的集合，分组是聚集函数的计算范围。在输出的表格中每个分组为一行，使用 <code>GROUP BY</code> 才能发挥出聚集函数的作用。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="keyword">SELECT</span> 语句&#125; <span class="keyword">GROUP</span> <span class="keyword">BY</span> &#123;分组关键字&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>GROUP BY</code> 同样支持多关键字。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="keyword">SELECT</span> 语句&#125; <span class="keyword">GROUP</span> <span class="keyword">BY</span> &#123;分组关键字&#125; [, 分组关键字];</span><br></pre></td></tr></table></figure>
+<div class="tabs" id="分组聚集示例"><ul class="nav-tabs"><li class="tab active"><button type="button" data-href="#分组聚集示例-1">示例</button></li><li class="tab"><button type="button" data-href="#分组聚集示例-2">输出</button></li></ul><div class="tab-contents"><div class="tab-item-content active" id="分组聚集示例-1"><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> studioName, <span class="built_in">COUNT</span>(length) <span class="keyword">FROM</span> Movies <span class="keyword">GROUP</span> <span class="keyword">BY</span> studioName; </span><br><span class="line"><span class="comment">-- 使用聚合函数计数某工作室出品的电影中有记录电影时长的数量</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> studioName, movieType, <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">FROM</span> Movies <span class="keyword">GROUP</span> <span class="keyword">BY</span> studioName, movieType;</span><br><span class="line"><span class="comment">-- 使用聚合函数计数某工作室出品的某类型电影的数量</span></span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="分组聚集示例-2"><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">+----------------+---------------+</span><br><span class="line">| studioName     | COUNT(length) |</span><br><span class="line">+----------------+---------------+</span><br><span class="line">| Fox            |             2 |</span><br><span class="line">| huaxia         |             1 |</span><br><span class="line">| MGM            |             4 |</span><br><span class="line">| Disney         |             1 |</span><br><span class="line">| Paramount      |             1 |</span><br><span class="line">| USA Entertainm |             1 |</span><br><span class="line">+----------------+---------------+</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">+----------------+-----------+----------+</span><br><span class="line">| studioName     | movieType | COUNT(*) |</span><br><span class="line">+----------------+-----------+----------+</span><br><span class="line">| Fox            | drama     |        1 |</span><br><span class="line">| huaxia         | feature   |        1 |</span><br><span class="line">| MGM            | drama     |        4 |</span><br><span class="line">| Disney         | drama     |        1 |</span><br><span class="line">| Paramount      | sciFic    |        2 |</span><br><span class="line">| Fox            | sciFic    |        1 |</span><br><span class="line">| USA Entertainm | comedy    |        1 |</span><br><span class="line">+----------------+-----------+----------+</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div></div>
+<h4 id="注意事项">注意事项</h4>
+<ul>
+<li><code>GROUP BY</code> 不会进行排序的工作，它的分组依然是乱序的。</li>
+<li><code>SELECT</code> 语句中的字段必须是分组关键字、引用 <mark class="hl-label default">以物理字段作</mark>  分组关键字的计算字段、聚集函数。需要注意的是，如果分组关键字是计算字段，<code>SELECT</code> 语句中的计算字段不能引用它，但聚集函数的参数可以任意引用。</li>
+</ul>
+<p>以下是一些关于第二条的示例，有正有误：</p>
+<div class="tabs" id="分组聚集易错示例"><ul class="nav-tabs"><li class="tab active"><button type="button" data-href="#分组聚集易错示例-1">示例1</button></li><li class="tab"><button type="button" data-href="#分组聚集易错示例-2">示例2</button></li><li class="tab"><button type="button" data-href="#分组聚集易错示例-3">示例3</button></li><li class="tab"><button type="button" data-href="#分组聚集易错示例-4">示例4</button></li><li class="tab"><button type="button" data-href="#分组聚集易错示例-5">示例5</button></li></ul><div class="tab-contents"><div class="tab-item-content active" id="分组聚集易错示例-1"><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> Movies <span class="keyword">GROUP</span> <span class="keyword">BY</span> studioName;</span><br></pre></td></tr></table></figure>
+<details class="toggle" style="border: 1px solid  #222222"><summary class="toggle-button" style="background-color:  #222222;color:  white">显示答案</summary><div class="toggle-content"><p>错误，部分物理字段不属于分组关键字。</p>
+<p>分析 SQL 这样做的原因，由于每个分组使用单行显示，并且分组内仅保证相同属性 <code>studioName</code>，因此无法确定的输出其他字段（如 <code>title</code> 字段）。</p>
+</div></details><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="分组聚集易错示例-2"><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> CONCAT(studioName, &quot; &quot;, movieType), <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">FROM</span> Movies <span class="keyword">GROUP</span> <span class="keyword">BY</span> studioName, movieType;</span><br></pre></td></tr></table></figure>
+<details class="toggle" style="border: 1px solid  #222222"><summary class="toggle-button" style="background-color:  #222222;color:  white">显示答案</summary><div class="toggle-content"><p>正确，计算字段是对分组关键字的引用。</p>
+<p>分析 SQL 这样做的原因，每个分组内保证相同属性 <code>studioName</code> 和 <code>movieType</code>，因此可以确定输出 <code>UPPER(studioName)</code> 字段。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">+------------------------------------+----------+</span><br><span class="line">| CONCAT(studioName, &quot; &quot;, movieType) | COUNT(*) |</span><br><span class="line">+------------------------------------+----------+</span><br><span class="line">| Fox drama                          |        1 |</span><br><span class="line">| huaxia feature                     |        1 |</span><br><span class="line">| MGM drama                          |        4 |</span><br><span class="line">| Disney drama                       |        1 |</span><br><span class="line">| Paramount sciFic                   |        2 |</span><br><span class="line">| Fox sciFic                         |        1 |</span><br><span class="line">| USA Entertainm comedy              |        1 |</span><br><span class="line">+------------------------------------+----------+</span><br></pre></td></tr></table></figure>
+</div></details><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="分组聚集易错示例-3"><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">    CONCAT(studioName, &quot; &quot;, movieType), </span><br><span class="line">    <span class="built_in">COUNT</span>(<span class="operator">*</span>) </span><br><span class="line"><span class="keyword">FROM</span> </span><br><span class="line">    Movies </span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> </span><br><span class="line">    CONCAT(studioName, &quot; &quot;, movieType);</span><br></pre></td></tr></table></figure>
+<details class="toggle" style="border: 1px solid  #222222"><summary class="toggle-button" style="background-color:  #222222;color:  white">显示答案</summary><div class="toggle-content"><p>正确，计算字段是分组关键字。</p>
+<p>虽然是计算字段，但是对于 SQL 而言由于两个字段完全相同，直接引用即可。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">+------------------------------------+----------+</span><br><span class="line">| CONCAT(studioName, &quot; &quot;, movieType) | COUNT(*) |</span><br><span class="line">+------------------------------------+----------+</span><br><span class="line">| Fox drama                          |        1 |</span><br><span class="line">| huaxia feature                     |        1 |</span><br><span class="line">| MGM drama                          |        4 |</span><br><span class="line">| Disney drama                       |        1 |</span><br><span class="line">| Paramount sciFic                   |        2 |</span><br><span class="line">| Fox sciFic                         |        1 |</span><br><span class="line">| USA Entertainm comedy              |        1 |</span><br><span class="line">+------------------------------------+----------+</span><br></pre></td></tr></table></figure>
+</div></details><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="分组聚集易错示例-4"><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">    <span class="built_in">UPPER</span>(CONCAT(studioName, &quot; &quot;, movieType)), </span><br><span class="line">    <span class="built_in">COUNT</span>(<span class="operator">*</span>) </span><br><span class="line"><span class="keyword">FROM</span> </span><br><span class="line">    Movies </span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> </span><br><span class="line">    CONCAT(studioName, &quot; &quot;, movieType);</span><br></pre></td></tr></table></figure>
+<details class="toggle" style="border: 1px solid  #222222"><summary class="toggle-button" style="background-color:  #222222;color:  white">显示答案</summary><div class="toggle-content"><p>错误，计算字段不能引用 <code>GROUP BY</code> 中的计算字段，只能直接相等（如示例3）。</p>
+<p>从 SQL 实现的角度考虑，显然在进行 UPPER 操作后我们可以唯一的确定输出的值，但是当两个计算字段之间的逻辑变得复杂时，程序很难再推导出两个计算字段之间的关系，于是 SQL 索性禁止了所有此类行为。</p>
+</div></details><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="分组聚集易错示例-5"><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">    movieType, </span><br><span class="line">    <span class="built_in">AVG</span>(length <span class="operator">*</span> producerC) </span><br><span class="line"><span class="keyword">FROM</span> </span><br><span class="line">    Movies </span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> </span><br><span class="line">    movieType;</span><br></pre></td></tr></table></figure>
+<details class="toggle" style="border: 1px solid  #222222"><summary class="toggle-button" style="background-color:  #222222;color:  white">显示答案</summary><div class="toggle-content"><p>正确，聚合函数可以任意的引用和计算。因为聚合函数的本质就是将数据汇总输出一个值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">+-----------+-------------------------+</span><br><span class="line">| movieType | AVG(length * producerC) |</span><br><span class="line">+-----------+-------------------------+</span><br><span class="line">| drama     |              73075.0000 |</span><br><span class="line">| feature   |              15800.0000 |</span><br><span class="line">| sciFic    |              53028.0000 |</span><br><span class="line">| comedy    |              90132.0000 |</span><br><span class="line">+-----------+-------------------------+</span><br></pre></td></tr></table></figure>
+</div></details><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div></div>
+<h3 id="分组过滤-HAVING">分组过滤 HAVING</h3>
+<p>与 <code>WHERE</code> 不同的是，<code>HAVING</code> 过滤的对象是分组，而 <code>WHERE</code> 的过滤对象为行。<code>HAVING</code> 通常与 <code>GROUP BY</code> 一同使用，必须放在 <code>GROUP BY</code> 之后。如果你无法很好的区分 <code>WHERE</code> 和 <code>HAVING</code> 只需要记住，在 <code>GROUP BY</code> 之前进行的筛选是 <code>WHERE</code>，在 <code>GROUP BY</code> 之后进行的筛选是 <code>HAVING</code>。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="keyword">SELECT</span> 语句&#125; <span class="keyword">GROUP</span> <span class="keyword">BY</span> &#123;分组关键字&#125; <span class="keyword">HAVING</span> &#123;条件表达式&#125;</span><br></pre></td></tr></table></figure>
+<p>由于 <code>HAVING</code> 过滤的对象是分组。在 <code>HAVING</code> 条件表达式中，可以使用聚集函数；而在 <code>WHERE</code> 条件表达式中，不可使用聚集函数。但 <code>HAVING</code> 条件表达式中的引用具有与前面提到的 <code>GROUP BY</code> 相同的约束，详见 <code>分组聚集 GROUP BY - 注意事项</code>。</p>
+<div class="tabs" id="分组过滤示例"><ul class="nav-tabs"><li class="tab active"><button type="button" data-href="#分组过滤示例-1">示例</button></li><li class="tab"><button type="button" data-href="#分组过滤示例-2">输出</button></li></ul><div class="tab-contents"><div class="tab-item-content active" id="分组过滤示例-1"><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">    studioName, </span><br><span class="line">    <span class="built_in">COUNT</span>(<span class="operator">*</span>) </span><br><span class="line"><span class="keyword">FROM</span> </span><br><span class="line">    Movies </span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> </span><br><span class="line">    studioName </span><br><span class="line"><span class="keyword">HAVING</span> </span><br><span class="line">    <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="operator">&gt;</span> <span class="number">1</span> <span class="keyword">AND</span> </span><br><span class="line">    LENGTH(studioName) <span class="operator">&gt;</span> <span class="number">3</span>;</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="分组过滤示例-2"><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+------------+----------+</span><br><span class="line">| studioName | COUNT(*) |</span><br><span class="line">+------------+----------+</span><br><span class="line">| Paramount  |        2 |</span><br><span class="line">+------------+----------+</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div></div>
+<h2 id="SELECT-子句顺序">SELECT 子句顺序</h2>
+<p>至此我们介绍了 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn></mrow><annotation encoding="application/x-tex">4</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">4</span></span></span></span> 种子句，SQL 严格定义了这些关键字的顺序。SELECT 查询命令也是按照这个顺序从左往右执行的。</p>
+<table>
+<thead>
+<tr>
+<th>关键字</th>
+<th>作用</th>
+<th>顺序级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>WHERE</code></td>
+<td>行级过滤</td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>GROUP BY</code></td>
+<td>分组</td>
+<td>2</td>
+</tr>
+<tr>
+<td><code>HAVING</code></td>
+<td>组级过滤</td>
+<td>3</td>
+</tr>
+<tr>
+<td><code>ORDER BY</code></td>
+<td>排序</td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>LIMIT OFFSET</code></td>
+<td>分页查询</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
+<p>下面算是一个综合应用吧。</p>
+<div class="tabs" id="子句顺序示例"><ul class="nav-tabs"><li class="tab active"><button type="button" data-href="#子句顺序示例-1">示例</button></li><li class="tab"><button type="button" data-href="#子句顺序示例-2">输出</button></li></ul><div class="tab-contents"><div class="tab-item-content active" id="子句顺序示例-1"><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">    studioName, </span><br><span class="line">    <span class="built_in">COUNT</span>(<span class="operator">*</span>) </span><br><span class="line"><span class="keyword">FROM</span> </span><br><span class="line">    Movies </span><br><span class="line"><span class="keyword">WHERE</span> </span><br><span class="line">    <span class="keyword">year</span> <span class="operator">&gt;=</span> <span class="number">1950</span> <span class="comment">-- 首先去除 1950 年前的作品</span></span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> </span><br><span class="line">    studioName <span class="comment">-- 然后将剩余作品按工作室分组</span></span><br><span class="line"><span class="keyword">HAVING</span> </span><br><span class="line">    <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="operator">&gt;</span> <span class="number">1</span> <span class="comment">-- 再去掉分组后分组包含作品 &lt;= 1 的工作室</span></span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> </span><br><span class="line">    <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">DESC</span>, <span class="comment">-- 最后将数据集按作品数降序, 工作室名称升序排列</span></span><br><span class="line">    studioName;</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="子句顺序示例-2"><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">+------------+----------+</span><br><span class="line">| studioName | COUNT(*) |</span><br><span class="line">+------------+----------+</span><br><span class="line">| MGM        |        3 |</span><br><span class="line">| Fox        |        2 |</span><br><span class="line">| Paramount  |        2 |</span><br><span class="line">+------------+----------+</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div></div>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%AF%AD%E6%B3%95/">语法</a><a class="post-meta__tags" href="/tags/Database/">Database</a><a class="post-meta__tags" href="/tags/MySQL/">MySQL</a><a class="post-meta__tags" href="/tags/SQL/">SQL</a></div><div class="post_share"><div class="social-share" data-image="/img/default_cover.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/acm-think-suffix-expression/" title="对于后缀表达式的思考 - 栈"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">对于后缀表达式的思考 - 栈</div></div></a></div><div class="next-post pull-right"><a href="/posts/db-subquery-join/" title="SELECT 中的子查询与联结"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">SELECT 中的子查询与联结</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/db-sql-basic/" title="SQL 语法入门 - 基础操作"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-10-01</div><div class="title">SQL 语法入门 - 基础操作</div></div></a></div><div><a href="/posts/db-subquery-join/" title="SELECT 中的子查询与联结"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-10-13</div><div class="title">SELECT 中的子查询与联结</div></div></a></div><div><a href="/posts/db-select-set/" title="SELECT 中的合并、交集与差集"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-10-18</div><div class="title">SELECT 中的合并、交集与差集</div></div></a></div><div><a href="/posts/db-key-index/" title="使用键与索引"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-10-27</div><div class="title">使用键与索引</div></div></a></div><div><a href="/posts/db-mysql-postgresql/" title="从 MySQL 学习 PostgreSQL"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-12-08</div><div class="title">从 MySQL 学习 PostgreSQL</div></div></a></div><div><a href="/posts/db-trigger-view/" title="使用触发器与视图"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-12-08</div><div class="title">使用触发器与视图</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Jamhus Tao</div><div class="author-info__description">找点好玩的去！</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">113</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">83</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">72</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/jamhus-tao"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/img/qq.jpg" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/img/weixin.jpg" target="_blank" title="Weixin"><i class="fab fa-weixin"></i></a><a class="social-icon" href="mailto:jamhus_tao@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="https://github.com/jamhus-tao" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E8%BF%87%E6%BB%A4-WHERE"><span class="toc-number">1.</span> <span class="toc-text">数据过滤 WHERE</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.1.</span> <span class="toc-text">基本格式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="toc-number">1.2.</span> <span class="toc-text">运算符</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E5%AD%97%E6%AE%B5"><span class="toc-number">2.</span> <span class="toc-text">计算字段</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E5%AD%97%E6%AE%B5%E4%B8%8E%E7%89%A9%E7%90%86%E5%AD%97%E6%AE%B5"><span class="toc-number">2.1.</span> <span class="toc-text">计算字段与物理字段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0"><span class="toc-number">2.2.</span> <span class="toc-text">函数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%8E%92%E5%BA%8F-ORDER-BY"><span class="toc-number">3.</span> <span class="toc-text">数据排序 ORDER BY</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%A0%BC%E5%BC%8F-2"><span class="toc-number">3.1.</span> <span class="toc-text">基本格式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%87%E5%BA%8F%E4%B8%8E%E9%99%8D%E5%BA%8F"><span class="toc-number">3.2.</span> <span class="toc-text">升序与降序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E5%85%B3%E9%94%AE%E5%AD%97%E6%8E%92%E5%BA%8F"><span class="toc-number">3.3.</span> <span class="toc-text">多关键字排序</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E9%A1%B5%E6%9F%A5%E8%AF%A2-LIMIT-OFFSET"><span class="toc-number">4.</span> <span class="toc-text">分页查询 LIMIT OFFSET</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%81%9A%E9%9B%86%E5%87%BD%E6%95%B0%E4%B8%8E%E5%88%86%E7%BB%84"><span class="toc-number">5.</span> <span class="toc-text">聚集函数与分组</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%81%9A%E9%9B%86%E5%87%BD%E6%95%B0"><span class="toc-number">5.1.</span> <span class="toc-text">聚集函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E7%BB%84%E8%81%9A%E9%9B%86-GROUP-BY"><span class="toc-number">5.2.</span> <span class="toc-text">分组聚集 GROUP BY</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%A0%BC%E5%BC%8F-3"><span class="toc-number">5.2.1.</span> <span class="toc-text">基本格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">5.2.2.</span> <span class="toc-text">注意事项</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E7%BB%84%E8%BF%87%E6%BB%A4-HAVING"><span class="toc-number">5.3.</span> <span class="toc-text">分组过滤 HAVING</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SELECT-%E5%AD%90%E5%8F%A5%E9%A1%BA%E5%BA%8F"><span class="toc-number">6.</span> <span class="toc-text">SELECT 子句顺序</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cpp-cmake-abc/" title="CMake 项目构建和代码测试">CMake 项目构建和代码测试</a><time datetime="2024-09-27T13:01:00.000Z" title="更新于 2024-09-27 21:01:00">2024-09-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ds-consistent-hash/" title="浅析几种一致性哈希算法">浅析几种一致性哈希算法</a><time datetime="2024-09-11T09:58:00.000Z" title="更新于 2024-09-11 17:58:00">2024-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ds-bloom-filter/" title="布隆过滤器及其误判率推导">布隆过滤器及其误判率推导</a><time datetime="2024-07-14T06:28:00.000Z" title="更新于 2024-07-14 14:28:00">2024-07-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cs-hanmming-check/" title="海明校验码 - 计算机网络">海明校验码 - 计算机网络</a><time datetime="2024-06-26T05:24:00.000Z" title="更新于 2024-06-26 13:24:00">2024-06-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/acm-lanqiaocup-24cbg/" title="2024 年第十五届蓝桥杯 C/C++ B组国赛题解">2024 年第十五届蓝桥杯 C/C++ B组国赛题解</a><time datetime="2024-06-08T05:49:00.000Z" title="更新于 2024-06-08 13:49:00">2024-06-08</time></div></div></div></div></div></div></main><footer id="footer" style="background: #171717"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2025 By Jamhus Tao</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.umd.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="/pluginsSrc/katex/dist/katex.min.css"><script src="/pluginsSrc/katex/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('/pluginsSrc/mermaid/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addModeChange('mermaid', runMermaid)
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: 'f5ab0e5f4c6139f6fc66',
+      clientSecret: '34afc0f7b7a9086e590fbcb099bae698933ed074',
+      repo: 'jamhus-tao.github.io.gitalk',
+      owner: 'jamhus-tao',
+      admin: ['jamhus-tao'],
+      id: 'fd4eef633ad3692c864f37a753ccfb82',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    getCSS('/pluginsSrc/gitalk/dist/gitalk.css')
+    getScript('/pluginsSrc/gitalk/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.textContent= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !false) {
+  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script data-pjax defer src="/js/my.js"></script><script defer="defer" id="ribbon" src="/pluginsSrc/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

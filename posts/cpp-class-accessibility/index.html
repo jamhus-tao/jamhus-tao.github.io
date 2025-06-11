@@ -1,0 +1,433 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>一文理解类的访问权限 | JamhusTao の Blog</title><meta name="author" content="Jamhus Tao"><meta name="copyright" content="Jamhus Tao"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="在类的继承体系中，关于访问权限我个人感觉一直是非常复杂，各类博客、书籍对它的解释都不够好。在这篇文章我想通过我的理解，着重解释类的继承体系中复杂的访问权限的原理。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一文理解类的访问权限">
+<meta property="og:url" content="https://jamhus-tao.github.io/posts/cpp-class-accessibility/">
+<meta property="og:site_name" content="JamhusTao の Blog">
+<meta property="og:description" content="在类的继承体系中，关于访问权限我个人感觉一直是非常复杂，各类博客、书籍对它的解释都不够好。在这篇文章我想通过我的理解，着重解释类的继承体系中复杂的访问权限的原理。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://jamhus-tao.github.io/img/default_cover.png">
+<meta property="article:published_time" content="2024-02-14T13:58:00.000Z">
+<meta property="article:modified_time" content="2024-02-14T13:58:00.000Z">
+<meta property="article:author" content="Jamhus Tao">
+<meta property="article:tag" content="C&#x2F;C++">
+<meta property="article:tag" content="原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://jamhus-tao.github.io/img/default_cover.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://jamhus-tao.github.io/posts/cpp-class-accessibility/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-FQ4L3WN8LH"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-FQ4L3WN8LH');
+</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":600},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '一文理解类的访问权限',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-02-14 21:58:00'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/my.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">113</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">83</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">72</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/default_cover.png')"><nav id="nav"><span id="blog-info"><a href="/" title="JamhusTao の Blog"><span class="site-name">JamhusTao の Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">一文理解类的访问权限</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-02-14T13:58:00.000Z" title="发表于 2024-02-14 21:58:00">2024-02-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-02-14T13:58:00.000Z" title="更新于 2024-02-14 21:58:00">2024-02-14</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/C/">C++</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/C/%E4%B8%80%E6%96%87%E7%90%86%E8%A7%A3%E7%B1%BB%E7%9A%84%E8%AE%BF%E9%97%AE%E6%9D%83%E9%99%90/">一文理解类的访问权限</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>5分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="一文理解类的访问权限"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="前言">前言</h2>
+<p>在类的继承体系中，关于访问权限我个人感觉一直是非常复杂，各类博客、书籍对它的解释都不够好。在这篇文章我想通过我的理解，着重解释类的继承体系中复杂的访问权限的原理。注意：我将在个人理解中加入 <code>inaccessible</code> 的访问权限，帮助理解烦杂的访问权限体系。</p>
+<h2 id="继承后访问权限">继承后访问权限</h2>
+<h3 id="四级访问权限">四级访问权限</h3>
+<p>类的访问权限分为三级：<code>private</code> / <code>protected</code> / <code>public</code>。但我认为增加一级 <code>inaccessible</code> 更容易理解。</p>
+<p>首先，我们来回顾一下以上三个访问权限连同 <code>inaccessible</code> 分别是什么访问限制：</p>
+<ul>
+<li><code>public</code>：公有的，类外、类内、派生类均可访问 <code>public</code> 下的类成员。</li>
+<li><code>protected</code>：受保护的，类外不可访问 <code>protected</code> 下的类成员，类内、派生类成员可访问。</li>
+<li><code>private</code>：私有的，类外、派生类不可访问 <code>private</code> 下的类成员，类内成员可访问。</li>
+<li><code>inaccessible</code>：不可访问的，类外、类内、派生类均不可访问 <code>inaccessible</code> 的类成员。</li>
+</ul>
+<p>换言之，<code>public</code> 对于类外是可访问的，<code>public</code> / <code>protected</code> 对于派生类是可访问的，<code>public</code> / <code>protected</code> / <code>private</code> 对于类内是可访问的，而 <code>inaccessible</code> 对谁都是不可访问的。</p>
+<details class="toggle" style="border: 1px solid  #222222"><summary class="toggle-button" style="background-color:  #222222;color:  white">为什么提出 protected 权限</summary><div class="toggle-content"><p>从上面可以看出，<code>protected</code> 只对派生类有所区别，它正是用于为派生类和类外提供区别的权限而提出的。受保护成员可以被派生类访问，而无法被类外访问。</p>
+</div></details>
+<details class="toggle" style="border: 1px solid  #222222"><summary class="toggle-button" style="background-color:  #222222;color:  white">为什么我引入了 inaccessible 权限</summary><div class="toggle-content"><p>为了直观表示在继承后，成员访问权限的变化，我们可以使用状态转移表或状态图的方式表示。但这样有一个问题，<code>private</code> 成员继承后转移为何状态？因此这里设立了 <code>inaccessible</code> 状态，这样我们可以画例如这样的状态图，这为我们后面的诸多解释提供方便：</p>
+<p><img src="https://s2.loli.net/2024/02/14/HNPAI74KRJY3hgT.png" alt="mermaid-diagram-2024-02-14-214610.png"></p>
+<p>再次强调，<code>inaccessible</code> 是我个人定义的概念，用于方便理解类的访问权限。<code>inaccessible</code> 成员实际就是类内不存在的成员，它的所有表现都与不存在该成员相同。（<code>private</code> 在类外有时也会出现与不存在该成员不同的表现。）</p>
+</div></details>
+<h3 id="访问权限的继承">访问权限的继承</h3>
+<p>类的访问权限在继承过程中的变化如下：</p>
+<table>
+<thead>
+<tr>
+<th>继承方式 / 继承后权限 / 继承前权限</th>
+<th><code>public</code></th>
+<th><code>protected</code></th>
+<th><code>private</code></th>
+<th><code>inaccessible</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>public</code>（公有继承）</td>
+<td><code>public</code></td>
+<td><code>protected</code></td>
+<td><code>inaccessible</code></td>
+<td><code>inaccessible</code></td>
+</tr>
+<tr>
+<td><code>protected</code>（受保护继承）</td>
+<td><code>protected</code></td>
+<td><code>prtected</code></td>
+<td><code>inaccessible</code></td>
+<td><code>inaccessible</code></td>
+</tr>
+<tr>
+<td><code>private</code>（私有继承）</td>
+<td><code>private</code></td>
+<td><code>private</code></td>
+<td><code>inaccessible</code></td>
+<td><code>inaccessible</code></td>
+</tr>
+</tbody>
+</table>
+<p>从表中可以看的很清楚，继承后权限就是 <code>private</code> 变 <code>inaccessible</code>，其余不变，然后所有全部和继承方式取最小权限的结果。</p>
+<br>
+<h2 id="派生类到基类转换的可访问性">派生类到基类转换的可访问性</h2>
+<p>其实所有间接继承无法完成或者间接类型转换无法完成，都是基于上面的继承体系产生的结果（构造函数的 <code>using</code> 始终是个特例，这里将它排除在外）。这里我们主要对下面三类派生类到基类转换作解释：</p>
+<h3 id="类外转换">类外转换</h3>
+<p><code>protected</code> 或 <code>private</code> 继承方式下，类外 ​<mark class="hl-label default">无法实现</mark>  派生类到基类的转换。反之，是合法的。</p>
+<p>因为 <code>protected</code> 或 <code>private</code> 继承方式将 <code>public</code> 成员转换为 <code>protected</code> 或 <code>private</code> 成员，对于类外，这是从可访问到不可访问的转换，类外想篡取不该有的访问权限，当然是不允许的！</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart TD
+    subgraph 1[基类]
+        subgraph 10[类外可访问]
+            11(public)
+        end
+        12(protected)
+        13(private)
+        14(inaccessible)
+    end
+    subgraph 2[派生类]
+        21(public)
+        subgraph 2a[类外不可访问]
+            22(protected)
+            23(private)
+            24(inaccessible)
+        end
+    end
+    1 &#x3D;&#x3D;&gt;|protected 继承| 2
+    2 --&gt;|派生类到基类的转换| 1
+    11 &amp; 12 .-&gt; 22
+    13 &amp; 14 .-&gt; 24
+    22 --&gt;|试图篡取权限| 11
+
+    subgraph 3[基类]
+        subgraph 30[类外可访问]
+            31(public)
+        end
+        32(protected)
+        33(private)
+        34(inaccessible)
+    end
+    subgraph 4[派生类]
+        41(public)
+        subgraph 4a[类外不可访问]
+            42(protected)
+            43(private)
+            44(inaccessible)
+        end
+    end
+    3 &#x3D;&#x3D;&gt;|public 继承| 4
+    4 --&gt;|派生类到基类的转换| 3
+    31 .-&gt; 41
+    32 .-&gt; 42
+    33 &amp; 34 .-&gt; 44
+  </pre></div>
+<p>以 <code>protected</code> 继承为例，可以看到存在从类外不可访问到类外可访问的篡权；再来看 <code>public</code> 继承则不存在篡权。</p>
+<h3 id="直接基类转换">直接基类转换</h3>
+<p>不论以何继承方式，类内派生类到 ​<mark class="hl-label default">直接基类</mark>  的转换都是 ​<mark class="hl-label default">合法的</mark> 。</p>
+<p>因为对于派生类，基类成员原本可见的成员对于派生类依然是可见的，不存在篡取访问权限；有人质疑 <code>private</code> 成员在派生类中变为 <code>inaccessible</code>，但 <code>private</code> 在基类中对于派生类也是不可见的，并没有得到新的权限。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart TD
+    subgraph 1[基类]
+        subgraph 10[派生类可访问]
+            11(public)
+            12(protected)
+        end
+        13(private)
+        14(inaccessible)
+    end
+    subgraph 2[派生类]
+        21(public)
+        22(protected)
+        23(private)
+        subgraph 2a[类内不可访问]
+            24(inaccessible)
+        end
+    end
+    1 &#x3D;&#x3D;&gt;|private 继承| 2
+    2 --&gt;|派生类到基类的转换| 1
+    11 &amp; 12 .-&gt; 23
+    13 &amp; 14 .-&gt; 24
+  </pre></div>
+<p>以 <code>private</code> 继承为例，派生类对基类来说是 “派生类”，派生类对派生类来说是 “类内”，这里不存在篡权。</p>
+<h3 id="间接基类转换">间接基类转换</h3>
+<p>派生类的 <code>private</code> 继承方式下，再派生类（派生类的派生类）不论以何继承方式，其内都 ​<mark class="hl-label default">无法实现</mark>  派生类到基类的转换。反之，是合法的。</p>
+<p>这次我们直接看图：</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart TD
+    subgraph 1[基类]
+        subgraph 10[类外可访问]
+            11(public)
+        end
+        12(protected)
+        13(private)
+        14(inaccessible)
+    end
+    subgraph 2[派生类]
+        21(public)
+        22(protected)
+        subgraph 2a[派生类不可访问]
+            23(private)
+            24(inaccessible)
+        end
+    end
+    1 &#x3D;&#x3D;&gt;|private 继承| 2
+    2 --&gt;|派生类到基类的转换| 1
+    11 &amp; 12 .-&gt; 23
+    13 &amp; 14 .-&gt; 24
+    23 --&gt;|试图篡取权限| 11
+
+    subgraph 3[基类]
+        subgraph 30[类外可访问]
+            31(public)
+        end
+        32(protected)
+        33(private)
+        34(inaccessible)
+    end
+    subgraph 4[派生类]
+        41(public)
+        42(protected)
+        subgraph 4a[派生类不可访问]
+            43(private)
+            44(inaccessible)
+        end
+    end
+    3 &#x3D;&#x3D;&gt;|protected 继承| 4
+    4 --&gt;|派生类到基类的转换| 3
+    31 &amp; 32 .-&gt; 42
+    33 &amp; 34 .-&gt; 44
+  </pre></div>
+<p>派生类对基类来说是 “派生类”，派生类对派生类来说是 “类内”。在以 <code>private</code> 继承的示例中，可以看到存在从类外不可访问到类外可访问的篡权；在以 <code>protected</code> 继承的示例中，则不存在篡权的情况。</p>
+<div class="note primary flat"><p>事实上，不论是我定义的四级访问权限，还是原先的三级访问权限，其实质都只是用于描述可访问性的中间过程，以及为不同对象提供区别的可访问性。而最终一个访问是否合法，始终直接取决于可访问性，而非访问权限。</p>
+</div>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/C-C/">C/C++</a><a class="post-meta__tags" href="/tags/%E5%8E%9F%E7%90%86/">原理</a></div><div class="post_share"><div class="social-share" data-image="/img/default_cover.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/cpp-amazing-using/" title="using 的三大作用汇总"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">using 的三大作用汇总</div></div></a></div><div class="next-post pull-right"><a href="/posts/cpp-move-forward/" title="从引用折叠到 move 与 forward 代码复现"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">从引用折叠到 move 与 forward 代码复现</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/cpp-diff-level-const/" title="如何理解 C++ 顶层和底层 const 下复杂类型"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-19</div><div class="title">如何理解 C++ 顶层和底层 const 下复杂类型</div></div></a></div><div><a href="/posts/cpp-move-forward/" title="从引用折叠到 move 与 forward 代码复现"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-02-17</div><div class="title">从引用折叠到 move 与 forward 代码复现</div></div></a></div><div><a href="/posts/cpp-default-member-function/" title="类的六个特殊成员函数的自动合成"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-01-30</div><div class="title">类的六个特殊成员函数的自动合成</div></div></a></div><div><a href="/posts/cpp-in-assembly/" title="逐行解析 - 从汇编看 C 语言"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-03-16</div><div class="title">逐行解析 - 从汇编看 C 语言</div></div></a></div><div><a href="/posts/cpp-four-cast/" title="四种 cast 强制类型转换"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-12-25</div><div class="title">四种 cast 强制类型转换</div></div></a></div><div><a href="/posts/cpp-generic-algorithm/" title="泛型算法 - 从泛型到函数绑定与迭代器拓展"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-01-22</div><div class="title">泛型算法 - 从泛型到函数绑定与迭代器拓展</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Jamhus Tao</div><div class="author-info__description">找点好玩的去！</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">113</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">83</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">72</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/jamhus-tao"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/img/qq.jpg" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/img/weixin.jpg" target="_blank" title="Weixin"><i class="fab fa-weixin"></i></a><a class="social-icon" href="mailto:jamhus_tao@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="https://github.com/jamhus-tao" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%A7%E6%89%BF%E5%90%8E%E8%AE%BF%E9%97%AE%E6%9D%83%E9%99%90"><span class="toc-number">2.</span> <span class="toc-text">继承后访问权限</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E7%BA%A7%E8%AE%BF%E9%97%AE%E6%9D%83%E9%99%90"><span class="toc-number">2.1.</span> <span class="toc-text">四级访问权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BF%E9%97%AE%E6%9D%83%E9%99%90%E7%9A%84%E7%BB%A7%E6%89%BF"><span class="toc-number">2.2.</span> <span class="toc-text">访问权限的继承</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B4%BE%E7%94%9F%E7%B1%BB%E5%88%B0%E5%9F%BA%E7%B1%BB%E8%BD%AC%E6%8D%A2%E7%9A%84%E5%8F%AF%E8%AE%BF%E9%97%AE%E6%80%A7"><span class="toc-number">3.</span> <span class="toc-text">派生类到基类转换的可访问性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E5%A4%96%E8%BD%AC%E6%8D%A2"><span class="toc-number">3.1.</span> <span class="toc-text">类外转换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E5%9F%BA%E7%B1%BB%E8%BD%AC%E6%8D%A2"><span class="toc-number">3.2.</span> <span class="toc-text">直接基类转换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%B4%E6%8E%A5%E5%9F%BA%E7%B1%BB%E8%BD%AC%E6%8D%A2"><span class="toc-number">3.3.</span> <span class="toc-text">间接基类转换</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cpp-cmake-abc/" title="CMake 项目构建和代码测试">CMake 项目构建和代码测试</a><time datetime="2024-09-27T13:01:00.000Z" title="更新于 2024-09-27 21:01:00">2024-09-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ds-consistent-hash/" title="浅析几种一致性哈希算法">浅析几种一致性哈希算法</a><time datetime="2024-09-11T09:58:00.000Z" title="更新于 2024-09-11 17:58:00">2024-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ds-bloom-filter/" title="布隆过滤器及其误判率推导">布隆过滤器及其误判率推导</a><time datetime="2024-07-14T06:28:00.000Z" title="更新于 2024-07-14 14:28:00">2024-07-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cs-hanmming-check/" title="海明校验码 - 计算机网络">海明校验码 - 计算机网络</a><time datetime="2024-06-26T05:24:00.000Z" title="更新于 2024-06-26 13:24:00">2024-06-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/acm-lanqiaocup-24cbg/" title="2024 年第十五届蓝桥杯 C/C++ B组国赛题解">2024 年第十五届蓝桥杯 C/C++ B组国赛题解</a><time datetime="2024-06-08T05:49:00.000Z" title="更新于 2024-06-08 13:49:00">2024-06-08</time></div></div></div></div></div></div></main><footer id="footer" style="background: #171717"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2025 By Jamhus Tao</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.umd.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="/pluginsSrc/katex/dist/katex.min.css"><script src="/pluginsSrc/katex/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('/pluginsSrc/mermaid/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addModeChange('mermaid', runMermaid)
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: 'f5ab0e5f4c6139f6fc66',
+      clientSecret: '34afc0f7b7a9086e590fbcb099bae698933ed074',
+      repo: 'jamhus-tao.github.io.gitalk',
+      owner: 'jamhus-tao',
+      admin: ['jamhus-tao'],
+      id: '7c588766a9f83e0e1a2575040a702ac8',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    getCSS('/pluginsSrc/gitalk/dist/gitalk.css')
+    getScript('/pluginsSrc/gitalk/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.textContent= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !false) {
+  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script data-pjax defer src="/js/my.js"></script><script defer="defer" id="ribbon" src="/pluginsSrc/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

@@ -1,0 +1,442 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Linux 开发系列笔记(2.2) - 进程基本控制 | JamhusTao の Blog</title><meta name="author" content="Jamhus Tao"><meta name="copyright" content="Jamhus Tao"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="建站提交历史文章，原文写作时间 2023 年 2 月前后。  回到文章目录  进程基本控制   进程创建、进程查看、进程重载、进程调试、进程回收    进程状态命令 查看与设置进程资源限制 123$ ulimit -a  &#x2F;&#x2F; 查看全部进程资源限制&#x2F;&#x2F; About more of shell command: &quot;ulimit --help&quot; or &quot;help ulim">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 开发系列笔记(2.2) - 进程基本控制">
+<meta property="og:url" content="https://jamhus-tao.github.io/posts/linux-dev-2-2-process-basic/">
+<meta property="og:site_name" content="JamhusTao の Blog">
+<meta property="og:description" content="建站提交历史文章，原文写作时间 2023 年 2 月前后。  回到文章目录  进程基本控制   进程创建、进程查看、进程重载、进程调试、进程回收    进程状态命令 查看与设置进程资源限制 123$ ulimit -a  &#x2F;&#x2F; 查看全部进程资源限制&#x2F;&#x2F; About more of shell command: &quot;ulimit --help&quot; or &quot;help ulim">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://jamhus-tao.github.io/img/default_cover.png">
+<meta property="article:published_time" content="2023-08-24T12:39:25.000Z">
+<meta property="article:modified_time" content="2023-08-24T12:39:25.000Z">
+<meta property="article:author" content="Jamhus Tao">
+<meta property="article:tag" content="C&#x2F;C++">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Ubuntu">
+<meta property="article:tag" content="并发">
+<meta property="article:tag" content="网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://jamhus-tao.github.io/img/default_cover.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://jamhus-tao.github.io/posts/linux-dev-2-2-process-basic/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-FQ4L3WN8LH"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-FQ4L3WN8LH');
+</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":600},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Linux 开发系列笔记(2.2) - 进程基本控制',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-08-24 20:39:25'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/my.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">113</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">83</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">72</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/default_cover.png')"><nav id="nav"><span id="blog-info"><a href="/" title="JamhusTao の Blog"><span class="site-name">JamhusTao の Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Linux 开发系列笔记(2.2) - 进程基本控制</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-08-24T12:39:25.000Z" title="发表于 2023-08-24 20:39:25">2023-08-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-08-24T12:39:25.000Z" title="更新于 2023-08-24 20:39:25">2023-08-24</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Linux/">Linux</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Linux/Linux-%E5%BC%80%E5%8F%91%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0-%E7%B3%BB%E5%88%97/">Linux 开发系列笔记(系列)</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>10分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Linux 开发系列笔记(2.2) - 进程基本控制"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><div class="note warning flat"><p>建站提交历史文章，原文写作时间 2023 年 2 月前后。</p>
+</div>
+<div class="note default flat"><p><a href="/2023/08/24/Linux/Linux%20%E5%BC%80%E5%8F%91%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0/Linux%20%E5%BC%80%E5%8F%91%E7%B3%BB%E5%88%97%E7%AC%94%E8%AE%B0(0)%20-%20%E5%89%8D%E8%A8%80/">回到文章目录</a></p>
+</div>
+<h2 id="进程基本控制">进程基本控制</h2>
+<ul>
+<li>
+<mark class="hl-label default">进程创建、进程查看、进程重载、进程调试、进程回收</mark> 
+</li>
+</ul>
+<h3 id="进程状态命令">进程状态命令</h3>
+<h4 id="查看与设置进程资源限制">查看与设置进程资源限制</h4>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ ulimit -a  <span class="comment">// 查看全部进程资源限制</span></span><br><span class="line"><span class="comment">// About more of shell command: &quot;ulimit --help&quot; or &quot;help ulimit&quot;</span></span><br><span class="line"><span class="comment">// About more of linux api: &quot;man 2 getrlimit&quot; or &quot;man 2 setrlimit&quot;</span></span><br></pre></td></tr></table></figure>
+<h4 id="查看进程状态快照">查看进程状态快照</h4>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ps aux  <span class="comment">// 或 ps ajx</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>
+<p><code>(默认)</code>：显示当前终端进程及其子进程的粗略信息。</p>
+</li>
+<li>
+<p><code>a</code>：显示终端上的所有进程，包括其他用户进程。</p>
+</li>
+<li>
+<p><code>x</code>：显示无终端的所有进程，不包括其他用户进程。</p>
+</li>
+<li>
+<p><code>u</code>：显示进程详细信息。多为用户关注信息，如：<code>CPU</code>占用、内存占用、<code>STAT</code>状态。</p>
+</li>
+<li>
+<p><code>j</code>：显示进程详细信息。多为控制相关信息，如：<code>PPID</code>、<code>GID</code>、<code>STAT</code>状态。</p>
+</li>
+</ul>
+<p><code>STAT</code>状态：</p>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">状态：</span><br><span class="line">    R    运行或就绪</span><br><span class="line">    S    可中断的睡眠</span><br><span class="line">    D    不可中断的睡眠 (usually IO)</span><br><span class="line">    Z    僵尸进程 (nearly dead)</span><br><span class="line">    X    已死 (should never be seen)</span><br><span class="line">    I    空闲的内核线程</span><br><span class="line">    T    停止或被追踪</span><br><span class="line">    t    追踪时被调试器停止</span><br><span class="line"></span><br><span class="line">其他：</span><br><span class="line">    &lt;    高优先级 (not nice to other users)</span><br><span class="line">    N    低优先级 (nice to other users)</span><br><span class="line">    s    拥有子进程</span><br><span class="line">    l    拥有多线程</span><br><span class="line">    +    前台进程</span><br></pre></td></tr></table></figure>
+<h4 id="监视实时进程状态">监视实时进程状态</h4>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ top</span><br><span class="line">$ top -d <span class="number">1</span> <span class="comment">// 设置刷新时间间隔(秒)</span></span><br></pre></td></tr></table></figure>
+<p>按键操作：</p>
+<ul>
+<li>
+<p><code>h</code>：相关帮助。</p>
+</li>
+<li>
+<p><code>P</code>：按<code>CPU</code>占用排序。</p>
+</li>
+<li>
+<p><code>M</code>：按内存占用排序。</p>
+</li>
+<li>
+<p><code>T</code>：按运行时长排序。</p>
+</li>
+<li>
+<p><code>U</code>：按用户名筛选。</p>
+</li>
+<li>
+<p><code>k</code>：杀死进程，输入无效数据退出。</p>
+</li>
+<li>
+<p><code>q</code>：退出<code>top</code>。</p>
+</li>
+</ul>
+<h4 id="杀死进程">杀死进程</h4>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kill &lt;pid&gt;  <span class="comment">// 杀死进程（默认通过 15 号信号）</span></span><br><span class="line">kill <span class="number">-9</span> &lt;pid&gt;  <span class="comment">// 通过 9 号信号强制杀死进程(自杀, 杀死暂停进程), &quot;kill -l&quot; 查看所有信号。</span></span><br></pre></td></tr></table></figure>
+<h4 id="查看与设置进程号">查看与设置进程号</h4>
+<ul>
+<li><code>getpid</code>，<code>getppid</code></li>
+<li>关于<code>进程组</code>与<code>会话</code>相关更多内容见<code>2.4.1 进程、进程组、会话</code>章节。</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="comment">//     get process id</span></span><br><span class="line"><span class="comment">//         return value:</span></span><br><span class="line"><span class="comment">//             return process id of current process, or -1 for error</span></span><br><span class="line"><span class="function"><span class="type">pid_t</span> <span class="title">getpid</span><span class="params">(<span class="type">void</span>)</span></span>;</span><br><span class="line"><span class="comment">//     get parent process id</span></span><br><span class="line"><span class="comment">//         return value:</span></span><br><span class="line"><span class="comment">//             return parent process id of current process, or -1 for error</span></span><br><span class="line"><span class="function"><span class="type">pid_t</span> <span class="title">getppid</span><span class="params">(<span class="type">void</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// About more:</span></span><br><span class="line"><span class="comment">// $ man 2 getpid</span></span><br></pre></td></tr></table></figure>
+<h3 id="创建子进程">创建子进程</h3>
+<h4 id="创建进程分叉">创建进程分叉</h4>
+<ul>
+<li>进程分叉将创建当前进程（<code>父进程</code>）的拷贝。进程分叉初始，<code>父进程</code>与<code>子进程</code>具有完全相同的状态：两者共享相同代码，运行到代码的相同位置，具有完全相同的数据集。当然，两者的进程标识<code>pid</code>与<code>ppid</code>是不同的。</li>
+<li><code>返回值</code>：进程分叉将有两个返回值，一个来自<code>父进程</code>，一个来自<code>子进程</code>。
+<ul>
+<li>在<code>父进程</code>中，返回<code>子进程</code>的<code>pid</code>。</li>
+<li>在<code>子进程</code>中，返回<code>0</code>。</li>
+<li>如果进程创建异常，不会产生<code>子进程</code>，返回<code>-1</code>。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="comment">// create a child fork process</span></span><br><span class="line"><span class="function"><span class="type">pid_t</span> <span class="title">fork</span><span class="params">(<span class="type">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Fork test:\n&quot;</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="type">int</span> pid = fork();</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">-1</span>) &#123;</span><br><span class="line">        <span class="built_in">perror</span>(<span class="string">&quot;fork&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid) &#123;</span><br><span class="line">        <span class="comment">// parent process</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;This is parent process, pid = %d, ppid = %d\n&quot;</span>, <span class="built_in">getpid</span>(), <span class="built_in">getppid</span>());</span><br><span class="line">        <span class="built_in">sleep</span>(<span class="number">1</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// child process</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;This is child process, pid = %d, ppid = %d\n&quot;</span>, <span class="built_in">getpid</span>(), <span class="built_in">getppid</span>());</span><br><span class="line">        <span class="built_in">sleep</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">3</span>; i++) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%d\t%d\n&quot;</span>, <span class="built_in">getpid</span>(), i);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Fork test:</span><br><span class="line">This is parent process, pid = <span class="number">10001</span>, ppid = <span class="number">1506</span>  <span class="comment">// 假设父进程 id 为 10001</span></span><br><span class="line">This is child process, pid = <span class="number">10086</span>, ppid = <span class="number">10001</span>  <span class="comment">// 假设子进程 id 为 10086</span></span><br><span class="line"><span class="number">10001</span>    <span class="number">1</span></span><br><span class="line"><span class="number">10086</span>    <span class="number">1</span></span><br><span class="line"><span class="number">10001</span>    <span class="number">2</span></span><br><span class="line"><span class="number">10086</span>    <span class="number">2</span></span><br><span class="line"><span class="number">10086</span>    <span class="number">3</span>  <span class="comment">// 无法预判父子进程谁先谁后</span></span><br><span class="line"><span class="number">10001</span>    <span class="number">3</span></span><br></pre></td></tr></table></figure>
+<p>注：由于<code>fork</code>直译为<code>分叉</code>，所以该进程创建又称为进程分叉。</p>
+<h4 id="进程分叉内存管理原理">进程分叉内存管理原理</h4>
+<ul>
+<li><code>fork</code>函数将进程进行拷贝，生成一个完全相同的进程。</li>
+<li>由于<code>fork</code>函数生成一个完全相同的进程，因此<code>子进程</code>将与<code>父进程</code>有相同的虚拟地址映射表。换言之，<code>子进程</code>与<code>父进程</code>的<code>虚拟地址</code>映射到相同的<code>物理地址</code>，但是两者在数据上应该具有独立性，这导致了<code>子进程</code>与<code>父进程</code>对当前数据只有读的权限，不具备写的权限。如果进程对<code>物理地址</code>的值进行修改，将导致两者的数据同时发生修改，这不是期望发生的。</li>
+<li><code>进程分叉</code>运用了<code>写时拷贝</code>的技术，具备了写的权限，同时为<code>进程分叉</code>节约了大量的时间与空间。在<code>进程分叉</code>的初始状态，<code>子进程</code>与<code>父进程</code>的虚拟内存指向相同的真实内存空间，当<code>子进程</code>与<code>父进程</code>的任意一方需要修改时，修改部分的虚拟内存会指向一片新的真实内存，并赋予这个空间新的值。这样做的好处是，例如代码和一些无需更改的数据，将不会重复占用真实内存。</li>
+</ul>
+<img src="https://s2.loli.net/2023/08/24/7vqBeUsrckLnyIQ.jpg" style="zoom:33%;" />
+<ul>
+<li>以上过程均由内核自动完成。</li>
+</ul>
+<h4 id="退出进程">退出进程</h4>
+<ul>
+<li>进程退出的方法有三种：<code>_exit(0)</code>、<code>exit(0)</code>（推荐）、<code>main</code>函数中的<code>return 0</code>。</li>
+<li><code>main</code>函数中的<code>return 0</code>实际上是调用了<code>exit(0)</code>。</li>
+<li><code>exit</code>函数是<code>标准C库</code>函数，是对<code>Linux</code>函数<code>_exit</code>的封装。</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="comment">//     exit a process</span></span><br><span class="line"><span class="comment">//         status:</span></span><br><span class="line"><span class="comment">//             exit status, 0~255</span></span><br><span class="line"><span class="type">void</span> _exit(<span class="type">int</span> status);</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="comment">//     exit a process</span></span><br><span class="line"><span class="comment">//         status:</span></span><br><span class="line"><span class="comment">//            exit status</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">exit</span><span class="params">(<span class="type">int</span> status)</span></span>;</span><br></pre></td></tr></table></figure>
+<h3 id="GDB-多进程调试">GDB 多进程调试</h3>
+<ol>
+<li>关闭<code>detach-on-fork</code>才能在调试中切换进程。</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(gdb) show detach-on-fork  <span class="comment">// 显示 detach-on-fork 选择</span></span><br><span class="line">(gdb) set detach-on-fork off  <span class="comment">// 关闭 detach-on-fork 选项, on / off</span></span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>设置<code>follow-fork-mode</code>跟踪起始进程。</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(gdb) show follow-fork-mode  <span class="comment">// 显示 follow-fork-mode 选择</span></span><br><span class="line">(gdb) set follow-fork-mode parent  <span class="comment">// 设置 follow-fork-mode 选项, parent / child</span></span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>切换跟踪进程。</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 请先确保 detach-on-fork 选项关闭</span></span><br><span class="line"><span class="comment">// 切换至的进程将处于暂停状态, 暂停在进程创建位置, 或上次进程切出时位置</span></span><br><span class="line"><span class="comment">// 暂停时, 进程 STAT 为 t, 可使用 &quot;ps&quot; 查看</span></span><br><span class="line">(gdb) info inferiors  <span class="comment">// 显示所有进程及其 ID</span></span><br><span class="line">(gdb) inferior &lt;ID&gt;  <span class="comment">// 切换跟踪进程</span></span><br></pre></td></tr></table></figure>
+<h3 id="exec-函数簇重载进程">exec 函数簇重载进程</h3>
+<ul>
+<li><code>execl</code>、<code>execlp</code>、<code>execle</code>、<code>execv</code>、<code>execvp</code>、<code>execvpe</code></li>
+<li><code>exec</code>函数簇将重载进程，直接覆盖当前进程代码，因此<code>exec</code>函数簇通常需要在<code>fork</code>进程中执行。</li>
+<li><code>l</code>：参数使用列表传递，传递一系列参数，以<code>NULL</code>参数（<code>哨兵</code>）结尾。</li>
+<li><code>p</code>：在<code>环境变量</code>和当前路径中查找<code>file</code>，其他函数仅在当前路径查找。</li>
+<li><code>e</code>：传递<code>envp</code>数组指定路径搜索目录，此时<code>哨兵</code>显得尤为重要。</li>
+<li><code>v</code>：参数使用<code>argv</code>数组传递，而不是参数列表。</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">execl</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname, <span class="type">const</span> <span class="type">char</span> *arg, ...<span class="comment">/* (char  *) NULL */</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">execlp</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *file, <span class="type">const</span> <span class="type">char</span> *arg, ...<span class="comment">/* (char  *) NULL */</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">execle</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname, <span class="type">const</span> <span class="type">char</span> *arg, ...<span class="comment">/*, (char *) NULL, char *const envp[] */</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">execv</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *pathname, <span class="type">char</span> *<span class="type">const</span> argv[])</span></span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">execvp</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *file, <span class="type">char</span> *<span class="type">const</span> argv[])</span></span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">execvpe</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *file, <span class="type">char</span> *<span class="type">const</span> argv[], <span class="type">char</span> *<span class="type">const</span> envp[])</span></span>;</span><br><span class="line"><span class="comment">//     execute a file</span></span><br><span class="line"><span class="comment">//         pathname / file:</span></span><br><span class="line"><span class="comment">//             the file path to execute</span></span><br><span class="line"><span class="comment">//         return value:</span></span><br><span class="line"><span class="comment">//             no return on success, or return -1 for error</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// About more</span></span><br><span class="line"><span class="comment">// man 3 exec</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>注：根据习惯，第一个参数为文件名，即本身。如<code>ps aux</code>参数为<code>ps</code>、<code>aux</code>。</li>
+<li>注：如果执行成功没有<code>返回值</code>，因为当前进程代码已覆盖，无法继续执行。</li>
+<li>
+<mark class="hl-label default">注：system 函数实际是对 fork 函数与 exec 函数簇的封装，通常使用 system 函数可以更方便的满足需求。</mark> 
+</li>
+</ul>
+<h3 id="回收子进程">回收子进程</h3>
+<h4 id="孤儿进程与僵尸进程">孤儿进程与僵尸进程</h4>
+<ul>
+<li><code>孤儿进程</code>：<code>父进程</code>结束、<code>子进程</code>尚未结束，此时<code>子进程</code>为<code>孤儿进程</code>，<code>init进程</code>（<code>PID</code>为<code>1</code>）代替<code>父进程</code>托管<code>子进程</code>。<code>孤儿进程</code>虽然脱离<code>父进程</code>控制，但是会自然结束，通常不具有危害。</li>
+<li><code>僵尸进程</code>：<code>子进程</code>结束、<code>父进程</code>尚未结束，如果<code>父进程</code>未处理<code>子进程</code>的结束信息，未回收<code>子进程</code>的内核区数据，此时<code>子进程</code>为<code>僵尸进程</code>。在进程概述中讲到，<code>子进程</code>结束不会自动释放内核区数据，等待<code>父进程</code>接收并处理其结束信息。如果处于将死状态的<code>子进程</code>一直存在，将不断占用内核区内存和<code>PID</code>，大量积累具有危害。</li>
+<li><code>父进程</code>不处理<code>僵尸进程</code>，在其结束后，<code>init</code>进程会为其处理<code>僵尸进程</code>。但是如果<code>父进程</code>是长期运行的进程（如服务器进程），危害将持续积累。</li>
+<li><code>wait</code>函数与<code>waitpid</code>函数用于处理和回收<code>子进程</code>内核区数据。</li>
+</ul>
+<h4 id="wait-函数回收子进程">wait 函数回收子进程</h4>
+<ul>
+<li>
+<p><code>wait</code>函数与<code>waitpid</code>函数用于接收进程状态变化，默认<code>阻塞</code>进程等待任意<code>子进程</code>状态变化。</p>
+</li>
+<li>
+<p><code>返回值</code>：当任意进程状态变化，函数返回子进程<code>PID</code>，设置<code>wstatus</code>值表示该<code>子进程</code>状态变化编码（后述情况不设置<code>wstatus</code>）；当<code>WNOHANG</code>选项打开，并且存在未结束<code>子进程</code>，返回<code>0</code>（当<code>WNOHANG</code>选项关闭，并且存在未结束<code>子进程</code>，阻塞）；当所有<code>子进程</code>已回收，抛出<code>No child process</code>错误，返回<code>-1</code>；当出现其他错误，返回<code>-1</code>。</p>
+</li>
+<li>
+<p><code>pid</code>：分为下述情况：</p>
+<ul>
+<li><code>&lt; -1</code>：等待任意<code>组ID</code>为<code>-pid</code>（<code>pid</code>的绝对值）的<code>子进程</code>状态变化。</li>
+<li><code>-1</code>：等待任意<code>子进程</code>状态变化。</li>
+<li><code>0</code>：等待任意<code>组ID</code>与函数启动时<code>父进程</code>的<code>组ID</code>相同的<code>子进程</code>状态变化。</li>
+<li><code>&gt; 0</code>：等待<code>进程ID</code>为<code>pid</code>的<code>子进程</code>状态变化。</li>
+<li>如果对应进程符号<code>ID</code>要求但不是<code>子进程</code>（<code>子孙进程</code>不属于<code>子进程</code>）的，不属于控制范围。</li>
+</ul>
+</li>
+<li>
+<p><code>wstatus</code>：整型指针，用于接收状态变化编码，可为<code>NULL</code>表示不接收信息。解码宏如下：</p>
+<ul>
+<li><code>WIFEXITED(wstatus)</code>：返回01整型。是否正常退出（<code>exit</code>为正常退出）。</li>
+<li><code>WEXITSTATUS(wstatus)</code>：返回整型。如果上宏为真，返回退出状态（<code>exit</code>参数，<code>0~255</code>）。</li>
+<li><code>WIFSIGNALED(wstatus)</code>：返回01整型。是否异常退出（信号退出为异常退出）。</li>
+<li><code>WTERMSIG(wstatus)</code>：返回整型。如果上宏为真，返回引发退出的信号。</li>
+<li><code>WIFSTOPPED(wstatus)</code>：返回01整型。是否进入暂停。</li>
+<li><code>WSTOPSIG(wstatus)</code>：返回整型。如果上宏为真，返回引发暂停的信号。</li>
+<li><code>WIFCONTINUED(wstatus)</code>：返回01整型。是否进程继续。</li>
+</ul>
+</li>
+<li>
+<p><code>options</code>：宏如下：（使用<code>|</code>连接）</p>
+<ul>
+<li><code>(默认)</code>：等待进程正常退出、进程异常退出（以及被追踪进程暂停）。</li>
+<li><code>WNOHANG</code>：不阻塞，立即返回。</li>
+<li><code>WUNTRACED</code>：也会等待进程（未被追踪进程）被暂停。</li>
+<li><code>WCONTINUED</code>：也会等待进程被继续。</li>
+</ul>
+</li>
+<li>
+<p><code>wait(wstatus)</code>等价于<code>waitpid(-1, wstatus, 0)</code>。</p>
+</li>
+<li>
+<p>关于更多：<code>$ man 2 wait</code>。</p>
+</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="comment">// wait for the change state</span></span><br><span class="line"><span class="function"><span class="type">pid_t</span> <span class="title">wait</span><span class="params">(<span class="type">int</span> *wstatus)</span></span>;</span><br><span class="line"><span class="function"><span class="type">pid_t</span> <span class="title">waitpid</span><span class="params">(<span class="type">pid_t</span> pid, <span class="type">int</span> *wstatus, <span class="type">int</span> options)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="comment">// print error message if return value is -1</span></span><br><span class="line"><span class="built_in">perror</span>(<span class="string">&quot;wait&quot;</span>);</span><br></pre></td></tr></table></figure>
+<h4 id="信号回收子进程">信号回收子进程</h4>
+<ul>
+<li>我们注意到<code>wait</code>函数回收子进程时，需要主动检测是否有子进程状态变化；如果我们希望即使处理子进程，必须阻塞的回收子进程，或者使用独立线程处理子进程。在<code>2.3.4 信号</code>章节中将提到，子进程状态变化时将触发<code>SIGCHLD</code>信号，届时可以考虑使用信号即时回收子进程。</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 请先了解 2.3.4 信号 章节后阅读此代码</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;signal.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">process_signal</span><span class="params">(<span class="type">int</span> sig)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (sig == SIGCHLD) &#123;</span><br><span class="line">        <span class="type">int</span> ret = <span class="number">1</span>, wstatus;</span><br><span class="line">        <span class="keyword">while</span> (ret &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="built_in">waitpid</span>(<span class="number">-1</span>, &amp;wstatus, WNOHANG);</span><br><span class="line">            <span class="comment">// 业务逻辑</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/C-C/">C/C++</a><a class="post-meta__tags" href="/tags/Linux/">Linux</a><a class="post-meta__tags" href="/tags/Ubuntu/">Ubuntu</a><a class="post-meta__tags" href="/tags/%E5%B9%B6%E5%8F%91/">并发</a><a class="post-meta__tags" href="/tags/%E7%BD%91%E7%BB%9C/">网络</a></div><div class="post_share"><div class="social-share" data-image="/img/default_cover.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/linux-dev-2-1-process-introduction/" title="Linux 开发系列笔记(2.1) - 进程概述"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Linux 开发系列笔记(2.1) - 进程概述</div></div></a></div><div class="next-post pull-right"><a href="/posts/linux-dev-2-3-ipc/" title="Linux 开发系列笔记(2.3) - 进程通信"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Linux 开发系列笔记(2.3) - 进程通信</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/linux-dev-0-preface/" title="Linux 开发系列笔记(0) - 前言"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-24</div><div class="title">Linux 开发系列笔记(0) - 前言</div></div></a></div><div><a href="/posts/linux-dev-1-1-install/" title="Linux 开发系列笔记(1.1) - Linux 开发环境搭建"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-24</div><div class="title">Linux 开发系列笔记(1.1) - Linux 开发环境搭建</div></div></a></div><div><a href="/posts/linux-dev-1-2-gcc/" title="Linux 开发系列笔记(1.2) - GCC&#x2F;G++ 基本使用"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-24</div><div class="title">Linux 开发系列笔记(1.2) - GCC&#x2F;G++ 基本使用</div></div></a></div><div><a href="/posts/linux-dev-1-3-lib/" title="Linux 开发系列笔记(1.3) - 静态库与动态库制作"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-24</div><div class="title">Linux 开发系列笔记(1.3) - 静态库与动态库制作</div></div></a></div><div><a href="/posts/linux-dev-1-6-directory-opt/" title="Linux 开发系列笔记(1.6) - 文件操作与目录操作"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-24</div><div class="title">Linux 开发系列笔记(1.6) - 文件操作与目录操作</div></div></a></div><div><a href="/posts/linux-dev-1-4-make/" title="Linux 开发系列笔记(1.4) - Makefile 基本使用"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-24</div><div class="title">Linux 开发系列笔记(1.4) - Makefile 基本使用</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Jamhus Tao</div><div class="author-info__description">找点好玩的去！</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">113</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">83</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">72</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/jamhus-tao"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/img/qq.jpg" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/img/weixin.jpg" target="_blank" title="Weixin"><i class="fab fa-weixin"></i></a><a class="social-icon" href="mailto:jamhus_tao@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="https://github.com/jamhus-tao" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E5%9F%BA%E6%9C%AC%E6%8E%A7%E5%88%B6"><span class="toc-number">1.</span> <span class="toc-text">进程基本控制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E7%8A%B6%E6%80%81%E5%91%BD%E4%BB%A4"><span class="toc-number">1.1.</span> <span class="toc-text">进程状态命令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E4%B8%8E%E8%AE%BE%E7%BD%AE%E8%BF%9B%E7%A8%8B%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6"><span class="toc-number">1.1.1.</span> <span class="toc-text">查看与设置进程资源限制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E8%BF%9B%E7%A8%8B%E7%8A%B6%E6%80%81%E5%BF%AB%E7%85%A7"><span class="toc-number">1.1.2.</span> <span class="toc-text">查看进程状态快照</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%9B%91%E8%A7%86%E5%AE%9E%E6%97%B6%E8%BF%9B%E7%A8%8B%E7%8A%B6%E6%80%81"><span class="toc-number">1.1.3.</span> <span class="toc-text">监视实时进程状态</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9D%80%E6%AD%BB%E8%BF%9B%E7%A8%8B"><span class="toc-number">1.1.4.</span> <span class="toc-text">杀死进程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E4%B8%8E%E8%AE%BE%E7%BD%AE%E8%BF%9B%E7%A8%8B%E5%8F%B7"><span class="toc-number">1.1.5.</span> <span class="toc-text">查看与设置进程号</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%AD%90%E8%BF%9B%E7%A8%8B"><span class="toc-number">1.2.</span> <span class="toc-text">创建子进程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E8%BF%9B%E7%A8%8B%E5%88%86%E5%8F%89"><span class="toc-number">1.2.1.</span> <span class="toc-text">创建进程分叉</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E5%88%86%E5%8F%89%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.2.</span> <span class="toc-text">进程分叉内存管理原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%80%E5%87%BA%E8%BF%9B%E7%A8%8B"><span class="toc-number">1.2.3.</span> <span class="toc-text">退出进程</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GDB-%E5%A4%9A%E8%BF%9B%E7%A8%8B%E8%B0%83%E8%AF%95"><span class="toc-number">1.3.</span> <span class="toc-text">GDB 多进程调试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#exec-%E5%87%BD%E6%95%B0%E7%B0%87%E9%87%8D%E8%BD%BD%E8%BF%9B%E7%A8%8B"><span class="toc-number">1.4.</span> <span class="toc-text">exec 函数簇重载进程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9E%E6%94%B6%E5%AD%90%E8%BF%9B%E7%A8%8B"><span class="toc-number">1.5.</span> <span class="toc-text">回收子进程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%A4%E5%84%BF%E8%BF%9B%E7%A8%8B%E4%B8%8E%E5%83%B5%E5%B0%B8%E8%BF%9B%E7%A8%8B"><span class="toc-number">1.5.1.</span> <span class="toc-text">孤儿进程与僵尸进程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#wait-%E5%87%BD%E6%95%B0%E5%9B%9E%E6%94%B6%E5%AD%90%E8%BF%9B%E7%A8%8B"><span class="toc-number">1.5.2.</span> <span class="toc-text">wait 函数回收子进程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BF%A1%E5%8F%B7%E5%9B%9E%E6%94%B6%E5%AD%90%E8%BF%9B%E7%A8%8B"><span class="toc-number">1.5.3.</span> <span class="toc-text">信号回收子进程</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cpp-cmake-abc/" title="CMake 项目构建和代码测试">CMake 项目构建和代码测试</a><time datetime="2024-09-27T13:01:00.000Z" title="更新于 2024-09-27 21:01:00">2024-09-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ds-consistent-hash/" title="浅析几种一致性哈希算法">浅析几种一致性哈希算法</a><time datetime="2024-09-11T09:58:00.000Z" title="更新于 2024-09-11 17:58:00">2024-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ds-bloom-filter/" title="布隆过滤器及其误判率推导">布隆过滤器及其误判率推导</a><time datetime="2024-07-14T06:28:00.000Z" title="更新于 2024-07-14 14:28:00">2024-07-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cs-hanmming-check/" title="海明校验码 - 计算机网络">海明校验码 - 计算机网络</a><time datetime="2024-06-26T05:24:00.000Z" title="更新于 2024-06-26 13:24:00">2024-06-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/acm-lanqiaocup-24cbg/" title="2024 年第十五届蓝桥杯 C/C++ B组国赛题解">2024 年第十五届蓝桥杯 C/C++ B组国赛题解</a><time datetime="2024-06-08T05:49:00.000Z" title="更新于 2024-06-08 13:49:00">2024-06-08</time></div></div></div></div></div></div></main><footer id="footer" style="background: #171717"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2025 By Jamhus Tao</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.umd.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="/pluginsSrc/katex/dist/katex.min.css"><script src="/pluginsSrc/katex/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('/pluginsSrc/mermaid/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addModeChange('mermaid', runMermaid)
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: 'f5ab0e5f4c6139f6fc66',
+      clientSecret: '34afc0f7b7a9086e590fbcb099bae698933ed074',
+      repo: 'jamhus-tao.github.io.gitalk',
+      owner: 'jamhus-tao',
+      admin: ['jamhus-tao'],
+      id: 'd9b3ded609bf606c974dfb0be88e68c7',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    getCSS('/pluginsSrc/gitalk/dist/gitalk.css')
+    getScript('/pluginsSrc/gitalk/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.textContent= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !false) {
+  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script data-pjax defer src="/js/my.js"></script><script defer="defer" id="ribbon" src="/pluginsSrc/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

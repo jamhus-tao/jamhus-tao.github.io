@@ -1,0 +1,334 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Github + Hexo + Butterfly 建站笔记(七) - 解决一些遗留问题 | JamhusTao の Blog</title><meta name="author" content="Jamhus Tao"><meta name="copyright" content="Jamhus Tao"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="关于我的建站过程中的若干问题，其中多数为用到的平台的一些 BUG 的应对之策：路径名大小写变换导致的不可访问问题；URL 变换导致的外站链接失效问题；为什么我的锚不起作用；关于 Butterfly 标签外挂 label 在行首的 BUG。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Github + Hexo + Butterfly 建站笔记(七) - 解决一些遗留问题">
+<meta property="og:url" content="https://jamhus-tao.github.io/posts/blog-hexo-7-bugfix/">
+<meta property="og:site_name" content="JamhusTao の Blog">
+<meta property="og:description" content="关于我的建站过程中的若干问题，其中多数为用到的平台的一些 BUG 的应对之策：路径名大小写变换导致的不可访问问题；URL 变换导致的外站链接失效问题；为什么我的锚不起作用；关于 Butterfly 标签外挂 label 在行首的 BUG。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://jamhus-tao.github.io/img/default_cover.png">
+<meta property="article:published_time" content="2023-10-01T03:55:00.000Z">
+<meta property="article:modified_time" content="2024-02-13T07:45:00.000Z">
+<meta property="article:author" content="Jamhus Tao">
+<meta property="article:tag" content="Github">
+<meta property="article:tag" content="Butterfly">
+<meta property="article:tag" content="Bugfix">
+<meta property="article:tag" content="Git">
+<meta property="article:tag" content="正则表达式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://jamhus-tao.github.io/img/default_cover.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://jamhus-tao.github.io/posts/blog-hexo-7-bugfix/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-FQ4L3WN8LH"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-FQ4L3WN8LH');
+</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":600},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Github + Hexo + Butterfly 建站笔记(七) - 解决一些遗留问题',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-02-13 15:45:00'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/my.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">113</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">83</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">72</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/default_cover.png')"><nav id="nav"><span id="blog-info"><a href="/" title="JamhusTao の Blog"><span class="site-name">JamhusTao の Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Github + Hexo + Butterfly 建站笔记(七) - 解决一些遗留问题</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-10-01T03:55:00.000Z" title="发表于 2023-10-01 11:55:00">2023-10-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-02-13T07:45:00.000Z" title="更新于 2024-02-13 15:45:00">2024-02-13</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%BB%BA%E7%AB%99%E7%AC%94%E8%AE%B0-%E7%B3%BB%E5%88%97/">建站笔记(系列)</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>12分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Github + Hexo + Butterfly 建站笔记(七) - 解决一些遗留问题"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><div class="note default flat"><p><a href="/2023/07/25/%E5%BB%BA%E7%AB%99%E7%AC%94%E8%AE%B0/Github%20+%20Hexo%20+%20Butterfly%20%E5%BB%BA%E7%AB%99%E7%AC%94%E8%AE%B0(%E9%9B%B6)%20-%20%E5%89%8D%E8%A8%80/">回到文章目录</a></p>
+</div>
+<h2 id="路径名大小写变换导致的不可访问问题">路径名大小写变换导致的不可访问问题</h2>
+<h3 id="问题描述">问题描述</h3>
+<p>如果你有使用英文命名的习惯，那么在使用 Hexo 的过程中可能会遇到这样一个问题：当将文件名的大小写改变时，重新 deploy 到 git 仓库后使用路径无法访问了。</p>
+<p>另外，导致文件名的大小写改变也可以是间接导致的。如，改变文章的 tags 或 categories 的大小写，Hexo 会为你生成与其一致的文件夹。</p>
+<p>而我遇到的就是后面一种问题，因为我习惯将 tags 命名为英文，但是一次大小写不统一于是统一改成了首字母大写，然后就导致了上面的问题。如无法访问 <code>https://jamhus-tao.github.io/tags/Butterfly</code>，因为其路径应该是 <code>https://jamhus-tao.github.io/tags/butterfly</code>。</p>
+<h3 id="导致原因">导致原因</h3>
+<p>其实遇到这类问题我们很自然的想到是是否忽略大小写不统一，这个问题我们日常编程中也很常见，Hexo 为我们提供了 <code>hexo clean</code> 的命令清除本地生成的数据，但这时似乎不顶用了。</p>
+<p>导致这个问题的并不是本地的 Hexo 出了问题，而是远程的 Github 出了问题。使用 <code>hexo clean</code> 可以将本地生成的文件清理的很干净，但是我们忘记了将本地分支 <code>push</code> 到远程时并不清除远程的上一个分支，<code>git</code> 是增量式记录的，它会计算与上一次提交的差异，然后将差异附加。但是 <code>git</code> 忽略大小写，而网页路径区分大小写，这就导致了将本地分支 <code>push</code> 上去之后，远程的文件名依然为 <code>butterfly</code>，而在生成的网页文件中的链接是 <code>Butterfly</code>，网页路径又区分大小写而无法访问。</p>
+<h3 id="解决方案">解决方案</h3>
+<p>知道了问题，解决这个方案就很简单，我们只需要绕过 <code>git</code> 的增量式记录即可。</p>
+<p>首先在 <code>.deploy_git</code> 目录下打开命令行，删除除 <code>.git</code> 外的所有文件后 <code>commit</code> 然后拉取前一个 <code>commit</code> 重新 <code>commit</code> 一遍，这样就可以强制更新所有信息。</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 先删除所有除 .git 外的文件</span></span><br><span class="line">git tag org                <span class="comment"># 新增 tag 方便切换</span></span><br><span class="line">git add <span class="literal">-A</span></span><br><span class="line">git commit <span class="literal">-m</span> <span class="string">&quot;site cleared.&quot;</span></span><br><span class="line">git tag new                <span class="comment"># 新增 tag 方便切换</span></span><br><span class="line">git reset <span class="literal">--hard</span> org    <span class="comment"># 拉取未删除版本, 并重置工作区</span></span><br><span class="line">git reset new            <span class="comment"># 拉取删除版本, 但不重置工作区</span></span><br><span class="line">git add <span class="literal">-A</span></span><br><span class="line">git commit <span class="literal">-m</span> <span class="string">&quot;site fixed.&quot;</span></span><br><span class="line">git tag <span class="literal">-d</span> org new        <span class="comment"># 删除临时 tag</span></span><br></pre></td></tr></table></figure>
+<br>
+<h2 id="URL-变换导致的外站链接失效问题">URL 变换导致的外站链接失效问题</h2>
+<h3 id="吐槽：HEXO-的-URL-令我诟病">吐槽：HEXO 的 URL 令我诟病</h3>
+<p>在 <code>hexo</code> 中，<code>URL</code> 生成的默认规则是 <code>:year/:month/:day/:title</code>，也就是说一条生成的 <code>URL</code> 包含发布时间和文章名称这些信息。但我个人不是很喜欢这样的规则，查阅 <code>hexo</code> 官方文档也发现它是可配置的：</p>
+<p><a target="_blank" rel="noopener" href="https://hexo.io/docs/permalinks">Permalinks | Hexo 官方文档</a></p>
+<p><img src="https://s2.loli.net/2024/01/27/wvt6J5EqHMFV4Bh.png" alt=" "></p>
+<p>按照我个人对于 <code>URL</code> 的理解，<code>URL</code> 除了保证唯一、持久有效外。如果它希望被频繁转发，那么它至少要是短小的，最好还是方便记忆，特征鲜明的。例如我们来评价一下下面的 <code>URL</code> 命名：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">https://jamhus-tao.github.io/posts/id/175/  <span class="comment"># 短小精干，转发方便, 看着舒服</span></span><br><span class="line">https://jamhus-tao.github.io/posts/afe23c723fe2  <span class="comment"># 12-hash，也很短小方便</span></span><br><span class="line">https://jamhus-tao.github.io/posts/blog-hexo-7-bugfix/  <span class="comment"># 方便记忆，特征鲜明，看到就知道要讲什么</span></span><br><span class="line">https://jamhus-tao.github.io/2023/10/01/%E5%BB%BA%E7%AB%99%E7%AC%94%E8%AE%B0/Github%20+%20Hexo%20+%20Butterfly%20%E5%BB%BA%E7%AB%99%E7%AC%94%E8%AE%B0(%E4%B8%83)%20-%20%E8%A7%A3%E5%86%B3%E4%B8%80%E4%BA%9B%E9%9A%90%E5%BD%A2%E9%97%AE%E9%A2%98/  </span><br><span class="line"><span class="comment"># 看到这个我浑身难受，其实这个问题在中文环境特别突出，而 hexo 的最大用户还是中文用户</span></span><br></pre></td></tr></table></figure>
+<p><code>hexo</code> 事实上也提供了一些清爽的 <code>url</code> 规则。比如 <code>id</code> 和 <code>hash</code> 两个选项，但是它们依然存在一些问题：<code>id</code> 是不可持久的，也就是你 <code>clean</code> 仓库之后重新生成可能原来的 <code>id</code> 就打乱了，那么你分享在外站链接也就全部失效了；另外 <code>hash</code> 是由发文时间和文章标题生成的，有时候希望改下标题原链接同样会失效。</p>
+<h3 id="问题重述">问题重述</h3>
+<p>所以我们希望解决的问题是：如何在 <code>hexo</code> 内维护稳定且方便的链接，这个链接不应与任何未来可能修改的文章信息关联。</p>
+<p>最后我们还会解决博客长期维护的历史问题：即之前使用过的链接已经更换，我需要将所有历史链接重定向到新链接。</p>
+<h3 id="设置长期有效链接">设置长期有效链接</h3>
+<p>这里建议你将配置文件中的默认 URL 生成规则设置为 <code>hash</code>，因为我个人更倾向这种清爽且相对稳定的方式。具体参考：<a target="_blank" rel="noopener" href="https://hexo.io/docs/permalinks">Permalinks | Hexo 官方文档</a></p>
+<p>然后我们应该养成为每篇文章命名长期有效链接的习惯，每篇文章的自定义链接可以写在 <code>YAML Front Matter</code> 中的 <code>permalink</code> 字段，如果该字段被设置，它将替代默认方案。具体参考：<a target="_blank" rel="noopener" href="https://hexo.io/docs/front-matter">Front-matter | Hexo 官方文档</a></p>
+<p>这里有个技巧，在 <code>scaffolds</code> 目录下可以书写文章模板，使用 <code>hexo new post</code> 实际就会生成一份到 <code>source/_posts</code> 目录下。下面是一个示例：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">title:</span> <span class="string">Github</span> <span class="string">+</span> <span class="string">Hexo</span> <span class="string">+</span> <span class="string">Butterfly</span> <span class="string">建站笔记(七)</span> <span class="bullet">-</span> <span class="string">解决一些遗留问题</span></span><br><span class="line"><span class="attr">date:</span> <span class="number">2023-10-01 11:55:00</span></span><br><span class="line"><span class="attr">published:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">permalink:</span> <span class="string">posts/blog-hexo-7-bugfix/</span>  <span class="comment"># 设置长期有效链接</span></span><br></pre></td></tr></table></figure>
+<h3 id="重定向历史链接">重定向历史链接</h3>
+<p>我现在希望将历史链接全部重定向到新链接，<code>hexo</code> 本身并不支持这个功能，这需要我们自己外挂一些脚本。首先我们需要在 <code>YAML Front Matter</code> 中加入 <code>otherlink</code> 字段，并在这个字段中加入其他链接。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">title:</span> <span class="string">Github</span> <span class="string">+</span> <span class="string">Hexo</span> <span class="string">+</span> <span class="string">Butterfly</span> <span class="string">建站笔记(七)</span> <span class="bullet">-</span> <span class="string">解决一些遗留问题</span></span><br><span class="line"><span class="attr">date:</span> <span class="number">2023-10-01 11:55:00</span></span><br><span class="line"><span class="attr">published:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">permalink:</span> <span class="string">posts/blog-hexo-7-bugfix/</span>  <span class="comment"># 设置长期有效链接</span></span><br><span class="line"><span class="attr">otherlink:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">posts/id/175/</span></span><br><span class="line">  <span class="bullet">-</span> <span class="number">2023</span><span class="string">/10/01/%E5%BB%BA%E7%AB%99%E7%AC%94%E8%AE%B0/Github%20+%20Hexo%20+%20Butterfly%20%E5%BB%BA%E7%AB%99%E7%AC%94%E8%AE%B0(%E4%B8%83)%20-%20%E8%A7%A3%E5%86%B3%E4%B8%80%E4%BA%9B%E9%9A%90%E5%BD%A2%E9%97%AE%E9%A2%98/</span></span><br></pre></td></tr></table></figure>
+<p>然后为重定向网页创建一个模板到 <code>scaffolds/skip.html</code>。网页跳转的非常快，用最简单的网页即可，当然你也可以魔改，做些定时跳转，但是我对 <code>html</code> 不是很熟悉。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-handlebars"><span class="language-xml"></span></span></span><br><span class="line"><span class="language-xml"><span class="language-handlebars">        <span class="comment">&lt;!-- &#123;:&#125; 表示待填充的链接 --&gt;</span></span></span></span><br><span class="line"><span class="language-xml"><span class="language-handlebars">        window.location.href = &quot;/&#123;:&#125;&quot;; </span></span></span><br><span class="line"><span class="language-xml"><span class="language-handlebars">    </span></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Redirecting...<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>然后我们需要提供脚本，为我们生成需要的跳转网页，将它合并到博客中，它的原理我就不具体介绍了，这里我们选择使用 <code>python</code> 来完成这项工作，将它命名为 <code>otherlink.py</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> urllib.parse <span class="keyword">import</span> unquote</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> yaml  <span class="comment"># 安装第三方库, pip install pyyaml</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">PATH_POST = <span class="string">&quot;source/_posts&quot;</span></span><br><span class="line">PATH_PUBLIC = <span class="string">&quot;public&quot;</span></span><br><span class="line">PATH_TEMPLATE = <span class="string">&quot;scaffolds/skip.html&quot;</span></span><br><span class="line">AVAILABLE_EXT = (<span class="string">&quot;.md&quot;</span>,)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(PATH_TEMPLATE, <span class="string">&quot;r&quot;</span>, encoding=<span class="string">&quot;utf-8&quot;</span>) <span class="keyword">as</span> file:</span><br><span class="line">    template = file.read()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">check_blank_line</span>(<span class="params">line: <span class="built_in">str</span></span>):</span><br><span class="line">    <span class="keyword">return</span> line.strip() == <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">check_yaml_line</span>(<span class="params">line: <span class="built_in">str</span></span>):</span><br><span class="line">    <span class="keyword">return</span> line.count(<span class="string">&quot;-&quot;</span>) == <span class="built_in">len</span>(line.strip())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">split_yaml</span>(<span class="params">fp: <span class="built_in">str</span></span>):</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(fp, <span class="string">&quot;r&quot;</span>, encoding=<span class="string">&quot;utf-8&quot;</span>) <span class="keyword">as</span> _io:</span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            _line = _io.readline()</span><br><span class="line">            <span class="keyword">if</span> check_blank_line(_line):</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            <span class="keyword">if</span> check_yaml_line(_line):</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            <span class="keyword">return</span> &#123;&#125;</span><br><span class="line">        _data = []</span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            _line = _io.readline()</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(_line) == <span class="number">0</span>:</span><br><span class="line">                <span class="keyword">return</span> &#123;&#125;</span><br><span class="line">            <span class="keyword">if</span> check_blank_line(_line):</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            <span class="keyword">if</span> check_yaml_line(_line):</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            _data.append(_line)</span><br><span class="line">        <span class="keyword">return</span> yaml.safe_load(<span class="string">&quot;&quot;</span>.join(_data))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">check_link</span>(<span class="params">new_fp: <span class="built_in">str</span>, post_link</span>):</span><br><span class="line">    <span class="keyword">if</span> post_link <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">    _fp = os.path.join(new_fp, <span class="string">&quot;index.html&quot;</span>)</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(_fp, <span class="string">&quot;r&quot;</span>, encoding=<span class="string">&quot;utf-8&quot;</span>) <span class="keyword">as</span> _io:</span><br><span class="line">        <span class="keyword">return</span> post_link <span class="keyword">in</span> _io.read()  <span class="comment"># 这个验证是不严谨的</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">other_link_generate</span>():</span><br><span class="line">    <span class="keyword">for</span> _path, _, _files <span class="keyword">in</span> os.walk(PATH_POST):</span><br><span class="line">        <span class="keyword">for</span> _file <span class="keyword">in</span> _files:</span><br><span class="line">            <span class="keyword">if</span> _file.startswith(<span class="string">&quot;.&quot;</span>) <span class="keyword">or</span> <span class="keyword">not</span> _file.endswith(AVAILABLE_EXT):</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            _fp = os.path.join(_path, _file)</span><br><span class="line">            _yaml = split_yaml(_fp)</span><br><span class="line">            _post_link = _yaml.get(<span class="string">&quot;permalink&quot;</span>, <span class="literal">None</span>)</span><br><span class="line">            _other_link = _yaml.get(<span class="string">&quot;otherlink&quot;</span>, [])</span><br><span class="line">            <span class="keyword">if</span> _other_link <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">isinstance</span>(_other_link, <span class="built_in">list</span>):</span><br><span class="line">                _other_link = [_other_link]</span><br><span class="line">            <span class="keyword">for</span> _item <span class="keyword">in</span> _other_link:</span><br><span class="line">                _item = unquote(_item)</span><br><span class="line">                _new_fp = os.path.join(PATH_PUBLIC, _item)</span><br><span class="line">                os.makedirs(_new_fp, exist_ok=<span class="literal">True</span>)</span><br><span class="line">                <span class="keyword">with</span> <span class="built_in">open</span>(os.path.join(_new_fp, <span class="string">&quot;index.html&quot;</span>), <span class="string">&quot;w&quot;</span>, encoding=<span class="string">&quot;utf-8&quot;</span>) <span class="keyword">as</span> _io:</span><br><span class="line">                    _io.write(template.<span class="built_in">format</span>(_post_link))</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&quot;Create Skip Link: &#123;&#125; -&gt; &#123;&#125;&quot;</span>.<span class="built_in">format</span>(_item, unquote(_post_link)))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    other_link_generate()</span><br><span class="line">    <span class="comment"># os.system(&quot;hexo g -d&quot;)  # 如果希望完成后自动部署</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>在每次部署前你需要先运行这个脚本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo g &amp;&amp; hexo d  <span class="comment"># 原先部署命令</span></span><br><span class="line">otherlink.py &amp;&amp; hexo g &amp;&amp; hexo d  <span class="comment"># 新的部署命令</span></span><br></pre></td></tr></table></figure>
+<p>当然如果你明确重定向内容没有改变，可以不执行这行命令。另外，该命令是一次执行的，也就是说不能在 <code>hexo s</code> 中动态更新。</p>
+<br>
+<h2 id="为什么我的锚不起作用">为什么我的锚不起作用</h2>
+<h3 id="问题描述-2">问题描述</h3>
+<p>锚其实就是目录中的一个链接，它起到在同一篇文章中跳转子标题的作用，我们有时候会遇到一个麻烦：分明我的目录加了标题，为什么生成的网页无法实现跳转？</p>
+<h3 id="导致原因-2">导致原因</h3>
+<p>这个问题实际上并不是 <code>hexo</code> 的问题，当然也不一定是你的问题，如果你经常遇到这个问题，可能是你的习惯不符合标准。当然，我好像也没听说 <code>Markdown</code> 有严格的规范的说法，所以我说这只是约定不统一的问题。</p>
+<p>​<mark class="hl-label default">那么 hexo 认为的规范是什么？</mark>  <code>hexo</code> 认为一篇文章应该只有（至多）一个一级标题，因此它不会为一级标题生成跳转链接，至于是否会在侧边栏生成标题，具体的行为还得看你的主题。</p>
+<p>​<mark class="hl-label default">锚本质是什么？</mark>  其实锚本质就是网页中一个标签的 <code>id</code> 属性，现在的浏览器都支持输入 <code>#id</code> 来定位到特定位置。当然，<code>hexo</code> 也不会为你的一级标题生成它的 <code>id</code>。</p>
+<h3 id="解决方案-2">解决方案</h3>
+<p>那么如何解决这个问题，其实答案也很显然了，我们有两个解决方案：</p>
+<ul>
+<li>遵循 <code>hexo</code> 的 <code>Markdown</code> 规范，全部为你的标题添加一级。这个工作量其实不大，我们可以借助一些工具。</li>
+<li>使用外挂脚本，为缺失的标签重新生成 <code>id</code>，这步需要解析 <code>html</code> 源码，同时需要修改原文和侧边栏两个部分。</li>
+</ul>
+<p>我这边选择了第一个方法，因为我们将使用的 <mark class="hl-label default">正则表达式</mark>  可以很快的解决这个问题（OK，如果你熟悉正则表达式，看到这里就结束了）。后面我们尽量遵循 <code>hexo</code> 规范即可。</p>
+<ol>
+<li>使用你的任何主流本地编辑器（或者 IDE）打开文章目录，然后打开替换功能。VSCode 的替换快捷键是 <code>Ctrl+H</code>，全局替换是 <code>Ctrl+Shift+H</code>；Jetbrain 的替换快捷键是 <code>Ctrl+R</code>，全局替换是 <code>Ctrl+Shift+R</code>。点击替换栏的 <code>.*</code> 按钮即可使用正则替换，主流编辑器应该都支持使用正则匹配替换。</li>
+<li>输入查找栏 <code>^(#+? )</code>、替换栏 <code>#$1</code>，注意请不要立即开始替换，因为我还将提供一些警告和备选方案。</li>
+<li>明确警告并选择适合的备选方案后点击全部替换（<code>Replace All</code>），完成。</li>
+</ol>
+<div class="note warning flat"><p>警告和备选方案↓↓↓</p>
+</div>
+<p>​<mark class="hl-label default">警告一：</mark>  你的文章可能包含一些代码注释，很多语言的注释可能是以 <code>#</code> 提示的，这些被包含在正则替换中。下面提供一些备选方案：</p>
+<ul>
+<li>你的注释 <code># </code> 会被替换为 <code>## </code>，这依然符合注释，你认为这无伤大雅，直接替换即可。</li>
+<li>标题前和后通常都会换行，如果你也是严格这么做的，那么可以采取此方案。输入查找栏 <code>^(#+? .+)\n\n</code>、替换栏 <code>#$1\n\n</code>。</li>
+<li>如果你没有使用 <code>##</code> 等对注释分级的习惯，那么可以采取此方案。输入查找栏 <code>^(#&#123;2,&#125;? )</code>、替换栏 <code>#$1</code>，这样做可以完成二级以上标题替换，后面使用原方案逐条筛选。</li>
+<li>最坏的方案，使用原方案高亮后逐条筛选替换。</li>
+</ul>
+<p>​<mark class="hl-label default">警告二：</mark>  不要直接使用全局替换，如果你的一些文章原先保有使用二级标题的习惯。你可以使用全局查找 <code># </code> 定位这些包含大量一级标题的文章。</p>
+<br>
+<h2 id="关于-Butterfly-标签外挂-label-在行首的-BUG">关于 Butterfly 标签外挂 label 在行首的 BUG</h2>
+<h3 id="问题描述-3">问题描述</h3>
+<mark class="hl-label default">问题描述：</mark>  `Butterfly` 自己也说，当标签外挂中的 label 出现在行首时存在 BUG，并称这是 `hexo` 自己存在的问题。例如公式显示异常：$x^2+y^2=r^2$，引用显示异常：`Butterfly`，
+<mark class="hl-label default">以及无法正常换行</mark> ，不过图片倒是可以正常显示。
+<p><img src="https://s2.loli.net/2024/02/13/Je4Q51kWmYTCbHU.png" alt=" "></p>
+<p>但我就问了，为什么我有办法修好，你修不好？？？好吧，可能官方已经忘记要修复这个问题了。</p>
+<h3 id="解决方案-3">解决方案</h3>
+<p>在每个 <code>&#123;% label "..." %&#125;</code> 前增加一个空字符就可以解决这个问题，​<mark class="hl-label default">我问 ChatGPT</mark> ，它告诉我存在一个零宽空格 <code>U+200B</code> ，这样就又解决了美观问题。</p>
+<div class="tabs" id="label-的解决方案"><ul class="nav-tabs"><li class="tab active"><button type="button" data-href="#label-的解决方案-1">解决代码</button></li><li class="tab"><button type="button" data-href="#label-的解决方案-2">效果展示</button></li></ul><div class="tab-contents"><div class="tab-item-content active" id="label-的解决方案-1"><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&amp;#x200B;&#123;% label &quot;问题描述：&quot; %&#125; <span class="code">`Butterfly`</span> 自己也说，当标签外挂中的 label 出现在行首时存在 BUG，</span><br><span class="line">并称这是 <span class="code">`hexo`</span> 自己存在的问题。例如公式显示异常：$x^2+y^2=r^2$，引用显示异常：<span class="code">`Butterfly`</span>，</span><br><span class="line"></span><br><span class="line">&amp;#x200B;&#123;% label &quot;以及无法正常换行&quot; %&#125;，不过图片倒是可以正常显示。</span><br><span class="line"></span><br><span class="line">![<span class="string"> </span>](<span class="link">https://xx.xxx.net/xxxxx.png</span>)</span><br><span class="line"></span><br><span class="line">但我就问了，为什么我有办法修好，你修不好？？？好吧，可能官方已经忘记要修复这个问题了。</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="label-的解决方案-2"><p>​<mark class="hl-label default">问题描述：</mark>  <code>Butterfly</code> 自己也说，当标签外挂中的 label 出现在行首时存在 BUG，<br>
+并称这是 <code>hexo</code> 自己存在的问题。例如公式显示异常：<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>x</mi><mn>2</mn></msup><mo>+</mo><msup><mi>y</mi><mn>2</mn></msup><mo>=</mo><msup><mi>r</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">x^2+y^2=r^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8974em;vertical-align:-0.0833em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.0085em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span>，引用显示异常：<code>Butterfly</code>，</p>
+<p>​<mark class="hl-label default">以及无法正常换行</mark> ，不过图片倒是可以正常显示。</p>
+<p><img src="https://s2.loli.net/2024/02/13/Je4Q51kWmYTCbHU.png" alt=" "></p>
+<p>但我就问了，为什么我有办法修好，你修不好？？？好吧，可能官方已经忘记要修复这个问题了。</p><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div></div>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Github/">Github</a><a class="post-meta__tags" href="/tags/Butterfly/">Butterfly</a><a class="post-meta__tags" href="/tags/Bugfix/">Bugfix</a><a class="post-meta__tags" href="/tags/Git/">Git</a><a class="post-meta__tags" href="/tags/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">正则表达式</a></div><div class="post_share"><div class="social-share" data-image="/img/default_cover.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/git-abc-7-ssh-gpg/" title="Git 学习笔记(七) - SSH 连接与 GPG 认证"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Git 学习笔记(七) - SSH 连接与 GPG 认证</div></div></a></div><div class="next-post pull-right"><a href="/posts/db-mysql-install/" title="MySQL 安装笔记"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">MySQL 安装笔记</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/blog-hexo-0-preface/" title="Github + Hexo + Butterfly 建站笔记(零) - 前言"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-07-25</div><div class="title">Github + Hexo + Butterfly 建站笔记(零) - 前言</div></div></a></div><div><a href="/posts/blog-hexo-4-bed-picgo/" title="Github + Hexo + Butterfly 建站笔记(四) - PicGo 图床配置"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-07-26</div><div class="title">Github + Hexo + Butterfly 建站笔记(四) - PicGo 图床配置</div></div></a></div><div><a href="/posts/blog-hexo-5-comment-gittalk/" title="Github + Hexo + Butterfly 建站笔记(五) - Gitalk 评论系统"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-07-26</div><div class="title">Github + Hexo + Butterfly 建站笔记(五) - Gitalk 评论系统</div></div></a></div><div><a href="/posts/blog-hexo-6-custom/" title="Github + Hexo + Butterfly 建站笔记(六) - 自定义配置"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-26</div><div class="title">Github + Hexo + Butterfly 建站笔记(六) - 自定义配置</div></div></a></div><div><a href="/posts/git-abc-0-preface/" title="Git 学习笔记(零) - 前言"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-02</div><div class="title">Git 学习笔记(零) - 前言</div></div></a></div><div><a href="/posts/git-abc-6-remote/" title="Git 学习笔记(六) - 远程仓库"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-02</div><div class="title">Git 学习笔记(六) - 远程仓库</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Jamhus Tao</div><div class="author-info__description">找点好玩的去！</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">113</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">83</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">72</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/jamhus-tao"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/img/qq.jpg" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/img/weixin.jpg" target="_blank" title="Weixin"><i class="fab fa-weixin"></i></a><a class="social-icon" href="mailto:jamhus_tao@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="https://github.com/jamhus-tao" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%AF%E5%BE%84%E5%90%8D%E5%A4%A7%E5%B0%8F%E5%86%99%E5%8F%98%E6%8D%A2%E5%AF%BC%E8%87%B4%E7%9A%84%E4%B8%8D%E5%8F%AF%E8%AE%BF%E9%97%AE%E9%97%AE%E9%A2%98"><span class="toc-number">1.</span> <span class="toc-text">路径名大小写变换导致的不可访问问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="toc-number">1.1.</span> <span class="toc-text">问题描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%BC%E8%87%B4%E5%8E%9F%E5%9B%A0"><span class="toc-number">1.2.</span> <span class="toc-text">导致原因</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">1.3.</span> <span class="toc-text">解决方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#URL-%E5%8F%98%E6%8D%A2%E5%AF%BC%E8%87%B4%E7%9A%84%E5%A4%96%E7%AB%99%E9%93%BE%E6%8E%A5%E5%A4%B1%E6%95%88%E9%97%AE%E9%A2%98"><span class="toc-number">2.</span> <span class="toc-text">URL 变换导致的外站链接失效问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%90%E6%A7%BD%EF%BC%9AHEXO-%E7%9A%84-URL-%E4%BB%A4%E6%88%91%E8%AF%9F%E7%97%85"><span class="toc-number">2.1.</span> <span class="toc-text">吐槽：HEXO 的 URL 令我诟病</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E9%87%8D%E8%BF%B0"><span class="toc-number">2.2.</span> <span class="toc-text">问题重述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E9%95%BF%E6%9C%9F%E6%9C%89%E6%95%88%E9%93%BE%E6%8E%A5"><span class="toc-number">2.3.</span> <span class="toc-text">设置长期有效链接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8D%E5%AE%9A%E5%90%91%E5%8E%86%E5%8F%B2%E9%93%BE%E6%8E%A5"><span class="toc-number">2.4.</span> <span class="toc-text">重定向历史链接</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E7%9A%84%E9%94%9A%E4%B8%8D%E8%B5%B7%E4%BD%9C%E7%94%A8"><span class="toc-number">3.</span> <span class="toc-text">为什么我的锚不起作用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0-2"><span class="toc-number">3.1.</span> <span class="toc-text">问题描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%BC%E8%87%B4%E5%8E%9F%E5%9B%A0-2"><span class="toc-number">3.2.</span> <span class="toc-text">导致原因</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88-2"><span class="toc-number">3.3.</span> <span class="toc-text">解决方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E-Butterfly-%E6%A0%87%E7%AD%BE%E5%A4%96%E6%8C%82-label-%E5%9C%A8%E8%A1%8C%E9%A6%96%E7%9A%84-BUG"><span class="toc-number">4.</span> <span class="toc-text">关于 Butterfly 标签外挂 label 在行首的 BUG</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0-3"><span class="toc-number">4.1.</span> <span class="toc-text">问题描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88-3"><span class="toc-number">4.2.</span> <span class="toc-text">解决方案</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cpp-cmake-abc/" title="CMake 项目构建和代码测试">CMake 项目构建和代码测试</a><time datetime="2024-09-27T13:01:00.000Z" title="更新于 2024-09-27 21:01:00">2024-09-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ds-consistent-hash/" title="浅析几种一致性哈希算法">浅析几种一致性哈希算法</a><time datetime="2024-09-11T09:58:00.000Z" title="更新于 2024-09-11 17:58:00">2024-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ds-bloom-filter/" title="布隆过滤器及其误判率推导">布隆过滤器及其误判率推导</a><time datetime="2024-07-14T06:28:00.000Z" title="更新于 2024-07-14 14:28:00">2024-07-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cs-hanmming-check/" title="海明校验码 - 计算机网络">海明校验码 - 计算机网络</a><time datetime="2024-06-26T05:24:00.000Z" title="更新于 2024-06-26 13:24:00">2024-06-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/acm-lanqiaocup-24cbg/" title="2024 年第十五届蓝桥杯 C/C++ B组国赛题解">2024 年第十五届蓝桥杯 C/C++ B组国赛题解</a><time datetime="2024-06-08T05:49:00.000Z" title="更新于 2024-06-08 13:49:00">2024-06-08</time></div></div></div></div></div></div></main><footer id="footer" style="background: #171717"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2025 By Jamhus Tao</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.umd.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="/pluginsSrc/katex/dist/katex.min.css"><script src="/pluginsSrc/katex/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('/pluginsSrc/mermaid/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addModeChange('mermaid', runMermaid)
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: 'f5ab0e5f4c6139f6fc66',
+      clientSecret: '34afc0f7b7a9086e590fbcb099bae698933ed074',
+      repo: 'jamhus-tao.github.io.gitalk',
+      owner: 'jamhus-tao',
+      admin: ['jamhus-tao'],
+      id: 'f87728b3fa95f539681bc918a2a27874',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    getCSS('/pluginsSrc/gitalk/dist/gitalk.css')
+    getScript('/pluginsSrc/gitalk/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.textContent= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !false) {
+  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script data-pjax defer src="/js/my.js"></script><script defer="defer" id="ribbon" src="/pluginsSrc/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

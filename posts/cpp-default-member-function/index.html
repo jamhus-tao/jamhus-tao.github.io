@@ -1,0 +1,479 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>类的六个特殊成员函数的自动合成 | JamhusTao の Blog</title><meta name="author" content="Jamhus Tao"><meta name="copyright" content="Jamhus Tao"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="前言 类的六个特殊成员函数具体是： 123456789class A &amp;#123;   public:    A() &#x3D; default;  &#x2F;&#x2F; 默认构造函数    A(const A &amp;) &#x3D; default;  &#x2F;&#x2F; 拷贝构造函数    A &amp;operator&#x3D;(const A &amp;) &#x3D; default;  &#x2F;&#x2F; 拷贝赋值函数    A(A &amp;&amp;) n">
+<meta property="og:type" content="article">
+<meta property="og:title" content="类的六个特殊成员函数的自动合成">
+<meta property="og:url" content="https://jamhus-tao.github.io/posts/cpp-default-member-function/">
+<meta property="og:site_name" content="JamhusTao の Blog">
+<meta property="og:description" content="前言 类的六个特殊成员函数具体是： 123456789class A &amp;#123;   public:    A() &#x3D; default;  &#x2F;&#x2F; 默认构造函数    A(const A &amp;) &#x3D; default;  &#x2F;&#x2F; 拷贝构造函数    A &amp;operator&#x3D;(const A &amp;) &#x3D; default;  &#x2F;&#x2F; 拷贝赋值函数    A(A &amp;&amp;) n">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://jamhus-tao.github.io/img/default_cover.png">
+<meta property="article:published_time" content="2024-01-30T12:06:00.000Z">
+<meta property="article:modified_time" content="2024-02-12T06:25:00.000Z">
+<meta property="article:author" content="Jamhus Tao">
+<meta property="article:tag" content="C&#x2F;C++">
+<meta property="article:tag" content="原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://jamhus-tao.github.io/img/default_cover.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://jamhus-tao.github.io/posts/cpp-default-member-function/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-FQ4L3WN8LH"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-FQ4L3WN8LH');
+</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":600},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '类的六个特殊成员函数的自动合成',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-02-12 14:25:00'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/my.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">113</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">83</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">72</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/default_cover.png')"><nav id="nav"><span id="blog-info"><a href="/" title="JamhusTao の Blog"><span class="site-name">JamhusTao の Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">类的六个特殊成员函数的自动合成</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-01-30T12:06:00.000Z" title="发表于 2024-01-30 20:06:00">2024-01-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-02-12T06:25:00.000Z" title="更新于 2024-02-12 14:25:00">2024-02-12</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/C/">C++</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/C/%E7%B1%BB%E7%9A%84%E5%85%AD%E4%B8%AA%E7%89%B9%E6%AE%8A%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0%E7%9A%84%E8%87%AA%E5%8A%A8%E5%90%88%E6%88%90/">类的六个特殊成员函数的自动合成</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">4.3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>14分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="类的六个特殊成员函数的自动合成"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="前言">前言</h2>
+<p>类的六个特殊成员函数具体是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">   <span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">A</span>() = <span class="keyword">default</span>;  <span class="comment">// 默认构造函数</span></span><br><span class="line">    <span class="built_in">A</span>(<span class="type">const</span> A &amp;) = <span class="keyword">default</span>;  <span class="comment">// 拷贝构造函数</span></span><br><span class="line">    A &amp;<span class="keyword">operator</span>=(<span class="type">const</span> A &amp;) = <span class="keyword">default</span>;  <span class="comment">// 拷贝赋值函数</span></span><br><span class="line">    <span class="built_in">A</span>(A &amp;&amp;) <span class="keyword">noexcept</span> = <span class="keyword">default</span>;  <span class="comment">// 移动构造函数</span></span><br><span class="line">    A &amp;<span class="keyword">operator</span>=(A &amp;&amp;) <span class="keyword">noexcept</span> = <span class="keyword">default</span>;  <span class="comment">// 移动赋值函数</span></span><br><span class="line">    ~<span class="built_in">A</span>() <span class="keyword">noexcept</span> = <span class="keyword">default</span>;  <span class="comment">// 析构函数</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>当我们未显式定义这六个函数时，编译器默认会自动合成，但当它们的其中一些被显式定义或删除时，它们的其中一些不会被生成。这一直是一个非常头疼的点，因为它们之间的关系可以说非常复杂。本文就将介绍这些函数在何时合成，以及应对之法。</p>
+<details class="toggle" style="border: 1px solid  #222222"><summary class="toggle-button" style="background-color:  #222222;color:  white">开始前的一个小芝士 - 如何自己做实验</summary><div class="toggle-content"><p>这里我们还是问出了一个经典的问题，如何进行实验？基于实验我们可以自己验证一些问题。</p>
+<p>从 C++ 11 开始，提出了类型特征（<code>type traits</code>）函数，它们在编译时确认，用于判定类型是否符合某些特征，例如最常用的就是 <code>is_same_v</code>，它用来判断两个类型是否相等，返回一个布尔类型。我们通常与模板元编程结合，用它进行一些断言或者编译时分支的确定。</p>
+<p>这里我们需要用到的也正是这类类型特征函数，它们在 <code>type_traits</code> 库中。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 其中 Cls 表示我们的自定义类</span></span><br><span class="line">cout &lt;&lt; std::is_default_constructible&lt;Cls&gt;::value &lt;&lt; endl;  <span class="comment">// 是否具有默认构造函数</span></span><br><span class="line">cout &lt;&lt; std::is_copy_constructible&lt;Cls&gt;::value &lt;&lt; endl;  <span class="comment">// 是否具有拷贝构造函数</span></span><br><span class="line">cout &lt;&lt; std::is_copy_assignable&lt;Cls&gt;::value &lt;&lt; endl;  <span class="comment">// 是否具有拷贝赋值函数</span></span><br><span class="line">cout &lt;&lt; std::is_move_constructible&lt;Cls&gt;::value &lt;&lt; endl;  <span class="comment">// 是否可以进行移动构造</span></span><br><span class="line">cout &lt;&lt; std::is_move_assignable&lt;Cls&gt;::value &lt;&lt; endl;  <span class="comment">// 是否可以进行移动赋值</span></span><br><span class="line">cout &lt;&lt; std::is_destructible&lt;Cls&gt;::value &lt;&lt; endl;  <span class="comment">// 是否具有析构函数</span></span><br><span class="line"><span class="comment">// 后面的代码示例中为了节约代码篇幅，不会说明我们实验的方法。</span></span><br></pre></td></tr></table></figure>
+<p>当然，这里也有一些坑点。注意我们在移动语义上的 “委婉” 用词：可能类没有移动函数，但当它具有拷贝函数时它也是可移动的，因为移动语义可以重载到拷贝语义上。这种情况我们就只能用打印到终端的方法了。</p>
+</div></details>
+<br>
+<h2 id="特殊成员函数的默认行为">特殊成员函数的默认行为</h2>
+<ul>
+<li>默认构造函数的默认行为：调用所有成员的默认构造函数（对于基本数据成员进行默认初始化）</li>
+<li>拷贝构造函数的默认行为：调用所有成员的拷贝构造函数（对于基本数据成员直接拷贝）</li>
+<li>拷贝赋值函数的默认行为：调用所有成员的拷贝赋值函数（对于基本数据成员直接拷贝）</li>
+<li>移动构造函数的默认行为：调用所有成员的移动构造函数（对于基本数据成员直接拷贝）</li>
+<li>移动赋值函数的默认行为：调用所有成员的移动赋值函数（对于基本数据成员直接拷贝）</li>
+<li>析构函数的默认行为：调用所有成员的析构函数（对于基本数据成员释放其栈空间）</li>
+</ul>
+<p>​<mark class="hl-label default">注意：</mark>  对于默认构造函数，其实际与 <code>A() &#123;&#125;</code> 是等价的，因为构造函数被定义就无法禁止其成员进行构造（当然可以使用构造函数初始化列表重定义成员构造），<code>&#123;&#125;</code> 中主代码只能在构造完成后进行额外操作。对于析构函数，其实际与 <code>~A() &#123;&#125;</code> 是等价的，因为析构函数被定义就无法禁止其成员进行自动析构（当然，可以删除析构函数），<code>&#123;&#125;</code> 中主代码只能在析构前进行额外操作，如堆空间的管理。</p>
+<br>
+<h2 id="显式定义特殊成员函数">显式定义特殊成员函数</h2>
+<p>显式定义特殊成员函数的方法有三，我们以默认构造函数为例：</p>
+<ul>
+<li>显式使用默认行为：<code>A() = default;</code>，在一些场景默认行为不会隐式生成，需要用户显式指定。</li>
+<li>显式删除合成函数：<code>A() = delete;</code>，在一些场景默认合成，使用该方法删除它。</li>
+<li>自定义行为：<code>A() : ... &#123;...&#125;</code>，也就是我们完全选择重写。</li>
+</ul>
+<br>
+<h2 id="强制删除默认方法的场景">强制删除默认方法的场景</h2>
+<p>所谓强制删除默认方法是指，即使你显式指定为 <code>default</code>，该特殊成员函数依然是被删除的。另外，如果你将它们进行自定义，并按照默认行为重写也是错误的，因为强制删除的原因就是默认行为无法继续。</p>
+<ul>
+<li>如果一个类的成员相对应的特殊成员函数是删除的（或不可见的），则该特殊成员函数的默认行为是强制删除的。例如成员的拷贝构造函数是删除的，则类的拷贝构造函数的默认行为是强制删除的，当然自定义行为是允许的。这是因为注意到它们的默认行为是调用其成员的对应行为，如果成员的该行为被删除，则类自然不能完成其默认行为。</li>
+<li>如果一个类的析构函数是删除的（或不可见的（<code>private</code>）），则其所有构造函数都是强制删除的。注意不仅是特殊成员构造函数，还是其他自定义的构造函数都会被强制删除。（注意与第一条存在传递关系）</li>
+<li>如果一个类的成员是 <code>const</code> 或引用的，且该成员不完全实现类内初始化，则其默认构造函数是强制删除的。其作用实际是保证其 <code>const</code> 或引用成员正常完成初始化。</li>
+<li>如果一个类的成员是 <code>const</code> 或引用的，则其拷贝和移动赋值函数是删除的。这里无论其成员是否实现类内初始化，这样设计的意义与上一点相同。</li>
+</ul>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart TD
+    subgraph 成员或派生类
+        10(拷贝赋值函数缺失)
+        11(移动赋值函数缺失)
+        subgraph 12[&quot;是类的 const 或引用成员&quot;]
+          12.0(其他)
+          12.1(&quot;且不完全实现类内初始化\n(从类获取参数而确定)&quot;)
+        end
+        13(默认构造函数缺失)
+        14(析构函数缺失)
+        15(拷贝构造函数缺失)
+        16(移动构造函数缺失)
+    end
+    subgraph 类
+        0(存在 const 或引用成员)
+        21(拷贝赋值函数缺失)
+        22(移动赋值函数缺失)
+        23(其他构造函数缺失)
+        24(默认构造函数缺失)
+        25(析构函数缺失)
+        26(拷贝构造函数缺失)
+        27(移动构造函数缺失)
+    end
+    12 --&gt; 0 --&gt;|强制删除| 21 &amp; 22
+    10 --&gt;|强制删除| 21
+    11 --&gt;|强制删除| 22
+    12.1 &lt;--&gt;|强制删除| 24
+    13 --&gt;|强制删除| 24
+    14 --&gt;|强制删除| 25 --&gt;|强制删除| 24 &amp; 23 &amp; 26 &amp; 27
+    15 --&gt;|强制删除| 26
+    16 --&gt;|强制删除| 27
+  </pre></div>
+<p>下面是一些供参考的示例：</p>
+<div class="tabs" id="强制删除默认方法的示例"><ul class="nav-tabs"><li class="tab active"><button type="button" data-href="#强制删除默认方法的示例-1">存在 const 或引用成员不完全实现类内初始化的示例</button></li><li class="tab"><button type="button" data-href="#强制删除默认方法的示例-2">成员对应特殊成员缺失的示例</button></li><li class="tab"><button type="button" data-href="#强制删除默认方法的示例-3">成员析构函数缺失的示例</button></li></ul><div class="tab-contents"><div class="tab-item-content active" id="强制删除默认方法的示例-1"><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Member</span> &#123;</span><br><span class="line">   <span class="keyword">public</span>:</span><br><span class="line">    <span class="type">int</span> x = <span class="number">0</span>;</span><br><span class="line">    <span class="type">int</span> y;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Class</span> &#123;</span><br><span class="line">   <span class="keyword">public</span>:</span><br><span class="line">    Member mem1;</span><br><span class="line">    <span class="type">const</span> Member mem2;</span><br><span class="line">    <span class="type">int</span> &amp;r;</span><br><span class="line">    <span class="built_in">Class</span>() = <span class="keyword">default</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>在上面这个示例中：<code>mem1</code> 成员不是 <code>const</code> 或引用的，因此我们无需考虑它；<code>mem2</code> 成员是 <code>const</code> 的，且其成员 <code>x</code> 实现了类内初始化，而其成员 <code>y</code> 没有实现，因此 <code>Member</code> 不完全实现类内初始化，实际上已经满足强制删除的条件；最后，<code>r</code> 成员是基本数据类型的引用，它也没有实现类内初始化（即绑定）。因此 <code>Class</code> 的默认构造函数被强制删除。</p>
+<p>现在我们将代码修改如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Member</span> &#123;</span><br><span class="line">   <span class="keyword">public</span>:</span><br><span class="line">    <span class="type">int</span> x = <span class="number">0</span>;</span><br><span class="line">    <span class="type">int</span> y;</span><br><span class="line">    <span class="built_in">Member</span>() : <span class="built_in">y</span>(<span class="number">10</span>) &#123;&#125;;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="type">int</span> i = <span class="number">9</span>;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Class</span> &#123;</span><br><span class="line">   <span class="keyword">public</span>:</span><br><span class="line">    Member mem1;</span><br><span class="line">    <span class="type">const</span> Member mem2;</span><br><span class="line">    <span class="type">int</span> &amp;r = i;</span><br><span class="line">    <span class="built_in">Class</span>() = <span class="keyword">default</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>这样的示例 <code>Class</code> 是具有默认构造函数的。我们来分析一下 <code>mem2</code>，虽然 <code>mem2</code> 没有显式类内初始化，但它通过自定义的默认构造函数可以完成完全的类内初始化，这也是我们在图中提到的向成员传递参数。</p><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="强制删除默认方法的示例-2"><p>这里以拷贝构造函数为例。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Member</span> &#123;</span><br><span class="line">    <span class="comment">// Member &amp;operator=(const Member &amp;) = default;  // Case 2</span></span><br><span class="line">   <span class="keyword">public</span>:</span><br><span class="line">    Member &amp;<span class="keyword">operator</span>=(<span class="type">const</span> Member &amp;) = <span class="keyword">delete</span>;  <span class="comment">// Case 1</span></span><br><span class="line">    <span class="comment">// Member &amp;operator=(const Member &amp;) &#123; ...; return *this; &#125;  // Case 3</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Class</span> &#123;</span><br><span class="line">    Member mem;</span><br><span class="line">   <span class="keyword">public</span>:</span><br><span class="line">    Member &amp;<span class="keyword">operator</span>=(<span class="type">const</span> Member &amp;) = <span class="keyword">default</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><mark class="hl-label default">Case 1</mark>  ：<code>Class</code> 的拷贝构造函数的默认行为是删除的，因为成员不具有拷贝构造函数。</li>
+<li><mark class="hl-label default">Case 2</mark>  ：<code>Class</code> 的拷贝构造函数的默认行为是删除的，因为成员的拷贝构造函数对 <code>Class</code> 是不可见的。这里需要注意这与 <code>mem</code> 对类 <code>Class</code> 外部是否可见无关。</li>
+<li><mark class="hl-label default">Case 3</mark>  ：<code>Class</code> 将具有拷贝构造函数，注意这与成员的拷贝构造函数是默认行为还是自定义行为无关，只要具有即可。</li>
+</ul><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="强制删除默认方法的示例-3"><p>析构函数缺失是非常致命的，它将导致所有构造方法都不被允许。因为一个函数如果栈空间都不被允许释放，那么它将被禁止以任何方式构造。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Member</span> &#123;</span><br><span class="line">   <span class="keyword">public</span>:</span><br><span class="line">    ~<span class="built_in">Member</span>() <span class="keyword">noexcept</span> = <span class="keyword">delete</span>;</span><br><span class="line">    <span class="comment">// 默认构造函数强制删除</span></span><br><span class="line">    <span class="comment">// 拷贝构造函数强制删除</span></span><br><span class="line">    <span class="comment">// 移动构造函数强制删除</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Class</span> &#123;</span><br><span class="line">   <span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// 析构函数强制删除</span></span><br><span class="line">    <span class="comment">// 默认构造函数强制删除  // 这里存在传递关系</span></span><br><span class="line">    <span class="comment">// 拷贝构造函数强制删除  // 这里存在传递关系</span></span><br><span class="line">    <span class="comment">// 移动构造函数强制删除  // 这里存在传递关系</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>任何不可析构或包含不可析构成员的类都不允许进行任何构造。</p>
+<details class="toggle" style="border: 1px solid  #222222"><summary class="toggle-button" style="background-color:  #222222;color:  white">那么不可析构类存在的意义是什么</summary><div class="toggle-content"><p>不可析构通常很少被使用，只有当希望其析构被其他方法托管时。</p>
+<ul>
+<li>析构函数被删除的类，可以使用 <code>reinterpret_cast</code> 获取该类的指针，同时它天然不允许任何构造方法存在。例如直接从内存读取的二进制数据只能使用 <code>reinterpret_cast</code> 得到可用的该类，同时它的析构方法被原指针持有。</li>
+<li>析构函数被隐藏的类，可用于创建单例模式。单例通过 <code>static</code> 的函数创建，并且可以避免用户使用 <code>delete</code> 显式析构单例。</li>
+</ul>
+</div></details><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div></div>
+<br>
+<h2 id="隐式删除默认方法的场景">隐式删除默认方法的场景</h2>
+<div class="note warning flat"><p>后面我们将会介绍三 / 五法则，因此你可能不需要过多关注此章节的复杂规则。</p>
+</div>
+<p>隐式删除默认方法是指，该特殊成员函数不会默认合成，但可以通过显式定义（<code>default</code> / 自定义）生成。</p>
+<ul>
+<li>如果任何构造函数被显式定义（<code>delete</code> / <code>default</code> / 自定义），则默认构造函数将被隐式删除。注意不仅是特殊成员构造函数，还是其他自定义的构造函数都会隐式删除默认构造函数。</li>
+<li>如果拷贝构造 / 赋值函数被显式定义，则移动构造 / 赋值函数将被隐式删除；相反地，如果移动构造 / 赋值函数被显式定义，则拷贝构造 / 赋值函数将被隐式删除。</li>
+<li>对于移动操作，如果移动构造函数被显式定义，则移动赋值函数也将被隐式删除；相反地，如果移动赋值函数被显式定义，则移动构造函数也将被隐式删除。拷贝构造 / 赋值函数则没有此性质。</li>
+<li>对于移动操作，如果析构函数被显式定义，则移动构造函数和移动赋值函数被隐式删除。</li>
+</ul>
+<p>特别提醒一处可能的疑惑：虽然拷贝构造函自定义的，不会隐式删除拷贝赋值函数，但此时拷贝赋值函数不会使用仿照拷贝构造函数的方法，它依然使用默认行为，这是实际编程中容易忽视的；反之亦然。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart RL
+    0(默认构造函数)
+    subgraph &quot; &quot;
+        1(拷贝构造函数)
+        2(移动构造函数)
+        3(其他构造函数)
+    end
+    subgraph &quot; &quot;
+        4(移动赋值函数)
+        5(拷贝赋值函数)
+    end
+    6(析构函数)
+
+    1 &amp; 2 &amp; 3 -.-&gt;|隐式删除| 0
+    4 &lt;-.-&gt;|隐式删除| 2
+    4 &lt;-.-&gt;|隐式删除| 1
+    5 &lt;-.-&gt;|隐式删除| 2
+    2 &lt;-.-&gt;|隐式删除| 1
+    5 &lt;-.-&gt;|隐式删除| 4
+    6 -.-&gt;|隐式删除| 2 &amp; 4
+  </pre></div>
+<p>（此图中，虚线箭头表示的关系是，如果前者被显式定义（<code>delete</code> / <code>default</code> / 自定义），则后者将被隐式删除。）</p>
+<br>
+<h2 id="三-五法则">三 / 五法则</h2>
+<p>​<mark class="hl-label default">三五法则</mark>  中，三是指默认构造函数、拷贝构造函数、拷贝赋值函数，五是指默认构造函数、拷贝构造函数、拷贝赋值函数、移动构造函数、移动赋值函数，它们被统称为 <mark class="hl-label default">拷贝控制函数</mark>  。这里之所以区分三五，在于你实现的类是否关注移动语义，对于许多类你确实可以抛弃移动语义。</p>
+<p>三五法则很简单：当你想要显式定义（<code>delete</code> / <code>default</code> / 自定义）拷贝控制函数中的任一时，你必须显式定义所有的拷贝控制函数。这其实就是因为隐式删除的场景十分复杂，而且容易遗忘，你必须通过三五法则认真考虑每个函数的实现。</p>
+<p>另外，如果不遵循三五法则，那么可能还会因为其不明显的拷贝控制函数定义，在所有将该类作为成员的类中导致一些意料之外的强制删除问题。</p>
+<br>
+<h2 id="六个特殊成员函数的总关系图">六个特殊成员函数的总关系图</h2>
+<p>（图中，强制删除（实线）是指：如果前者被删除（<code>delete</code>），则后者的自动合成方法被删除，即使显式自动（<code>default</code>）也被编译器忽视；隐式删除（虚线）是指：如果前者被显式定义（<code>delete</code> / <code>default</code> / 自定义），则后者的自动合成方法被隐式删除，但用户可以显式定义（<code>default</code> / 自定义）后者。）</p>
+<p>其中，隐式删除最好遵循三五法则，无需记忆。</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart TD
+    subgraph 成员或派生类
+        10(拷贝赋值函数缺失)
+        11(移动赋值函数缺失)
+        subgraph 12[&quot;是类的 const 或引用成员&quot;]
+          12.0(其他)
+          12.1(&quot;且不完全实现类内初始化\n(从类获取参数而确定)&quot;)
+        end
+        13(默认构造函数缺失)
+        14(析构函数缺失)
+        15(拷贝构造函数缺失)
+        16(移动构造函数缺失)
+    end
+    subgraph 类
+        0(存在 const 或引用成员)
+        21(拷贝赋值函数缺失)
+        22(移动赋值函数缺失)
+        23(其他构造函数缺失)
+        24(默认构造函数缺失)
+        25(析构函数缺失)
+        26(拷贝构造函数缺失)
+        27(移动构造函数缺失)
+    end
+    12 --&gt; 0 --&gt;|强制删除| 21 &amp; 22
+    10 --&gt;|强制删除| 21
+    11 --&gt;|强制删除| 22
+    12.1 &lt;--&gt;|强制删除| 24
+    13 --&gt;|强制删除| 24
+    14 --&gt;|强制删除| 25 --&gt;|强制删除| 24 &amp; 23 &amp; 26 &amp; 27
+    15 --&gt;|强制删除| 26
+    16 --&gt;|强制删除| 27
+  </pre></div>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart RL
+    0(默认构造函数)
+    subgraph &quot; &quot;
+        1(拷贝构造函数)
+        2(移动构造函数)
+        3(其他构造函数)
+    end
+    subgraph &quot; &quot;
+        4(移动赋值函数)
+        5(拷贝赋值函数)
+    end
+    6(析构函数)
+
+    1 &amp; 2 &amp; 3 -.-&gt;|隐式删除| 0
+    4 &lt;-.-&gt;|隐式删除| 2
+    4 &lt;-.-&gt;|隐式删除| 1
+    5 &lt;-.-&gt;|隐式删除| 2
+    2 &lt;-.-&gt;|隐式删除| 1
+    5 &lt;-.-&gt;|隐式删除| 4
+    6 -.-&gt;|隐式删除| 2 &amp; 4
+  </pre></div>
+<p>最后，我们将上面的两张表放在一起：</p>
+<div class="mermaid-wrap"><pre class="mermaid-src" hidden>
+  flowchart TD
+    subgraph 成员或派生类
+        13(默认构造函数缺失)
+        14(析构函数缺失)
+        15(移动构造函数缺失)
+        16(拷贝构造函数缺失)
+        17(移动赋值函数缺失)
+        18(拷贝赋值函数缺失)
+        subgraph 19[&quot;是类的 const 或引用成员&quot;]
+          19.0(其他)
+          19.1(&quot;且不完全实现类内初始化\n(从类获取参数而确定)&quot;)
+        end
+    end
+    subgraph 类
+        0(存在 const 或引用成员)
+        23(默认构造函数)
+        24(析构函数)
+        subgraph &quot; &quot;
+        25(其他构造函数)
+        26(拷贝构造函数)
+        27(移动构造函数)
+        end
+        subgraph &quot; &quot;
+        28(拷贝赋值函数)
+        29(移动赋值函数)
+        end
+    end
+    13 --&gt;|强制删除| 23
+    14 --&gt;|强制删除| 24 --&gt;|强制删除| 23 &amp; 25 &amp; 26 &amp; 27
+    16 --&gt;|强制删除| 26
+    15 --&gt;|强制删除| 27
+    19 --&gt; 0 --&gt;|强制删除| 29 &amp; 28
+    18 --&gt;|强制删除| 28
+    17 --&gt;|强制删除| 29
+    19.1 &lt;--&gt;|强制删除| 23
+    25 &amp; 26 &amp; 27 -.-&gt;|隐式删除| 23
+    27 &amp; 29 &lt;-.-&gt;|隐式删除| 26 &amp; 28
+    27 &lt;-.-&gt;|隐式删除| 29
+    24 -.-&gt;|隐式删除| 27 &amp; 29
+%% Mermaid 啥时候出个关系图啊, flowchart 不是很适合画这玩意啊。
+  </pre></div>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/C-C/">C/C++</a><a class="post-meta__tags" href="/tags/%E5%8E%9F%E7%90%86/">原理</a></div><div class="post_share"><div class="social-share" data-image="/img/default_cover.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/cpp-generic-algorithm/" title="泛型算法 - 从泛型到函数绑定与迭代器拓展"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">泛型算法 - 从泛型到函数绑定与迭代器拓展</div></div></a></div><div class="next-post pull-right"><a href="/posts/cpp-template-complie-branch/" title="模板元 - 三种条件编译汇总"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">模板元 - 三种条件编译汇总</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/cpp-diff-level-const/" title="如何理解 C++ 顶层和底层 const 下复杂类型"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-09-19</div><div class="title">如何理解 C++ 顶层和底层 const 下复杂类型</div></div></a></div><div><a href="/posts/cpp-move-forward/" title="从引用折叠到 move 与 forward 代码复现"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-02-17</div><div class="title">从引用折叠到 move 与 forward 代码复现</div></div></a></div><div><a href="/posts/cpp-class-accessibility/" title="一文理解类的访问权限"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-02-14</div><div class="title">一文理解类的访问权限</div></div></a></div><div><a href="/posts/cpp-in-assembly/" title="逐行解析 - 从汇编看 C 语言"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-03-16</div><div class="title">逐行解析 - 从汇编看 C 语言</div></div></a></div><div><a href="/posts/cpp-four-cast/" title="四种 cast 强制类型转换"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-12-25</div><div class="title">四种 cast 强制类型转换</div></div></a></div><div><a href="/posts/cpp-generic-algorithm/" title="泛型算法 - 从泛型到函数绑定与迭代器拓展"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-01-22</div><div class="title">泛型算法 - 从泛型到函数绑定与迭代器拓展</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Jamhus Tao</div><div class="author-info__description">找点好玩的去！</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">113</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">83</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">72</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/jamhus-tao"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/img/qq.jpg" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/img/weixin.jpg" target="_blank" title="Weixin"><i class="fab fa-weixin"></i></a><a class="social-icon" href="mailto:jamhus_tao@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="https://github.com/jamhus-tao" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%B9%E6%AE%8A%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0%E7%9A%84%E9%BB%98%E8%AE%A4%E8%A1%8C%E4%B8%BA"><span class="toc-number">2.</span> <span class="toc-text">特殊成员函数的默认行为</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%98%BE%E5%BC%8F%E5%AE%9A%E4%B9%89%E7%89%B9%E6%AE%8A%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0"><span class="toc-number">3.</span> <span class="toc-text">显式定义特殊成员函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%BA%E5%88%B6%E5%88%A0%E9%99%A4%E9%BB%98%E8%AE%A4%E6%96%B9%E6%B3%95%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="toc-number">4.</span> <span class="toc-text">强制删除默认方法的场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9A%90%E5%BC%8F%E5%88%A0%E9%99%A4%E9%BB%98%E8%AE%A4%E6%96%B9%E6%B3%95%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="toc-number">5.</span> <span class="toc-text">隐式删除默认方法的场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E4%BA%94%E6%B3%95%E5%88%99"><span class="toc-number">6.</span> <span class="toc-text">三 &#x2F; 五法则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E4%B8%AA%E7%89%B9%E6%AE%8A%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0%E7%9A%84%E6%80%BB%E5%85%B3%E7%B3%BB%E5%9B%BE"><span class="toc-number">7.</span> <span class="toc-text">六个特殊成员函数的总关系图</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cpp-cmake-abc/" title="CMake 项目构建和代码测试">CMake 项目构建和代码测试</a><time datetime="2024-09-27T13:01:00.000Z" title="更新于 2024-09-27 21:01:00">2024-09-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ds-consistent-hash/" title="浅析几种一致性哈希算法">浅析几种一致性哈希算法</a><time datetime="2024-09-11T09:58:00.000Z" title="更新于 2024-09-11 17:58:00">2024-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ds-bloom-filter/" title="布隆过滤器及其误判率推导">布隆过滤器及其误判率推导</a><time datetime="2024-07-14T06:28:00.000Z" title="更新于 2024-07-14 14:28:00">2024-07-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cs-hanmming-check/" title="海明校验码 - 计算机网络">海明校验码 - 计算机网络</a><time datetime="2024-06-26T05:24:00.000Z" title="更新于 2024-06-26 13:24:00">2024-06-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/acm-lanqiaocup-24cbg/" title="2024 年第十五届蓝桥杯 C/C++ B组国赛题解">2024 年第十五届蓝桥杯 C/C++ B组国赛题解</a><time datetime="2024-06-08T05:49:00.000Z" title="更新于 2024-06-08 13:49:00">2024-06-08</time></div></div></div></div></div></div></main><footer id="footer" style="background: #171717"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2025 By Jamhus Tao</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.umd.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="/pluginsSrc/katex/dist/katex.min.css"><script src="/pluginsSrc/katex/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('/pluginsSrc/mermaid/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addModeChange('mermaid', runMermaid)
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: 'f5ab0e5f4c6139f6fc66',
+      clientSecret: '34afc0f7b7a9086e590fbcb099bae698933ed074',
+      repo: 'jamhus-tao.github.io.gitalk',
+      owner: 'jamhus-tao',
+      admin: ['jamhus-tao'],
+      id: '7aa29a817e7558a7fe1ec64060c13c9f',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    getCSS('/pluginsSrc/gitalk/dist/gitalk.css')
+    getScript('/pluginsSrc/gitalk/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.textContent= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !false) {
+  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script data-pjax defer src="/js/my.js"></script><script defer="defer" id="ribbon" src="/pluginsSrc/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

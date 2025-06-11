@@ -1,0 +1,334 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Google File System 论文研读 - MIT6.824 | JamhusTao の Blog</title><meta name="author" content="Jamhus Tao"><meta name="copyright" content="Jamhus Tao"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="前言 这个部分来自课程 MIT6.824，这门课每节课都会精读一篇分布式系统领域的经典论文，并由此传授分布式系统设计与实现的重要原则和关键技术。 个人认为阅读论文比课程本身更加重要，课程围绕论文展开，可以快速获取论文的核心观点，课程的一切细节以及未提及的内容在论文中具有最详细的解释。另外教授会从当今立场（2022）评价论文的意义和缺陷，同时可能补全论文中缺失的信息解释，教授对学生提问的一些回答具有">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Google File System 论文研读 - MIT6.824">
+<meta property="og:url" content="https://jamhus-tao.github.io/posts/ds-mit6824-gfs/">
+<meta property="og:site_name" content="JamhusTao の Blog">
+<meta property="og:description" content="前言 这个部分来自课程 MIT6.824，这门课每节课都会精读一篇分布式系统领域的经典论文，并由此传授分布式系统设计与实现的重要原则和关键技术。 个人认为阅读论文比课程本身更加重要，课程围绕论文展开，可以快速获取论文的核心观点，课程的一切细节以及未提及的内容在论文中具有最详细的解释。另外教授会从当今立场（2022）评价论文的意义和缺陷，同时可能补全论文中缺失的信息解释，教授对学生提问的一些回答具有">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://jamhus-tao.github.io/img/default_cover.png">
+<meta property="article:published_time" content="2024-05-21T15:08:00.000Z">
+<meta property="article:modified_time" content="2024-05-21T15:10:00.000Z">
+<meta property="article:author" content="Jamhus Tao">
+<meta property="article:tag" content="分布式系统">
+<meta property="article:tag" content="MIT6.824">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://jamhus-tao.github.io/img/default_cover.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://jamhus-tao.github.io/posts/ds-mit6824-gfs/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-FQ4L3WN8LH"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-FQ4L3WN8LH');
+</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":600},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Google File System 论文研读 - MIT6.824',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-05-21 23:10:00'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/my.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">113</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">83</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">72</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/default_cover.png')"><nav id="nav"><span id="blog-info"><a href="/" title="JamhusTao の Blog"><span class="site-name">JamhusTao の Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Google File System 论文研读 - MIT6.824</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-05-21T15:08:00.000Z" title="发表于 2024-05-21 23:08:00">2024-05-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-05-21T15:10:00.000Z" title="更新于 2024-05-21 23:10:00">2024-05-21</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/">分布式系统</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/Google-File-System-%E8%AE%BA%E6%96%87%E7%A0%94%E8%AF%BB-MIT6-824/">Google File System 论文研读 - MIT6.824</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>11分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Google File System 论文研读 - MIT6.824"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="前言">前言</h2>
+<p>这个部分来自课程 MIT6.824，这门课每节课都会精读一篇分布式系统领域的经典论文，并由此传授分布式系统设计与实现的重要原则和关键技术。</p>
+<p>个人认为阅读论文比课程本身更加重要，课程围绕论文展开，可以快速获取论文的核心观点，课程的一切细节以及未提及的内容在论文中具有最详细的解释。另外教授会从当今立场（2022）评价论文的意义和缺陷，同时可能补全论文中缺失的信息解释，教授对学生提问的一些回答具有很好的启发意义，这些内容不被包含在论文中。</p>
+<p>本文综合课程内容和论文核心观点，并参考一些其他资料整理，希望对你学习课程有所帮助。</p>
+<p>课程官方：<a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.824/">https://pdos.csail.mit.edu/6.824/</a></p>
+<p>博主整理：<a target="_blank" rel="noopener" href="https://mit-public-courses-cn-translatio.gitbook.io/mit6-824">https://mit-public-courses-cn-translatio.gitbook.io/mit6-824</a></p>
+<p>B 站录屏：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1qk4y197bB">https://www.bilibili.com/video/BV1qk4y197bB</a></p>
+<p>​<mark class="hl-label default">请阅读论文 GFS：</mark> <a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.824/papers/gfs.pdf">https://pdos.csail.mit.edu/6.824/papers/gfs.pdf</a></p>
+<h2 id="什么是-GFS？">什么是 GFS？</h2>
+<p>在 GFS 出现之前，分布式系统实际已经进行了数十年的学术研究，但事实上在工业上它仍然很少被认可。在 2003 年，实际上互联网规模已经相当巨大，像 Google 这样的大数据公司开始实际使用分布式系统。GFS 几乎作为第一个严格意义上的分布式系统，它做了很多工作解决包括性能和容错性上的问题，在相当长的时间内颇具影响力。</p>
+<h2 id="GFS-的设计目标">GFS 的设计目标</h2>
+<p>GFS 的设计目标包括：大容量、快速、全局共享、容错、自动恢复。</p>
+<p>GFS 的局限性：</p>
+<ul>
+<li>GFS 的设计仅局限于一个数据中心，它并未将数据分布到世界各地。</li>
+<li>GFS 始终是 Google 内部使用的系统，Google 从未直接向外部售卖 GFS 系统。</li>
+</ul>
+<p>GFS 的特征：</p>
+<ul>
+<li>数据切片，它将大文件切片存储在不同机器上。</li>
+<li>大型顺序 IO 场景，GFS 被设计用于大型顺序 IO，它不对小规模随机访问进行优化。</li>
+<li>GFS 在当时并没有提供新颖的想法，但它是第一个被用于工业界的系统。</li>
+<li>GFS 并不保证返回正确的数据，这样的弱一致性在当时是反学术的。</li>
+</ul>
+<h2 id="GFS-的-master-节点">GFS 的 master 节点</h2>
+<p>GFS 集群中，具有三种角色：master、chunkserver、client。其中，master 采用主备模式，一个集群中只有一个 master 在工作。</p>
+<h3 id="master-的数据结构">master 的数据结构</h3>
+<p>master 仅用于存储元数据，它仅包含这三类数据：文件空间域、文件到 chunk 的映射关系、chunk 所在的位置。每个 chunk 的大小为 64MB，当 client 获取文件时，首先向 master 获取文件包含哪些 chunk 以及它们的位置，然后 client 直接从对应的 chunkserver 获取数据。具体地，master 的数据主要有：</p>
+<ul>
+<li>File（文件空间域和文件到 chunk 的映射关系）<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\to</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span>
+<ul>
+<li>Chunk ID 列表。</li>
+</ul>
+</li>
+<li>Chunk ID（chunk 所在的位置） <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>→</mo></mrow><annotation encoding="application/x-tex">\to</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span>
+<ul>
+<li>每个 chunk 所在的 chunkserver 列表，表示多个副本位置。</li>
+<li>chunk 对应的最新版本号（Version），版本落后表示已失效。</li>
+<li>主 chunk（Primary Chunk），所有写控制从主 chunk 开始，它是多个 chunk 副本之一。</li>
+<li>租约到期（Lease Expiration），主 Chunk 只在租约时间内担任主 chunk，一份租约是 60 秒。</li>
+</ul>
+</li>
+</ul>
+<h3 id="master-的容错性">master 的容错性</h3>
+<p>master 包含的三类元数据中，文件空间域和文件到 chunk 的映射关系使用 NV（非易失性）方式存储，而 chunk 所在的位置及其一些相关信息（chunkserver 列表、主 chunk、租约到期）使用 V（易失性）方式存储。例外地，chunk 的最新版本号应该是 NV 方式存储的，我们后面会讲到为什么。</p>
+<p>对于前者的 NV 方式存储，包括以下两个方面：每次操作元数据的 Operation Log 同时在主备 master 存储，一旦宕机重启，从 Operation Log 顺序恢复；当 Operation Log 达到一定数量，生成 checkpoint 快照并清空 Operation Log，这样有利于平衡容错开销。</p>
+<p>对于后者的 V 方式存储，即无需额外容错开销。master 启动时，从 chunkserver 获取 Chunk ID 和 Version 信息。至于主 chunk 和租约，完全可以遗忘并重新任命。</p>
+<p>另一方面 master 具有 standby master 和 shadow master。standby master 可以在宕机时接替工作，而 shadow master 可以提供短期的只读服务和分担部分 master 压力。</p>
+<h2 id="GFS-读文件">GFS 读文件</h2>
+<p>当 client 需要读取文件时，它会首先询问 master 主机。client 将告知 master 包括文件名、文件偏移量、读取字节数，master 通过两表查询会告知这段文件所在的 Chuck ID 的所有相关信息。client 得到这些信息后从相应的 chunkserver 请求数据。</p>
+<p>需要注意的是：</p>
+<ul>
+<li>client 会缓存 master 返回的这些元数据，这样 client 有时不再需要向 master 询问。这些缓存会在租约过期、文件关闭、缓存池满时清理。</li>
+<li>当出现数据跨 chunk 时，由 client 将询问切片后询问 master。虽然 client 不知道这些数据在哪个切片中，但它可以计算哪些数据在一个切片中。这样做的好处是，client 可以充分利用缓存的元数据。</li>
+<li>client 将获取 chunk 的所有副本位置，这时 client 会选择最近的 chunkserver 请求数据，由于在 Google 的数据中心，IP 地址是连续的，client 可以轻易的计算其中最近的 chunkserver。</li>
+</ul>
+<h2 id="GFS-写文件">GFS 写文件</h2>
+<p>具体而言，这个问题是如何追加文件，它与写不同，就像 write mode 和 append mode 的区别。</p>
+<p>GFS 的写操作相较于读操作复杂的对，因为它需要保证多个副本之间是一致的。当 client 需要写入文件时，它会首先询问 master 主机。client 同样将告知 master 包括文件名、文件偏移量、读取字节数，master 通过两表查询会告知这段文件所在的 Chunk ID 的所有相关信息。</p>
+<p>client 获取的这些信息包括 chunk 所在的 chunkserver 和其中的主 chunk 及租约时间。我们将持有主 chunk 的 chunksever 称为 primary，将持有其他副本的 chunksever 称为 secondary。client 首先通知 primary 准备接收数据，primary 将通知所有 secondary 准备接收数据。然后 client 会将数据发送到 primary 和 secondary，它们（primary 和 secondary）会首先将数据存储在临时文件中，然后追加到 chunk 中。如果这一切正常，secondary 将发送成功响应到 primary，primary 确认所有响应成功后发送成功响应到 client。</p>
+<p>如果 client 收到异常响应或者未收到响应，client 将重试整个流程。最后 client 还会缓存 master 返回的这些元数据，这样 client 有时不再需要向 master 询问。同样地，缓存会在租约过期时清理。</p>
+<p>需要注意的是，client 的数据传输具有不同的传输路径，我们称之为数据流，而称之前的传输方式为控制流。与控制流不同，数据流更专注传输效率，数据流会从 client 发送到网络距离最短的 chunkserver A，然后 A 将它转发到剩余最近的 chunkserver B，依此类推。我们称之为 pipeline 模式，它的优势在于均衡交换机负担，同时更好利用全双工模式。</p>
+<h2 id="版本和租约-Version-Lease">版本和租约 (Version &amp; Lease)</h2>
+<p>我们在之前多次提到了版本（Version）和租约（Lease）的概念，但并未介绍它是如何工作的。版本和租约定义了 primary 的任期时间和任期版本，每次分发租约时将更新版本。版本和租约在 GFS 的容错机制中具有相当重要的地位。</p>
+<p>由于一些 chunkserver 可能暂时处于离线状态，当它恢复并重新加入系统时，其上的 chunk 版本可能是陈旧的。如果 chunkserver 使用了陈旧的 chunk 版本，它会被 master 忽视。master 会将不足数量的 chunk 拷贝到其他 chunkserver，而这些陈旧的 chunk 版本会在连接上 master 后定期清理。</p>
+<p>当一个写操作到达 master 时，它会查询 chunk 的 primary 及其租约时间。如果 primary 不存在或者租约过期，master 会重新指定一个 primary，并更新当前 chunk 的版本。然后正如我们先前描述的那样，client 将完成后面的流程。</p>
+<p>值得注意的是，租约只会在过期时分发。例如 primary 失去连接，master 不会重新分发租约，而是等待租约过期。因为这里可能存在网络分区的问题，这时在这个网络中 primary 可能对 client A 或 master 是不可见的，而对 client B 是可见的。这时如果重新分发租约，那么在这个网络中就存在两个 primary 是局部可见的（因为 client 存在缓存），这种现象称为脑裂，也一定会产生一致性问题。我们通过租约协调这个问题，即使存在网络分区，当一个分区的 primary 被任命时，另一个分区的 primary 将自动过期。</p>
+<p>有学生提出，既然每次 client 向 master 提出请求，master 为何不每次指定 primary？首先是并发问题，如果存在两个 client 对同一个 chunk 执行写操作，它们必须由同一个 primary 指定其次序，否则就出现了脑裂。其次 client 是存在缓存的，因此它不一定每次向 master 请求。最后网络在传输过程中可能存在延迟，网络重试可能比他更快到达，这时也会存在冲突。</p>
+<p>我们回到写操作。由于 master 只会在租约过期时重新分发，因此如果一些机器不可逆的发生故障，那么它只有在租约过期时才有可能重新恢复。当然一些网络故障通过重试即可解决。另外一个需要注意的点是，虽然我们的写操作返回了异常，但它可能依然存在正常的副本，之后的读操作可能读到正常的数据也有可能是缺失的，这对一个分布式系统而言是可接受的。</p>
+<h2 id="GFS-的一致性">GFS 的一致性</h2>
+<p>GFS 是弱一致性系统，也就是说它可能存在一致性问题。</p>
+<p>当 client 追加数据段 A 时，它可能是成功的，这时所有副本都将包含数据段 A。然后追加数据段 B 时，可能某个 secondary 失败了，这时将出现重试。其中我们成功追加了数据段 C，然后数据段 B 的重试成功。当然，也有可能出现 D 追加失败，并且重试失败。于是如图中所示，我们的 chunk 可能存在空缺（padding）和重复（duplicate），更糟糕的是如果不断重试它的重复可能进入下一 chunk。</p>
+<img src="https://s2.loli.net/2024/04/19/9DvUKoQ6Ex21t8j.png" style="zoom:50%;" />
+<p>GFS 的应用应该具有容许错误的能力，例如在收到错误响应时，应用应当自动过滤其中缺失的数据。我们提供 checksum 用于检测 chunk 的数据完整性，这可以用于验证是否存在空缺和重复。另外如果你的数据存在幂等性问题，你必须剔除重复数据，这可以利用唯一标识区分，这些方法被包含在我们的库中。</p>
+<p>目前没有将 GFS 改进为强一致系统的方案，不过它发布的前 5-10 年在 Google 具有非常出色的表现，许多 Google 的基础架构例如 BigTable 和 MapReduce 都运行在它上面。</p>
+<h2 id="副本放置与回收">副本放置与回收</h2>
+<p>GFS 考虑副本放置策略出于负载均衡和容错性的考量。副本放置会发生在以下场景：副本创建、失效重放置、重平衡。</p>
+<p>出于负载均衡的考量，GFS 会将新副本放置在负载最低的 chunkserver 中；另一方面，出于容错性考量副本必须是跨机架的，因为同一机架下的 chunkserver 可能同时离线。考量的第三个方面是重要性考量，对于副本创建是立即的，GFS 必须立即执行创建。而失效重放置和重平衡作为后台任务进行，他们以较低的速率运行避免抢占立即任务资源。在这里失效根据失效副本数排序，失效副本越多的 chunk 更急切完成拷贝放置以避免损失数据。而重平衡优先级最低，它会在空闲时将副本从一个 chunkserver 移动到另一个，从而完成负载均衡。这些任务均在 master 的控制下完成。</p>
+<p>GFS 提供了垃圾回收机制，同样以缓慢的后台任务清理失效副本。失效副本主要包括两种：租约过期的副本、用户删除的副本、损坏的副本，其中租约过期是租约版本低于最新版本的副本，它通常是 chunkserver 在一段时间离线导致的。这些副本会在被 master 检测到时从 metadata 删除，然后 chunkserver 会定期发送心跳，这些数据包含了部分 chunkserver 的本地 chunk，它会在多次心跳中扫描全部本地 chunk。每次 chunkserver 发送心跳，master 将回复哪些 chunk 不在 master 的 metadata 中，然后 chunkserver 将清理这些 chunk 和相关的 metadata。可以发现这样被动的垃圾回收机制更加简单可控。</p>
+<h2 id="GFS-的缺陷">GFS 的缺陷</h2>
+<p>GFS 作为单 master 的分布式系统，向业界证明了单 master 系统依然可以很好的工作，但也是单 master 成为了系统很多的缺陷所在。</p>
+<ul>
+<li>master 存储了所有的元数据，随着文件的增加，这些数据可能会占满其资源。</li>
+<li>master 需要支持数千台机器的集群，而 master 的 CPU 每秒只能处理数百个请求。</li>
+<li>master 的主备切换不是自动的，它需要人工干预或外部设施支持，前者可能需要等待几个小时。</li>
+<li>另外一点就是 GFS 奇怪的语义可能为应用带来一些困扰，尽管这些不一致性发生的概率很低。</li>
+<li>网络是制约当时 GFS 这类分布式系统的主要瓶颈，这些系统早已不再使用。</li>
+</ul>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/">分布式系统</a><a class="post-meta__tags" href="/tags/MIT6-824/">MIT6.824</a></div><div class="post_share"><div class="social-share" data-image="/img/default_cover.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/ds-mit6824-mapreduce/" title="MapReduce 论文研读 - MIT6.824"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">MapReduce 论文研读 - MIT6.824</div></div></a></div><div class="next-post pull-right"><a href="/posts/ds-mit6824-vmft/" title="VMware FT 论文研读 - MIT6.824"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">VMware FT 论文研读 - MIT6.824</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/ds-mit6824-mapreduce/" title="MapReduce 论文研读 - MIT6.824"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-21</div><div class="title">MapReduce 论文研读 - MIT6.824</div></div></a></div><div><a href="/posts/ds-mit6824-vmft/" title="VMware FT 论文研读 - MIT6.824"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-21</div><div class="title">VMware FT 论文研读 - MIT6.824</div></div></a></div><div><a href="/posts/ds-mit6824-raft/" title="Raft 论文研读 - MIT6.824"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-21</div><div class="title">Raft 论文研读 - MIT6.824</div></div></a></div><div><a href="/posts/ds-bloom-filter/" title="布隆过滤器及其误判率推导"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-21</div><div class="title">布隆过滤器及其误判率推导</div></div></a></div><div><a href="/posts/ds-consistent-hash/" title="浅析几种一致性哈希算法"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-07-14</div><div class="title">浅析几种一致性哈希算法</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Jamhus Tao</div><div class="author-info__description">找点好玩的去！</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">113</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">83</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">72</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/jamhus-tao"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/img/qq.jpg" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/img/weixin.jpg" target="_blank" title="Weixin"><i class="fab fa-weixin"></i></a><a class="social-icon" href="mailto:jamhus_tao@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="https://github.com/jamhus-tao" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-GFS%EF%BC%9F"><span class="toc-number">2.</span> <span class="toc-text">什么是 GFS？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GFS-%E7%9A%84%E8%AE%BE%E8%AE%A1%E7%9B%AE%E6%A0%87"><span class="toc-number">3.</span> <span class="toc-text">GFS 的设计目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GFS-%E7%9A%84-master-%E8%8A%82%E7%82%B9"><span class="toc-number">4.</span> <span class="toc-text">GFS 的 master 节点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#master-%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="toc-number">4.1.</span> <span class="toc-text">master 的数据结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#master-%E7%9A%84%E5%AE%B9%E9%94%99%E6%80%A7"><span class="toc-number">4.2.</span> <span class="toc-text">master 的容错性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GFS-%E8%AF%BB%E6%96%87%E4%BB%B6"><span class="toc-number">5.</span> <span class="toc-text">GFS 读文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GFS-%E5%86%99%E6%96%87%E4%BB%B6"><span class="toc-number">6.</span> <span class="toc-text">GFS 写文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%88%E6%9C%AC%E5%92%8C%E7%A7%9F%E7%BA%A6-Version-Lease"><span class="toc-number">7.</span> <span class="toc-text">版本和租约 (Version &amp; Lease)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GFS-%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7"><span class="toc-number">8.</span> <span class="toc-text">GFS 的一致性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%AF%E6%9C%AC%E6%94%BE%E7%BD%AE%E4%B8%8E%E5%9B%9E%E6%94%B6"><span class="toc-number">9.</span> <span class="toc-text">副本放置与回收</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GFS-%E7%9A%84%E7%BC%BA%E9%99%B7"><span class="toc-number">10.</span> <span class="toc-text">GFS 的缺陷</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cpp-cmake-abc/" title="CMake 项目构建和代码测试">CMake 项目构建和代码测试</a><time datetime="2024-09-27T13:01:00.000Z" title="更新于 2024-09-27 21:01:00">2024-09-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ds-consistent-hash/" title="浅析几种一致性哈希算法">浅析几种一致性哈希算法</a><time datetime="2024-09-11T09:58:00.000Z" title="更新于 2024-09-11 17:58:00">2024-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ds-bloom-filter/" title="布隆过滤器及其误判率推导">布隆过滤器及其误判率推导</a><time datetime="2024-07-14T06:28:00.000Z" title="更新于 2024-07-14 14:28:00">2024-07-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cs-hanmming-check/" title="海明校验码 - 计算机网络">海明校验码 - 计算机网络</a><time datetime="2024-06-26T05:24:00.000Z" title="更新于 2024-06-26 13:24:00">2024-06-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/acm-lanqiaocup-24cbg/" title="2024 年第十五届蓝桥杯 C/C++ B组国赛题解">2024 年第十五届蓝桥杯 C/C++ B组国赛题解</a><time datetime="2024-06-08T05:49:00.000Z" title="更新于 2024-06-08 13:49:00">2024-06-08</time></div></div></div></div></div></div></main><footer id="footer" style="background: #171717"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2025 By Jamhus Tao</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.umd.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="/pluginsSrc/katex/dist/katex.min.css"><script src="/pluginsSrc/katex/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('/pluginsSrc/mermaid/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addModeChange('mermaid', runMermaid)
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: 'f5ab0e5f4c6139f6fc66',
+      clientSecret: '34afc0f7b7a9086e590fbcb099bae698933ed074',
+      repo: 'jamhus-tao.github.io.gitalk',
+      owner: 'jamhus-tao',
+      admin: ['jamhus-tao'],
+      id: '2aca7595ff67f14e9a63af743906ea14',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    getCSS('/pluginsSrc/gitalk/dist/gitalk.css')
+    getScript('/pluginsSrc/gitalk/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.textContent= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !false) {
+  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script data-pjax defer src="/js/my.js"></script><script defer="defer" id="ribbon" src="/pluginsSrc/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

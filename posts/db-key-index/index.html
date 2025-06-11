@@ -1,0 +1,418 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>使用键与索引 | JamhusTao の Blog</title><meta name="author" content="Jamhus Tao"><meta name="copyright" content="Jamhus Tao"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="在 SQL 中存在多种键，通常用于约束和查询。本文将介绍主键、唯一键、非空值、默认值、外键与索引。 开始前的一个小芝士本文将介绍键和索引的使用，这首先需要学会查看已有键和索引，但是初学者往往不知道如何查看表的结构。不同 SQL 语言查看的方法各不相同，对于 MySQL 可以使用下面的命令。 1SHOW CREATE TABLE &amp;#123;表名&amp;#125;; 示例输出1SHOW CREATE TA">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用键与索引">
+<meta property="og:url" content="https://jamhus-tao.github.io/posts/db-key-index/">
+<meta property="og:site_name" content="JamhusTao の Blog">
+<meta property="og:description" content="在 SQL 中存在多种键，通常用于约束和查询。本文将介绍主键、唯一键、非空值、默认值、外键与索引。 开始前的一个小芝士本文将介绍键和索引的使用，这首先需要学会查看已有键和索引，但是初学者往往不知道如何查看表的结构。不同 SQL 语言查看的方法各不相同，对于 MySQL 可以使用下面的命令。 1SHOW CREATE TABLE &amp;#123;表名&amp;#125;; 示例输出1SHOW CREATE TA">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://jamhus-tao.github.io/img/default_cover.png">
+<meta property="article:published_time" content="2023-10-27T15:27:00.000Z">
+<meta property="article:modified_time" content="2023-10-27T15:27:00.000Z">
+<meta property="article:author" content="Jamhus Tao">
+<meta property="article:tag" content="语法">
+<meta property="article:tag" content="Database">
+<meta property="article:tag" content="MySQL">
+<meta property="article:tag" content="SQL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://jamhus-tao.github.io/img/default_cover.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://jamhus-tao.github.io/posts/db-key-index/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-FQ4L3WN8LH"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-FQ4L3WN8LH');
+</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":600},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '使用键与索引',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-10-27 23:27:00'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/my.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">113</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">83</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">72</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/default_cover.png')"><nav id="nav"><span id="blog-info"><a href="/" title="JamhusTao の Blog"><span class="site-name">JamhusTao の Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">使用键与索引</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-10-27T15:27:00.000Z" title="发表于 2023-10-27 23:27:00">2023-10-27</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-10-27T15:27:00.000Z" title="更新于 2023-10-27 23:27:00">2023-10-27</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Database/">Database</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Database/%E4%BD%BF%E7%94%A8%E9%94%AE%E4%B8%8E%E7%B4%A2%E5%BC%95/">使用键与索引</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>13分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="使用键与索引"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>在 SQL 中存在多种键，通常用于约束和查询。本文将介绍主键、唯一键、非空值、默认值、外键与索引。</p>
+<details class="toggle" style="border: 1px solid  #222222"><summary class="toggle-button" style="background-color:  #222222;color:  white">开始前的一个小芝士</summary><div class="toggle-content"><p>本文将介绍键和索引的使用，这首先需要学会查看已有键和索引，但是初学者往往不知道如何查看表的结构。不同 SQL 语言查看的方法各不相同，对于 MySQL 可以使用下面的命令。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> <span class="keyword">CREATE</span> <span class="keyword">TABLE</span> &#123;表名&#125;;</span><br></pre></td></tr></table></figure>
+<div class="tabs" id="开始前的一个小芝士的示例"><ul class="nav-tabs"><li class="tab active"><button type="button" data-href="#开始前的一个小芝士的示例-1">示例</button></li><li class="tab"><button type="button" data-href="#开始前的一个小芝士的示例-2">输出</button></li></ul><div class="tab-contents"><div class="tab-item-content active" id="开始前的一个小芝士的示例-1"><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> <span class="keyword">CREATE</span> <span class="keyword">TABLE</span> MOvies;</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="开始前的一个小芝士的示例-2"><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">+--------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+</span><br><span class="line">| Table  | Create Table                                                                                                                                                                                                                                                                         |</span><br><span class="line">+--------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+</span><br><span class="line">| MOvies | CREATE TABLE `movies` (</span><br><span class="line">  `title` text,</span><br><span class="line">  `year` int DEFAULT NULL,</span><br><span class="line">  `length` int DEFAULT NULL,</span><br><span class="line">  `movieType` text,</span><br><span class="line">  `studioName` text,</span><br><span class="line">  `producerC` int DEFAULT NULL,</span><br><span class="line">  UNIQUE KEY `uniqueTitle` (`title`(10))</span><br><span class="line">) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci |</span><br><span class="line">+--------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div></div>
+</div></details>
+<br>
+<h2 id="主键">主键</h2>
+<h3 id="什么是主键">什么是主键</h3>
+<p>在介绍主键前首先需要了解一些相关的概念。</p>
+<ul>
+<li>超键：可唯一确定一条记录的字段组成的元组，可以只有一个字段。</li>
+<li>候选键：没有子集是超键的超键。通俗地讲，候选键是没有冗余字段的用于唯一确定字段的元组。</li>
+<li>主键：用户从候选键中选择一个（或不选）作为主键，包含多个字段的主键称为联合主键。用户应选择合适的候选键作主键。</li>
+</ul>
+<p>那么为什么要引入主键的概念？主键被用户指定用于唯一确定一行，于是在查找时，主键起到了非常重要的作用。</p>
+<p>一张表只能有一个主键或没有主键，主键在插入操作时要求主键不能重复，否则将插入失败。</p>
+<h3 id="创建和删除主键">创建和删除主键</h3>
+<h4 id="在建表时创建主键">在建表时创建主键</h4>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> test (id <span class="type">int</span> <span class="keyword">PRIMARY</span> KEY, name text, age <span class="type">smallint</span>);</span><br></pre></td></tr></table></figure>
+<p>另外，如果需要创建联合主键，可以使用下面这种方法。联合主键在实际中很少使用。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> test (id <span class="type">int</span>, name text, age <span class="type">smallint</span>, <span class="keyword">PRIMARY</span> KEY (id, name(<span class="number">4</span>)));</span><br></pre></td></tr></table></figure>
+<details class="toggle" style="border: 1px solid  #222222"><summary class="toggle-button" style="background-color:  #222222;color:  white">注意事项</summary><div class="toggle-content"><p>在创建主键时，如果要对 <code>BLOB</code> / <code>TEXT</code> 等变长类型创建键，必须指定用于创建键的长度。如上面这个示例中的 <code>name(4)</code> 表示取前 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4</mn></mrow><annotation encoding="application/x-tex">4</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">4</span></span></span></span> 个字符创建主键。</p>
+<p>这里的键不仅指主键，还包括：唯一键、外键、索引等。</p>
+</div></details>
+<h4 id="在建表后创建主键">在建表后创建主键</h4>
+<p>在创建表后修改主键不是一个很好的解决方案，一般建议在创建表时即确定表的结构。那么如果仍然需要，可以使用 <code>ALTER TABLE</code> 语句。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> test (id <span class="type">int</span>, name text, age <span class="type">smallint</span>);</span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> test <span class="keyword">ADD</span> <span class="keyword">PRIMARY</span> KEY (id, name(<span class="number">4</span>));</span><br></pre></td></tr></table></figure>
+<p>上面这个示例与 <code>在建表时创建主键</code> 是一样的效果。但创建主键时，会检查主键是否重复以及是否已有主键存在，否则创建失败。在创建键（不仅是主键）时 <code>KEY</code> 关键字后必须有 <code>()</code>，不能遗漏。</p>
+<p>如果创建的主键不是联合主键，可以使用：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> test (id <span class="type">int</span>, name text, age <span class="type">smallint</span>);</span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> test MODIFY <span class="keyword">COLUMN</span> id <span class="type">int</span> <span class="keyword">PRIMARY</span> KEY;  <span class="comment">-- Mysql 中使用 MODIFY</span></span><br></pre></td></tr></table></figure>
+<h4 id="删除主键">删除主键</h4>
+<p>和 <code>在建表后创建主键</code> 相似，删除主键使用 <code>ALTER TABLE</code> 语句。修改主键必须先删除主键。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> test (id <span class="type">int</span>, name text, age <span class="type">smallint</span>, <span class="keyword">PRIMARY</span> KEY (id, name(<span class="number">4</span>)));</span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> test <span class="keyword">DROP</span> <span class="keyword">PRIMARY</span> KEY;</span><br></pre></td></tr></table></figure>
+<br>
+<h2 id="唯一键">唯一键</h2>
+<p>唯一键和主键相似，同样可以唯一标识一行但不被指定为主键。主键只能有一个，但唯一键不受限制。在实际应用中，例如学生表中，可以将学号定义为主键，因为它被认为是学生的标识，但如身份证信息不适合用于标识学生但也是唯一确定的，这类信息可以使用唯一键进行约束。</p>
+<h3 id="创建唯一键">创建唯一键</h3>
+<p>唯一键对应的关键字为 <code>UNIQUE KEY</code>，由于唯一键可以有多个，相较于主键语法更复杂。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> &#123;表名&#125; (&#123;字段名&#125; &#123;字段类型&#125; [<span class="keyword">UNIQUE</span>], ...);</span><br><span class="line"><span class="comment">-- CREATE TABLE test (id int UNIQUE, name text, age smallint);</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> &#123;表名&#125; <span class="keyword">ADD</span> <span class="keyword">CONSTRAINT</span> [&#123;约束名&#125;] <span class="keyword">UNIQUE</span> KEY (创建字段);</span><br><span class="line"><span class="comment">-- ALTER TABLE test ADD CONSTRAINT uniqueId UNIQUE KEY (id);</span></span><br></pre></td></tr></table></figure>
+<p>可以注意到约束名是可缺省的，缺省时将自动命名，通常与创建字段同名。另外，唯一键也可以使用联合键，可以参考创建主键。</p>
+<h3 id="删除唯一键">删除唯一键</h3>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> &#123;表名&#125; <span class="keyword">DROP</span> <span class="keyword">CONSTRAINT</span> &#123;约束名&#125;;</span><br></pre></td></tr></table></figure>
+<br>
+<h2 id="非空值与默认值">非空值与默认值</h2>
+<p>与上面两种约束不同的是，字段非空约束和默认值只能对单字段使用，其语法也不太一样。字段非空约束和默认值也可以在创建表时或创建表后设置。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> &#123;表名&#125; (&#123;字段名&#125; &#123;字段类型&#125; [<span class="keyword">NOT</span> <span class="keyword">NULL</span>] [<span class="keyword">DEFAULT</span> &#123;默认值&#125;], ...);</span><br><span class="line"><span class="comment">-- CREATE TABLE test (id int NOT NULL, name text, age smallint);</span></span><br><span class="line"><span class="comment">-- CREATE TABLE test (id int DEFAULT 0, name text, age smallint);</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> &#123;表名&#125; MODIFY <span class="keyword">COLUMN</span> &#123;字段名&#125; &#123;字段类型&#125; [<span class="keyword">NOT</span> <span class="keyword">NULL</span>] [<span class="keyword">DEFAULT</span> &#123;默认值&#125;]</span><br><span class="line"><span class="comment">-- ALTER TABLE test MODIFY COLUMN id int NOT NULL;  -- 设置为非空</span></span><br><span class="line"><span class="comment">-- ALTER TABLE test MODIFY COLUMN id int DEFAULT 0;  -- 设置默认值 0</span></span><br><span class="line"><span class="comment">-- ALTER TABLE test MODIFY COLUMN id int;  -- 设置为空且无默认值</span></span><br></pre></td></tr></table></figure>
+<p>​<mark class="hl-label default">注意：</mark>  主键不能去除非空约束。<code>BLOB</code> / <code>TEXT</code> / <code>GEOMETRY</code> / <code>JSON</code> 不能设置默认值。在 <code>ALTER TABLE</code> 时设置和移除非空值与默认值都使用 <code>MODIFY COLUMN</code>。</p>
+<br>
+<h2 id="外键">外键</h2>
+<h3 id="什么是外键">什么是外键</h3>
+<p>外键是一种重要的约束，用于保证联结表的数据安全性。外键保证用于联结的键在外表中始终存在。</p>
+<p>我们经常会使用下面的方式进行联结：</p>
+<div class="tabs" id="什么是外键的示例"><ul class="nav-tabs"><li class="tab active"><button type="button" data-href="#什么是外键的示例-1">示例</button></li><li class="tab"><button type="button" data-href="#什么是外键的示例-2">输出</button></li></ul><div class="tab-contents"><div class="tab-item-content active" id="什么是外键的示例-1"><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> Movies;</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> MovieExec;</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">    title, </span><br><span class="line">    <span class="keyword">year</span>, </span><br><span class="line">    length, </span><br><span class="line">    movieType, </span><br><span class="line">    studioName, </span><br><span class="line">    name <span class="keyword">AS</span> execName </span><br><span class="line"><span class="keyword">FROM</span> </span><br><span class="line">    Movies </span><br><span class="line"><span class="keyword">LEFT</span> <span class="keyword">JOIN</span> </span><br><span class="line">    MovieExec </span><br><span class="line"><span class="keyword">ON</span> </span><br><span class="line">    producerC <span class="operator">=</span> cert;</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="什么是外键的示例-2"><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">+--------------------------+------+--------+-----------+----------------+-----------+</span><br><span class="line">| title                    | year | length | movieType | studioName     | producerC |</span><br><span class="line">+--------------------------+------+--------+-----------+----------------+-----------+</span><br><span class="line">| Empire Strikes Back      | 1980 |    111 | drama     | Fox            |       555 |</span><br><span class="line">| My people,My country     | 2019 |    158 | feature   | huaxia         |       100 |</span><br><span class="line">| Gone With the Wind       | 1938 |    238 | drama     | MGM            |       123 |</span><br><span class="line">| Logan&#x27;s run              | 1977 |    120 | drama     | MGM            |       888 |</span><br><span class="line">| Pretty Woman             | 1990 |    119 | drama     | Disney         |       999 |</span><br><span class="line">| Star Trek                | 1979 |   NULL | sciFic    | Paramount      |       444 |</span><br><span class="line">| Star Trek: Nemesis       | 2002 |    116 | sciFic    | Paramount      |       321 |</span><br><span class="line">| Star Wars                | 1977 |    124 | sciFic    | Fox            |       555 |</span><br><span class="line">| Terms of Endearment      | 1983 |    132 | drama     | MGM            |       123 |</span><br><span class="line">| The Man Who Wasn&#x27;t There | 2001 |    116 | comedy    | USA Entertainm |       777 |</span><br><span class="line">| The Usual Suspects       | 1995 |    106 | drama     | MGM            |       999 |</span><br><span class="line">+--------------------------+------+--------+-----------+----------------+-----------+</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">+-------------------+-------------+------+-----------+</span><br><span class="line">| name              | address     | cert | netWorth  |</span><br><span class="line">+-------------------+-------------+------+-----------+</span><br><span class="line">| Huangjianxin      | NULL        |  100 |      NULL |</span><br><span class="line">| Calvin Coolidge   | Fast Lane   |  123 |  20000000 |</span><br><span class="line">| Merv Griffin      | Riot Rd.    |  199 | 112000000 |</span><br><span class="line">| Stephen Spielberg | 123 ET road |  222 | 100000000 |</span><br><span class="line">| Ted Turner        | Turner Av.  |  333 | 125000000 |</span><br><span class="line">| George Lucas      | Oak Rd.     |  555 | 200000000 |</span><br><span class="line">| Jane Fonda        | Turner Av.  |  567 | 200000000 |</span><br><span class="line">+-------------------+-------------+------+-----------+</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">+--------------------------+------+--------+-----------+----------------+-----------------+</span><br><span class="line">| title                    | year | length | movieType | studioName     | execName        |</span><br><span class="line">+--------------------------+------+--------+-----------+----------------+-----------------+</span><br><span class="line">| Empire Strikes Back      | 1980 |    111 | drama     | Fox            | George Lucas    |</span><br><span class="line">| My people,My country     | 2019 |    158 | feature   | huaxia         | Huangjianxin    |</span><br><span class="line">| Gone With the Wind       | 1938 |    238 | drama     | MGM            | Calvin Coolidge |</span><br><span class="line">| Logan&#x27;s run              | 1977 |    120 | drama     | MGM            | NULL            |</span><br><span class="line">| Pretty Woman             | 1990 |    119 | drama     | Disney         | NULL            |</span><br><span class="line">| Star Trek                | 1979 |   NULL | sciFic    | Paramount      | NULL            |</span><br><span class="line">| Star Trek: Nemesis       | 2002 |    116 | sciFic    | Paramount      | NULL            |</span><br><span class="line">| Star Wars                | 1977 |    124 | sciFic    | Fox            | George Lucas    |</span><br><span class="line">| Terms of Endearment      | 1983 |    132 | drama     | MGM            | Calvin Coolidge |</span><br><span class="line">| The Man Who Wasn&#x27;t There | 2001 |    116 | comedy    | USA Entertainm | NULL            |</span><br><span class="line">| The Usual Suspects       | 1995 |    106 | drama     | MGM            | NULL            |</span><br><span class="line">+--------------------------+------+--------+-----------+----------------+-----------------+</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div></div>
+<p>在上面这个示例使用联结时，我们将 <code>Movies</code> 表（主表）与 <code>MovieExec</code> 表（外表）按照字段 <code>producerC</code>（制片人标识）与 <code>cert</code> 联结。但这里也看到了一些问题，例如我们使用左联结时，在表中出现了大量的 <code>NULL</code> 字段，因为没有在 <code>MovieExec</code> 表中找到对应的标识。此时如果在主表中插入一个外表不存在的记录或从外表删除一个主表依赖的记录，可能都会导致必要数据缺失。</p>
+<p>首先一个外键具有三个参数：</p>
+<ul>
+<li>外键约束名（用于标识外键）</li>
+<li>主表中的被联结字段名（主字段）</li>
+<li>外表中的联结字段名（外字段）</li>
+</ul>
+<p>外键即保证了约束：主字段中元素一定包含于外字段。主字段可重复，外字段也可重复。</p>
+<h3 id="创建和删除外键">创建和删除外键</h3>
+<h4 id="创建外键">创建外键</h4>
+<p>创建外键的语法相对复杂，需要特别注意主字段外必须要有括号。通常外字段是外表的主键。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> &#123;主表名&#125; <span class="keyword">ADD</span> <span class="keyword">CONSTRAINT</span> &#123;约束名&#125; <span class="keyword">FOREIGN</span> KEY (&#123;主字段&#125;) <span class="keyword">REFERENCES</span> &#123;外表名&#125;(&#123;外字段&#125;&#125;;</span><br></pre></td></tr></table></figure>
+<div class="tabs" id="创建外键的示例"><ul class="nav-tabs"><li class="tab active"><button type="button" data-href="#创建外键的示例-1">示例</button></li><li class="tab"><button type="button" data-href="#创建外键的示例-2">输出</button></li></ul><div class="tab-contents"><div class="tab-item-content active" id="创建外键的示例-1"><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> </span><br><span class="line">    Movies </span><br><span class="line"><span class="keyword">ADD</span> <span class="keyword">CONSTRAINT</span> </span><br><span class="line">    foreignProducerC </span><br><span class="line"><span class="keyword">FOREIGN</span> KEY </span><br><span class="line">    (producerC) </span><br><span class="line"><span class="keyword">REFERENCES</span> </span><br><span class="line">    MovieExec(cert);</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> Movies;</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> MovieExec;</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> </span><br><span class="line">    title, </span><br><span class="line">    <span class="keyword">year</span>, </span><br><span class="line">    length, </span><br><span class="line">    movieType, </span><br><span class="line">    studioName, </span><br><span class="line">    name <span class="keyword">AS</span> execName </span><br><span class="line"><span class="keyword">FROM</span> </span><br><span class="line">    Movies </span><br><span class="line"><span class="keyword">LEFT</span> <span class="keyword">JOIN</span> </span><br><span class="line">    MovieExec </span><br><span class="line"><span class="keyword">ON</span> </span><br><span class="line">    producerC <span class="operator">=</span> cert;</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="创建外键的示例-2"><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Query OK, 11 rows affected (0.12 sec)</span><br><span class="line">Records: 11  Duplicates: 0  Warnings: 0</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">+--------------------------+------+--------+-----------+----------------+-----------+</span><br><span class="line">| title                    | year | length | movieType | studioName     | producerC |</span><br><span class="line">+--------------------------+------+--------+-----------+----------------+-----------+</span><br><span class="line">| Empire Strikes Back      | 1980 |    111 | drama     | Fox            |       555 |</span><br><span class="line">| My people,My country     | 2019 |    158 | feature   | huaxia         |       100 |</span><br><span class="line">| Gone With the Wind       | 1938 |    238 | drama     | MGM            |       123 |</span><br><span class="line">| Logan&#x27;s run              | 1977 |    120 | drama     | MGM            |       888 |</span><br><span class="line">| Pretty Woman             | 1990 |    119 | drama     | Disney         |       999 |</span><br><span class="line">| Star Trek                | 1979 |   NULL | sciFic    | Paramount      |       444 |</span><br><span class="line">| Star Trek: Nemesis       | 2002 |    116 | sciFic    | Paramount      |       321 |</span><br><span class="line">| Star Wars                | 1977 |    124 | sciFic    | Fox            |       555 |</span><br><span class="line">| Terms of Endearment      | 1983 |    132 | drama     | MGM            |       123 |</span><br><span class="line">| The Man Who Wasn&#x27;t There | 2001 |    116 | comedy    | USA Entertainm |       777 |</span><br><span class="line">| The Usual Suspects       | 1995 |    106 | drama     | MGM            |       999 |</span><br><span class="line">+--------------------------+------+--------+-----------+----------------+-----------+</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">+-------------------+-------------+------+-----------+</span><br><span class="line">| name              | address     | cert | netWorth  |</span><br><span class="line">+-------------------+-------------+------+-----------+</span><br><span class="line">| Huangjianxin      | NULL        |  100 |      NULL |</span><br><span class="line">| Calvin Coolidge   | Fast Lane   |  123 |  20000000 |</span><br><span class="line">| Merv Griffin      | Riot Rd.    |  199 | 112000000 |</span><br><span class="line">| Stephen Spielberg | 123 ET road |  222 | 100000000 |</span><br><span class="line">| NULL              | NULL        |  321 |      NULL |</span><br><span class="line">| Ted Turner        | Turner Av.  |  333 | 125000000 |</span><br><span class="line">| NULL              | NULL        |  444 |      NULL |</span><br><span class="line">| George Lucas      | Oak Rd.     |  555 | 200000000 |</span><br><span class="line">| Jane Fonda        | Turner Av.  |  567 | 200000000 |</span><br><span class="line">| NULL              | NULL        |  777 |      NULL |</span><br><span class="line">| NULL              | NULL        |  888 |      NULL |</span><br><span class="line">| NULL              | NULL        |  999 |      NULL |</span><br><span class="line">+-------------------+-------------+------+-----------+</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">+--------------------------+------+--------+-----------+----------------+-----------------+</span><br><span class="line">| title                    | year | length | movieType | studioName     | execName        |</span><br><span class="line">+--------------------------+------+--------+-----------+----------------+-----------------+</span><br><span class="line">| Empire Strikes Back      | 1980 |    111 | drama     | Fox            | George Lucas    |</span><br><span class="line">| My people,My country     | 2019 |    158 | feature   | huaxia         | Huangjianxin    |</span><br><span class="line">| Gone With the Wind       | 1938 |    238 | drama     | MGM            | Calvin Coolidge |</span><br><span class="line">| Logan&#x27;s run              | 1977 |    120 | drama     | MGM            | NULL            |</span><br><span class="line">| Pretty Woman             | 1990 |    119 | drama     | Disney         | NULL            |</span><br><span class="line">| Star Trek                | 1979 |   NULL | sciFic    | Paramount      | NULL            |</span><br><span class="line">| Star Trek: Nemesis       | 2002 |    116 | sciFic    | Paramount      | NULL            |</span><br><span class="line">| Star Wars                | 1977 |    124 | sciFic    | Fox            | George Lucas    |</span><br><span class="line">| Terms of Endearment      | 1983 |    132 | drama     | MGM            | Calvin Coolidge |</span><br><span class="line">| The Man Who Wasn&#x27;t There | 2001 |    116 | comedy    | USA Entertainm | NULL            |</span><br><span class="line">| The Usual Suspects       | 1995 |    106 | drama     | MGM            | NULL            |</span><br><span class="line">+--------------------------+------+--------+-----------+----------------+-----------------+</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div></div>
+<p>在这个示例中可以看到，这里的 <code>MovieExec</code> 表与上一次不同，原因是直接使用上次的外表无法创建外键，因为存在值属于主字段但不属于外字段，不满足外键约束。</p>
+<h4 id="删除外键">删除外键</h4>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> Movies <span class="keyword">DROP</span> <span class="keyword">CONSTRAINT</span> &#123;约束名&#125;;</span><br><span class="line"><span class="comment">-- ALTER TABLE Movies DROP CONSTRAINT foreignProducerC;</span></span><br></pre></td></tr></table></figure>
+<h3 id="外键约束下行为">外键约束下行为</h3>
+<p>外键约束下有很强的约束，不满足约束将导致操作失败。另外，外键还有一些额外的行为。</p>
+<ul>
+<li>创建外键时
+<ul>
+<li>约束
+<ul>
+<li>主字段中元素必须均包含于外字段元素（外键约束）</li>
+<li>外字段必须已经创建索引，通常外字段是外表的主键</li>
+</ul>
+</li>
+<li>行为
+<ul>
+<li>主字段自动创建索引</li>
+<li>创建外键约束</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>删除外键时
+<ul>
+<li>行为
+<ul>
+<li>不会删除自动创建的主字段索引</li>
+<li>删除外键约束</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>在主表插入或修改记录
+<ul>
+<li>约束
+<ul>
+<li>操作后将满足外键约束</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>在外表删除或修改记录
+<ul>
+<li>约束
+<ul>
+<li>操作后将满足外键约束</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<br>
+<h2 id="索引">索引</h2>
+<h3 id="什么是索引">什么是索引</h3>
+<p>在使用查询语句时，常常使用 <code>WHERE</code> 子句进行筛选，但对于一般的字段，使用逐行判断的方法进行筛选，这种筛选效率低下。索引的本质是用于加速字段筛选的数据结构。字段使用索引后，可以在对数时间内查找需要的值。</p>
+<p>通过创建索引，在数据量很大时有显著的查询效率提升，但在频繁插入和修改时，效率下降明显。</p>
+<details class="toggle" style="border: 1px solid  #222222"><summary class="toggle-button" style="background-color:  #222222;color:  white">为什么索引的数据结构是 B+ 树</summary><div class="toggle-content"><p>刚刚说了索引是一种数据结构，那么为什么选择 B+ 树？我们要先从 B 树讲起。</p>
+<p>B 树是一棵多路搜索平衡树，每个节点有多个值和多个子节点。与二叉树不同的是，B 树通过在同一节点存放多个值，拥有更小的树深。虽然 B 树在一个节点存放多个值弱化了二叉搜索，但连续存储使得内存访问更加高效（局部性原理）。数据库的数据存储在磁盘中，与内存不同的是，磁盘中的 <code>IO</code> 操作远比内存中的 <code>IO</code> 慢，此时局部性原理显得比二叉搜索更为重要。B 树具有阶的概念，即在一个节点最多存放几个值，其实就是对局部性原理与二叉搜索性质的权衡。下图是一棵 B 树：</p>
+<p><img src="https://s2.loli.net/2023/10/27/XrN3eWT1RwQn8Jh.png" alt="B 树"></p>
+<p>B+ 树是对 B 树的优化，在 B 树中使用连续访问相对低效且不稳定，B+ 树即在 B 树的基础上建立后继索引，当进行区间询问时，效率就会有显著提升。B+ 树中的阶数由系统分页大小决定，例如分页大小为 16KB 时，阶数通常设置为 1000 左右。下图是一棵 B+ 树：</p>
+<p><img src="https://s2.loli.net/2023/10/27/vX4xc8dAgQZLK7m.png" alt="B+ 树"></p>
+</div></details>
+<h3 id="创建和删除索引">创建和删除索引</h3>
+<h4 id="创建索引">创建索引</h4>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> INDEX &#123;索引名&#125; <span class="keyword">ON</span> &#123;表名&#125;(&#123;字段名&#125;);  </span><br></pre></td></tr></table></figure>
+<p>如果要对 <code>BLOB</code> / <code>TEXT</code> 等变长类型创建索引，必须指定用于创建索引的长度。可以对联合键创建索引。</p>
+<p>下面是使用索引提速的示例：</p>
+<div class="tabs" id="创建索引的示例"><ul class="nav-tabs"><li class="tab active"><button type="button" data-href="#创建索引的示例-1">示例</button></li><li class="tab"><button type="button" data-href="#创建索引的示例-2">输出</button></li></ul><div class="tab-contents"><div class="tab-item-content active" id="创建索引的示例-1"><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">FROM</span> test;</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> test <span class="keyword">WHERE</span> name<span class="operator">=</span>&quot;zhaoliu&quot;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> INDEX indexName <span class="keyword">ON</span> test(name(<span class="number">4</span>));</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> test <span class="keyword">WHERE</span> name<span class="operator">=</span>&quot;zhaoliu&quot;;</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="创建索引的示例-2"><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+----------+</span><br><span class="line">| COUNT(*) |</span><br><span class="line">+----------+</span><br><span class="line">|   511232 |</span><br><span class="line">+----------+</span><br><span class="line">1 row in set (0.05 sec)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">+-------+---------+------+</span><br><span class="line">| id    | name    | age  |</span><br><span class="line">+-------+---------+------+</span><br><span class="line">| 23435 | zhaoliu |   35 |</span><br><span class="line">| 23436 | zhaoliu |   44 |</span><br><span class="line">| 23890 | zhaoliu |   35 |</span><br><span class="line">+-------+---------+------+</span><br><span class="line">3 rows in set (0.12 sec)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Query OK, 0 rows affected (1.78 sec)</span><br><span class="line">Records: 0  Duplicates: 0  Warnings: 0</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">+-------+---------+------+</span><br><span class="line">| id    | name    | age  |</span><br><span class="line">+-------+---------+------+</span><br><span class="line">| 23435 | zhaoliu |   35 |</span><br><span class="line">| 23436 | zhaoliu |   44 |</span><br><span class="line">| 23890 | zhaoliu |   35 |</span><br><span class="line">+-------+---------+------+</span><br><span class="line">3 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div></div>
+<p>可以看到在这个 <code>50000</code> 的测试集中，使用索引将其从 <code>0.12</code> 秒提速到了几乎 <code>0</code> 秒，在更大的数据集中效果显著。</p>
+<h4 id="删除索引">删除索引</h4>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> INDEX &#123;索引名&#125; <span class="keyword">ON</span> &#123;表名&#125;;</span><br><span class="line"><span class="comment">-- DROP INDEX indexName ON test;</span></span><br></pre></td></tr></table></figure>
+<h3 id="适用索引的场景">适用索引的场景</h3>
+<p>索引并非可以盲目使用，索引适用的字段必须是：</p>
+<ul>
+<li>数据集大，索引是比较复杂的数据结构，当数据集小时，没必要使用索引。</li>
+<li>查询频繁，索引本身用于提速查询，查询越频繁使用索引的价值就越大。</li>
+<li>很少修改，索引提速查询的代价是，修改时开销巨大。</li>
+</ul>
+<p>在上面的示例中，我们也可以看到创建索引非常慢，就是因为修改操作代价高昂。当数据集足够大（一般在 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>6</mn></msup></mrow><annotation encoding="application/x-tex">10^6</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">6</span></span></span></span></span></span></span></span></span></span></span> 级别）时，用户应该在查询和修改频率中权衡是否使用索引。</p>
+<h3 id="自动创建索引的场景">自动创建索引的场景</h3>
+<p>一些场景下会自动创建索引：</p>
+<ul>
+<li>创建主键时，自动创建索引。删除主键时自动删除索引。</li>
+<li>创建外键时，自动创建索引。但删除时不会自动删除索引。</li>
+<li>创建外键时，强制外字段已创建索引。</li>
+</ul>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%AF%AD%E6%B3%95/">语法</a><a class="post-meta__tags" href="/tags/Database/">Database</a><a class="post-meta__tags" href="/tags/MySQL/">MySQL</a><a class="post-meta__tags" href="/tags/SQL/">SQL</a></div><div class="post_share"><div class="social-share" data-image="/img/default_cover.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/db-four-nf/" title="数据库中的范式"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">数据库中的范式</div></div></a></div><div class="next-post pull-right"><a href="/posts/python-oop-note/" title="python 面向对象编程备忘"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">python 面向对象编程备忘</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/db-sql-basic/" title="SQL 语法入门 - 基础操作"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-10-01</div><div class="title">SQL 语法入门 - 基础操作</div></div></a></div><div><a href="/posts/db-subquery-join/" title="SELECT 中的子查询与联结"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-10-13</div><div class="title">SELECT 中的子查询与联结</div></div></a></div><div><a href="/posts/db-select-set/" title="SELECT 中的合并、交集与差集"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-10-18</div><div class="title">SELECT 中的合并、交集与差集</div></div></a></div><div><a href="/posts/db-mysql-postgresql/" title="从 MySQL 学习 PostgreSQL"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-12-08</div><div class="title">从 MySQL 学习 PostgreSQL</div></div></a></div><div><a href="/posts/db-trigger-view/" title="使用触发器与视图"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-12-08</div><div class="title">使用触发器与视图</div></div></a></div><div><a href="/posts/db-clause-opt/" title="SELECT 中的子句与运算"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-10-11</div><div class="title">SELECT 中的子句与运算</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Jamhus Tao</div><div class="author-info__description">找点好玩的去！</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">113</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">83</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">72</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/jamhus-tao"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/img/qq.jpg" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/img/weixin.jpg" target="_blank" title="Weixin"><i class="fab fa-weixin"></i></a><a class="social-icon" href="mailto:jamhus_tao@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="https://github.com/jamhus-tao" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E9%94%AE"><span class="toc-number">1.</span> <span class="toc-text">主键</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%BB%E9%94%AE"><span class="toc-number">1.1.</span> <span class="toc-text">什么是主键</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%92%8C%E5%88%A0%E9%99%A4%E4%B8%BB%E9%94%AE"><span class="toc-number">1.2.</span> <span class="toc-text">创建和删除主键</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%A8%E5%BB%BA%E8%A1%A8%E6%97%B6%E5%88%9B%E5%BB%BA%E4%B8%BB%E9%94%AE"><span class="toc-number">1.2.1.</span> <span class="toc-text">在建表时创建主键</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%A8%E5%BB%BA%E8%A1%A8%E5%90%8E%E5%88%9B%E5%BB%BA%E4%B8%BB%E9%94%AE"><span class="toc-number">1.2.2.</span> <span class="toc-text">在建表后创建主键</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E4%B8%BB%E9%94%AE"><span class="toc-number">1.2.3.</span> <span class="toc-text">删除主键</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%94%AF%E4%B8%80%E9%94%AE"><span class="toc-number">2.</span> <span class="toc-text">唯一键</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%94%AF%E4%B8%80%E9%94%AE"><span class="toc-number">2.1.</span> <span class="toc-text">创建唯一键</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E5%94%AF%E4%B8%80%E9%94%AE"><span class="toc-number">2.2.</span> <span class="toc-text">删除唯一键</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9D%9E%E7%A9%BA%E5%80%BC%E4%B8%8E%E9%BB%98%E8%AE%A4%E5%80%BC"><span class="toc-number">3.</span> <span class="toc-text">非空值与默认值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%96%E9%94%AE"><span class="toc-number">4.</span> <span class="toc-text">外键</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%A4%96%E9%94%AE"><span class="toc-number">4.1.</span> <span class="toc-text">什么是外键</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%92%8C%E5%88%A0%E9%99%A4%E5%A4%96%E9%94%AE"><span class="toc-number">4.2.</span> <span class="toc-text">创建和删除外键</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%A4%96%E9%94%AE"><span class="toc-number">4.2.1.</span> <span class="toc-text">创建外键</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E5%A4%96%E9%94%AE"><span class="toc-number">4.2.2.</span> <span class="toc-text">删除外键</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%96%E9%94%AE%E7%BA%A6%E6%9D%9F%E4%B8%8B%E8%A1%8C%E4%B8%BA"><span class="toc-number">4.3.</span> <span class="toc-text">外键约束下行为</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95"><span class="toc-number">5.</span> <span class="toc-text">索引</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%B4%A2%E5%BC%95"><span class="toc-number">5.1.</span> <span class="toc-text">什么是索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%92%8C%E5%88%A0%E9%99%A4%E7%B4%A2%E5%BC%95"><span class="toc-number">5.2.</span> <span class="toc-text">创建和删除索引</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95"><span class="toc-number">5.2.1.</span> <span class="toc-text">创建索引</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E7%B4%A2%E5%BC%95"><span class="toc-number">5.2.2.</span> <span class="toc-text">删除索引</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%82%E7%94%A8%E7%B4%A2%E5%BC%95%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="toc-number">5.3.</span> <span class="toc-text">适用索引的场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="toc-number">5.4.</span> <span class="toc-text">自动创建索引的场景</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cpp-cmake-abc/" title="CMake 项目构建和代码测试">CMake 项目构建和代码测试</a><time datetime="2024-09-27T13:01:00.000Z" title="更新于 2024-09-27 21:01:00">2024-09-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ds-consistent-hash/" title="浅析几种一致性哈希算法">浅析几种一致性哈希算法</a><time datetime="2024-09-11T09:58:00.000Z" title="更新于 2024-09-11 17:58:00">2024-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ds-bloom-filter/" title="布隆过滤器及其误判率推导">布隆过滤器及其误判率推导</a><time datetime="2024-07-14T06:28:00.000Z" title="更新于 2024-07-14 14:28:00">2024-07-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cs-hanmming-check/" title="海明校验码 - 计算机网络">海明校验码 - 计算机网络</a><time datetime="2024-06-26T05:24:00.000Z" title="更新于 2024-06-26 13:24:00">2024-06-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/acm-lanqiaocup-24cbg/" title="2024 年第十五届蓝桥杯 C/C++ B组国赛题解">2024 年第十五届蓝桥杯 C/C++ B组国赛题解</a><time datetime="2024-06-08T05:49:00.000Z" title="更新于 2024-06-08 13:49:00">2024-06-08</time></div></div></div></div></div></div></main><footer id="footer" style="background: #171717"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2025 By Jamhus Tao</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.umd.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="/pluginsSrc/katex/dist/katex.min.css"><script src="/pluginsSrc/katex/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('/pluginsSrc/mermaid/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addModeChange('mermaid', runMermaid)
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: 'f5ab0e5f4c6139f6fc66',
+      clientSecret: '34afc0f7b7a9086e590fbcb099bae698933ed074',
+      repo: 'jamhus-tao.github.io.gitalk',
+      owner: 'jamhus-tao',
+      admin: ['jamhus-tao'],
+      id: 'c83d7430c607bfd5de42bcf1a0227e2a',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    getCSS('/pluginsSrc/gitalk/dist/gitalk.css')
+    getScript('/pluginsSrc/gitalk/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.textContent= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !false) {
+  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script data-pjax defer src="/js/my.js"></script><script defer="defer" id="ribbon" src="/pluginsSrc/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

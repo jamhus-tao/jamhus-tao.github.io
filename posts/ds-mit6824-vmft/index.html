@@ -1,0 +1,291 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>VMware FT 论文研读 - MIT6.824 | JamhusTao の Blog</title><meta name="author" content="Jamhus Tao"><meta name="copyright" content="Jamhus Tao"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="前言 这个部分来自课程 MIT6.824，这门课每节课都会精读一篇分布式系统领域的经典论文，并由此传授分布式系统设计与实现的重要原则和关键技术。 个人认为阅读论文比课程本身更加重要，课程围绕论文展开，可以快速获取论文的核心观点，课程的一切细节以及未提及的内容在论文中具有最详细的解释。另外教授会从当今立场（2022）评价论文的意义和缺陷，同时可能补全论文中缺失的信息解释，教授对学生提问的一些回答具有">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VMware FT 论文研读 - MIT6.824">
+<meta property="og:url" content="https://jamhus-tao.github.io/posts/ds-mit6824-vmft/">
+<meta property="og:site_name" content="JamhusTao の Blog">
+<meta property="og:description" content="前言 这个部分来自课程 MIT6.824，这门课每节课都会精读一篇分布式系统领域的经典论文，并由此传授分布式系统设计与实现的重要原则和关键技术。 个人认为阅读论文比课程本身更加重要，课程围绕论文展开，可以快速获取论文的核心观点，课程的一切细节以及未提及的内容在论文中具有最详细的解释。另外教授会从当今立场（2022）评价论文的意义和缺陷，同时可能补全论文中缺失的信息解释，教授对学生提问的一些回答具有">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://jamhus-tao.github.io/img/default_cover.png">
+<meta property="article:published_time" content="2024-05-21T15:16:00.000Z">
+<meta property="article:modified_time" content="2024-05-21T15:17:00.000Z">
+<meta property="article:author" content="Jamhus Tao">
+<meta property="article:tag" content="分布式系统">
+<meta property="article:tag" content="MIT6.824">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://jamhus-tao.github.io/img/default_cover.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://jamhus-tao.github.io/posts/ds-mit6824-vmft/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-FQ4L3WN8LH"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-FQ4L3WN8LH');
+</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":600},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'VMware FT 论文研读 - MIT6.824',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-05-21 23:17:00'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/my.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">113</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">83</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">72</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/default_cover.png')"><nav id="nav"><span id="blog-info"><a href="/" title="JamhusTao の Blog"><span class="site-name">JamhusTao の Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">VMware FT 论文研读 - MIT6.824</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-05-21T15:16:00.000Z" title="发表于 2024-05-21 23:16:00">2024-05-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-05-21T15:17:00.000Z" title="更新于 2024-05-21 23:17:00">2024-05-21</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/">分布式系统</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/VMware-FT-%E8%AE%BA%E6%96%87%E7%A0%94%E8%AF%BB-MIT6-824/">VMware FT 论文研读 - MIT6.824</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>12分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="VMware FT 论文研读 - MIT6.824"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="前言">前言</h2>
+<p>这个部分来自课程 MIT6.824，这门课每节课都会精读一篇分布式系统领域的经典论文，并由此传授分布式系统设计与实现的重要原则和关键技术。</p>
+<p>个人认为阅读论文比课程本身更加重要，课程围绕论文展开，可以快速获取论文的核心观点，课程的一切细节以及未提及的内容在论文中具有最详细的解释。另外教授会从当今立场（2022）评价论文的意义和缺陷，同时可能补全论文中缺失的信息解释，教授对学生提问的一些回答具有很好的启发意义，这些内容不被包含在论文中。</p>
+<p>本文综合课程内容和论文核心观点，并参考一些其他资料整理，希望对你学习课程有所帮助。</p>
+<p>课程官方：<a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.824/">https://pdos.csail.mit.edu/6.824/</a></p>
+<p>博主整理：<a target="_blank" rel="noopener" href="https://mit-public-courses-cn-translatio.gitbook.io/mit6-824">https://mit-public-courses-cn-translatio.gitbook.io/mit6-824</a></p>
+<p>B 站录屏：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1qk4y197bB">https://www.bilibili.com/video/BV1qk4y197bB</a></p>
+<p>​<mark class="hl-label default">请阅读论文 VMware FT：</mark> <a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.824/papers/vm-ft.pdf">https://pdos.csail.mit.edu/6.824/papers/vm-ft.pdf</a></p>
+<p>VMware FT 是应用与虚拟机系统 VMware 中的容错体系，它通过主从复制来提供可靠的服务。</p>
+<p>我认为在这个章节中教授的介绍与论文存在不一致，产生冲突时我将更倾向于对论文的理解。对于不一致的点我会标明它在论文的位置。</p>
+<h2 id="复制的基本概念-Replicate">复制的基本概念 (Replicate)</h2>
+<p>其实我们在前面的 GFS 中就大量介绍了复制，同样的 VMware FT 也是通过复制来建立容错的。</p>
+<p>用最简单的方法来描述复制可以解决的容错问题就是单台设备的 Fail-Stop。这是容错领域的通用属于，它是指当任何过程中出现了异常，我们立即停止继续执行，而不是继续返回一个错误的结果。当然复制并不能解决所有的错误，例如硬件和软件的 Bug，这导致无论如何复制和运行你的程序都无法得到正确的结果。</p>
+<p>另一个问题是复制是否值得？复制意味着需要花费额外的计算和存储资源，例如在 GFS 中每份数据拥有 3 份副本，而在我们即将介绍的 VMware 中存在 2 台主机。复制考虑的问题就是服务的价值，你提供的服务是否值得提供额外的成本，例如银行应该提供可靠的服务，而我们的课程网站偶尔宕机并不会带来太大的损失。</p>
+<h2 id="确定性状态机-Determined-Status-Machine">确定性状态机 (Determined Status Machine)</h2>
+<p>值得注意的是，VMware FT 是以状态机（Status Machine）的形式实现复制的，它使用这种方式实现 Primer 和 Backup 两台机器的同步。如果我们需要实现两台机器完全同步，一种最简单的方法是只需在 Primer 的每次状态变化后，将它的所有内存、寄存器等信息全部复制到 Backup 上，这样显然保证了 Backup 始终是与 Primer 同步的。但是这样的问题也是严重的，全部复制的开销是巨大的，何况它通过网络传输很大程度上收到网络带宽的限制。</p>
+<p>VMware FT 当然没有采取这样的方案，它使用状态机复制的方案。状态机复制是指，如果两台机器具有完全相同的初始状态，并且每次以相同的序列执行完全相同的操作，那么它们的内部状态始终是同步的，当下一个操作到来时，它们也将得到相同的结果。通过状态机复制的方式，Primer 每执行一条指令都会将它发送到 Backup，然后 Backup 将会执行它从而保持同步，在 Primer 宕机后可以快速的接替它的工作。显然这样的工作方式的网络开销要小得多。</p>
+<p>当然，状态机复制的模式是理想的，它受到非常多因素的影响，这也是我们后面必须解决的问题。一个是同步频率的问题，前面讲到 Primer 通过转发指令实现机器间同步，因此 Backup 总是要比 Primer 要滞后一些，我们十分关心它们的交换频率。一个是非确定性问题，并不是所有的指令都是确定的，例如需要获取时间、IO 中断、读取未定义的内存，这是需要提供额外的信息实现同步。另一个是创建 Backup 的问题，当两台机器的其中一台宕机时，这是只有一台机器在工作，这时你不许创建一台新的机器，这里还是不可避免的需要复制大量的内存和寄存器的信息。</p>
+<p>关于论文中讨论的还存在一个问题，我们可以发现论文中讨论的都是状态机复制，并且只涉及单核心，目前还不确定 VMware 是如何将问题拓展到多核心上的。在多核心上处理指令的顺序是更加不明确的，VMware 在之后推出了新的不同的系统，并且可以在多核上工作，这些系统在我（教授）看来都是直接复制的而非状态机复制。</p>
+<p>一个非常有趣的点，我想说 VMware 和我们前面讲到的 MapReduce 以及 GFS 都不一样。MapReduce 在实现重复计算或者 GFS 在实现拷贝副本时，它们的工作都是应用程序层面的，也就是说它们工作在 OS 之上。而 VMware 不同，它对机器指令进行复制，它实际并不知道上次的软件具体做了什么，你可以使用 VMware FT 管理任何软件，只要它可以运行在 VMware 支持的微处理器上。VMware FT 实际上为任何软件提供了容错的魔法棒。</p>
+<h2 id="VMware-FT-是如何工作的？">VMware FT 是如何工作的？</h2>
+<p>首先 VMware 是一家虚拟机公司，它们的主要业务是售卖虚拟机技术。它们的虚拟机基本结构是这样的：首先需要有 VMM（Virtual Machine Monitor，论文中为 Hypervisor）工作在实体机器之上，在 VMM 上工作有 OS，然后 OS 上运行了各种应用程序。对于 VMware FT 而言工作在同一台机器上毫无意义，因为容错的一方面就是要解决机器故障的问题。因此这里有 Primer 和 Backup 两台机器， 同时还有外部的 Client，当然论文中还提到 Primer 和 Backup 共享磁盘，我们称之为 Disk Server。</p>
+<img src="https://s2.loli.net/2024/05/03/uIjOWKM9o8eDPha.png" style="zoom:75%;" />
+<p>当 Client 发送网络数据包时，Primer 的 VMM 会将请求送到应用程序。然后，Primer 会将具体执行的指令或许一些附加信息发送给 Backup，Backup 会执行这些指令，因此两台机器同步了它们的状态。这条通道具有一个术语 Log Channel，而这里发送的每一条指令称作 Log Entry。然后两台机器内部的应用程序将给出相同的输出，这个输出会在 Primer 中穿透 VMM 到达 Client，而在 Backup 中 VMM 会抑制它的输出。</p>
+<p>Log Entry 发送的速度非常快，Backup 会通过这种方式检测 Primer 是否仍然存活。如果超过一定的时间 Backup 没有从 Log Channel 获取到任何指令或者没有收到心跳，它会认为 Primer 挂了，Backup 会开始托管 Primer 的工作。Backup 首先会在网络中进行一些处理，让所有 Client 认为它是 Primer，因此它将接收到来自 Client 的请求，不过我并不清楚这里的网络是如何处理的。同时 Backup 的 VMM 不再抑制其输出，它实际上成为了 Primer，它将开始筹备复制一台它的 Backup。</p>
+<p>当然同样的，Primer 也应该具有类似的机制，它需要检测 Backup 的异常。当 Primer 认为 Backup 宕机时，它不再向 Backup 发送 Log Entry，然后需要启动一台新的 Backup。</p>
+<h2 id="非确定性事件-Non-determined-Event">非确定性事件 (Non-determined Event)</h2>
+<p>前面讲到，我们需要处理的一个问题就是非确定性事件（Non-determined Event），例如时间、IO 中断、读取未定义的内存这些都是非确定的。两机可能因为执行时间的先后，中断发送的位置不同等产生分歧。</p>
+<p>像时间依赖和随机数的指令处理起来相对简单，对于这类特殊指令它会直接将结果发送到 Backup 上（在论文中提到是通过附加额外信息而未表示是执行结果，但也只是简单提到，论文 1 页右栏 8 行），这类指令是极少的并且被这样特殊处理。对于未定义行为，我们同样通过附加额外信息从而做到确定性。</p>
+<p>另一问题，多核并行也有可能导致非确定性。我们前面讲到，VMware FT 这篇论文讨论的所有话题都局限于单核心，它无法解决这个问题。目前还不确定 VMware 是如何将问题拓展到多核心上的。在多核心上处理指令的顺序是更加不明确的，VMware 在之后推出了新的不同的系统，并且可以在多核上工作，这些系统在我（教授）看来都是直接复制的而非状态机复制。</p>
+<p>最复杂的问题就是中断。当网络数据包到达的时候，网卡会通过 DMA 的方式将网络数据拷贝到关联的计算机内存中，这时很有可能一些运行在物理机器上的操作系统会将数据拷贝到虚拟机中，这样我们就失去了对 Primer 的时序控制。我们将关联的内存设置在 VMM 中，这时网络数据会首先来到 VMM，然后由 VMM 控制拷贝到 Primer 中，最后发送一个网络中断。同时 VMM 将网络数据包发送到 Backup，最后在相同的指令序号发送网络中断。这就是论文中提到的 Bounce Buffer 机制。</p>
+<h2 id="输出控制-Output-Rule">输出控制 (Output Rule)</h2>
+<p>前面我们讲到，Primer 和 Backup 总是保持相同的输出，然而 Primer 的输出将穿透 VMM，Backup 的输出将被抑制。但这并不是输出控制的全部，我们还需要考虑容错的问题。</p>
+<p>假设这样一个场景，Primer 完成一个输出，例如告诉 Client 现在的时间，然后立即崩溃了；它会向 Backup 发送数据包，但网络是不可靠的，这个数据包同时丢失了。此时 Backup 会开始接替 Primer，但它从更早的位置开始，它不知道 Primer 告知 Client 的时间是多少，于是它响应了自己当前的时间，当然这个响应很可能因为重复被过滤。这时如果 Client 再次询问刚才那个时间进行一种复杂运算的结果是什么，这时它可能发现这个运算结果显然不是从前面的时间得到的，更糟糕的是 Client 可能并不会发现这个问题而导致更加严重的系统故障。</p>
+<p>因此正确的做法是，对于需要输出的指令，Primer 执行后不会立即回复，而是发送一条提示 Backup 回复的指令，然后等待 Backup 回复。当 Backup 执行这条指令时会回复 Primer，Primer 收到回复后才会进行输出。这样 Primer 和 Backup 就做到了输出时的同步，当然这也提醒我们两机时差太大可能产生较大的延迟。当然，此时 Primer 并未完全停止，等待过程它可以进行一些并发操作。</p>
+<p>教授解释进行输出控制的原因是可能发生包丢失，然后此时 Backup 接替工作就无法获取这些数据包，这里就不再展开教授的举例。然而论文认为进行输出控制的原因是非确定性事件（论文 3 页左栏倒数 7 行）。论文提到外围设施会解决包丢失的问题，因此 Backup 只会丢失 Primer 附加的信息，也就是决定非确定性事件的关键因素（论文 4 页左栏 8 行）。</p>
+<p>Primer 和 Backup 只需在输出时同步，这是因为 Primer 如果在输出前崩溃，那么它与 Backup 可能在更早的指令序号因为非确定性事件出现分歧，但这个指令序号不会早于上一次输出。Primer 事实上与 Backup 出现了分歧，但因为 Primer 此时并未向 Client 输出，Client 拿到这个分歧的任意一个版本并且继续执行都是正确的（论文 3 页左栏 Output Requirement 及下面一段）。教授没有解释这个问题，我认为他的解释无法解释这个问题，因此我认为他是错的。</p>
+<h2 id="重复输出">重复输出</h2>
+<p>一种需要讨论的情况是，在主从切换时，出现了重复输出。例如 Primer 在输出控制后实际向 Client 发送了响应，而这时 Primer 立即奔溃了；这时 Backup 认为 Primer 可能在向其发送最近一条指令后立即奔溃了，也可能收到了 Backup 的输出控制回复并完成了输出。Backup 无法与 Primer 确认这点，因此它会选择重复输出。</p>
+<p>有趣的是，输出控制这个问题无需被 VMware FT 处理，网络协议例如 TCP 具备处理这些问题的能力。Primer 和 Backup 虚拟机具有完全相同的物理状态，它们具有相同的 TCP 序列号，当然 IP 和 MAC 地址也是相同的。TCP 协议在收到相同序列号的数据包时会丢弃它，因此在用户层永远看不到它。</p>
+<p>这里可以认为是异常的场景，并且被意外的解决了。事实上，所有系统都存在这样的问题，它们无法避免包重复的问题，因此所有的系统都需要重复检测机制，这里我们使用 TCP 解决了这个问题。另一种思路是都不输出，这意味着 Client 不会收到响应而进行重试，这可能是一种糟糕的思路。</p>
+<h2 id="脑裂-Split-Brain">脑裂 (Split Brain)</h2>
+<p>最后一个问题，对于所有不存在 master 的系统都必须考虑脑裂。脑裂是指 Primer 和 Backup 之间可能失去网络连接了，但是它们都可以与 Client 连接，于是它们都会向 Client 输出。</p>
+<p>VMware FT 使用了 Test-and-Set 服务。前面提到两机使用了共享磁盘，在这个共享磁盘上有一个标志位用于 Test-and-Set。当任意一台机器需要进行主从切换时，都会检查这个标志位。如果这个标志位已经置位说明另一台机器现在是 Primer，如果未置位则置位并升级为 Primer，这种方法类似于两机在竞争分布式锁。当然，最糟糕的情况是这个共享磁盘如果失联了，那两机都必须等待，无法进行任何操作。</p>
+<p>总的来说，Test and Set 看起来像是个单点故障。虽然 VMware FT 尝试构建一个复制的容错系统，但是最后，主从切换还是依赖于 Test and Set 服务，这有点让人失望。我强烈的认为，Test and Set 服务本身也是个复制的服务，并且是容错的。几乎可以肯定的是，VMware 非常乐意向你售卖价值百万的高可用存储系统，系统内使用大量的复制服务。因为这里用到了 Test and Set服务，我猜它也是复制的。</p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/">分布式系统</a><a class="post-meta__tags" href="/tags/MIT6-824/">MIT6.824</a></div><div class="post_share"><div class="social-share" data-image="/img/default_cover.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/ds-mit6824-gfs/" title="Google File System 论文研读 - MIT6.824"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Google File System 论文研读 - MIT6.824</div></div></a></div><div class="next-post pull-right"><a href="/posts/ds-mit6824-raft/" title="Raft 论文研读 - MIT6.824"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Raft 论文研读 - MIT6.824</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/ds-mit6824-mapreduce/" title="MapReduce 论文研读 - MIT6.824"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-21</div><div class="title">MapReduce 论文研读 - MIT6.824</div></div></a></div><div><a href="/posts/ds-mit6824-gfs/" title="Google File System 论文研读 - MIT6.824"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-21</div><div class="title">Google File System 论文研读 - MIT6.824</div></div></a></div><div><a href="/posts/ds-mit6824-raft/" title="Raft 论文研读 - MIT6.824"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-21</div><div class="title">Raft 论文研读 - MIT6.824</div></div></a></div><div><a href="/posts/ds-bloom-filter/" title="布隆过滤器及其误判率推导"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-21</div><div class="title">布隆过滤器及其误判率推导</div></div></a></div><div><a href="/posts/ds-consistent-hash/" title="浅析几种一致性哈希算法"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-07-14</div><div class="title">浅析几种一致性哈希算法</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Jamhus Tao</div><div class="author-info__description">找点好玩的去！</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">113</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">83</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">72</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/jamhus-tao"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/img/qq.jpg" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/img/weixin.jpg" target="_blank" title="Weixin"><i class="fab fa-weixin"></i></a><a class="social-icon" href="mailto:jamhus_tao@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="https://github.com/jamhus-tao" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%8D%E5%88%B6%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5-Replicate"><span class="toc-number">2.</span> <span class="toc-text">复制的基本概念 (Replicate)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A1%AE%E5%AE%9A%E6%80%A7%E7%8A%B6%E6%80%81%E6%9C%BA-Determined-Status-Machine"><span class="toc-number">3.</span> <span class="toc-text">确定性状态机 (Determined Status Machine)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#VMware-FT-%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84%EF%BC%9F"><span class="toc-number">4.</span> <span class="toc-text">VMware FT 是如何工作的？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9D%9E%E7%A1%AE%E5%AE%9A%E6%80%A7%E4%BA%8B%E4%BB%B6-Non-determined-Event"><span class="toc-number">5.</span> <span class="toc-text">非确定性事件 (Non-determined Event)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BE%93%E5%87%BA%E6%8E%A7%E5%88%B6-Output-Rule"><span class="toc-number">6.</span> <span class="toc-text">输出控制 (Output Rule)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%87%8D%E5%A4%8D%E8%BE%93%E5%87%BA"><span class="toc-number">7.</span> <span class="toc-text">重复输出</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%84%91%E8%A3%82-Split-Brain"><span class="toc-number">8.</span> <span class="toc-text">脑裂 (Split Brain)</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cpp-cmake-abc/" title="CMake 项目构建和代码测试">CMake 项目构建和代码测试</a><time datetime="2024-09-27T13:01:00.000Z" title="更新于 2024-09-27 21:01:00">2024-09-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ds-consistent-hash/" title="浅析几种一致性哈希算法">浅析几种一致性哈希算法</a><time datetime="2024-09-11T09:58:00.000Z" title="更新于 2024-09-11 17:58:00">2024-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ds-bloom-filter/" title="布隆过滤器及其误判率推导">布隆过滤器及其误判率推导</a><time datetime="2024-07-14T06:28:00.000Z" title="更新于 2024-07-14 14:28:00">2024-07-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cs-hanmming-check/" title="海明校验码 - 计算机网络">海明校验码 - 计算机网络</a><time datetime="2024-06-26T05:24:00.000Z" title="更新于 2024-06-26 13:24:00">2024-06-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/acm-lanqiaocup-24cbg/" title="2024 年第十五届蓝桥杯 C/C++ B组国赛题解">2024 年第十五届蓝桥杯 C/C++ B组国赛题解</a><time datetime="2024-06-08T05:49:00.000Z" title="更新于 2024-06-08 13:49:00">2024-06-08</time></div></div></div></div></div></div></main><footer id="footer" style="background: #171717"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2025 By Jamhus Tao</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.umd.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="/pluginsSrc/katex/dist/katex.min.css"><script src="/pluginsSrc/katex/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('/pluginsSrc/mermaid/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addModeChange('mermaid', runMermaid)
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: 'f5ab0e5f4c6139f6fc66',
+      clientSecret: '34afc0f7b7a9086e590fbcb099bae698933ed074',
+      repo: 'jamhus-tao.github.io.gitalk',
+      owner: 'jamhus-tao',
+      admin: ['jamhus-tao'],
+      id: 'bd8caf92671c7a162898760c9805ff23',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    getCSS('/pluginsSrc/gitalk/dist/gitalk.css')
+    getScript('/pluginsSrc/gitalk/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.textContent= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !false) {
+  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script data-pjax defer src="/js/my.js"></script><script defer="defer" id="ribbon" src="/pluginsSrc/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

@@ -1,0 +1,301 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>ZSTU3192 仲夏之夜 (Summer) - 最小生成树问题解析 | JamhusTao の Blog</title><meta name="author" content="Jamhus Tao"><meta name="copyright" content="Jamhus Tao"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="建站提交历史文章，原文写作时间 2022 年 11 月 12 日。  前往 算竞题解 分类 || 前往 算竞模板 分类  放在前面 还是那句话，因为找不到此题相关的题解，所以凉皮写了这篇文章。作为算法初学者，这道题卡了凉皮很久，现在凉皮AC了这道题，所以兴奋的地和大家分享这篇文章。本文如果有些术语使用不当或者其他错误欢迎在评论区回复。 题目描述  “一闪一闪亮晶晶，满天都是小星星”，夏天的夜晚，满">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ZSTU3192 仲夏之夜 (Summer) - 最小生成树问题解析">
+<meta property="og:url" content="https://jamhus-tao.github.io/posts/acm-zstu-3192/">
+<meta property="og:site_name" content="JamhusTao の Blog">
+<meta property="og:description" content="建站提交历史文章，原文写作时间 2022 年 11 月 12 日。  前往 算竞题解 分类 || 前往 算竞模板 分类  放在前面 还是那句话，因为找不到此题相关的题解，所以凉皮写了这篇文章。作为算法初学者，这道题卡了凉皮很久，现在凉皮AC了这道题，所以兴奋的地和大家分享这篇文章。本文如果有些术语使用不当或者其他错误欢迎在评论区回复。 题目描述  “一闪一闪亮晶晶，满天都是小星星”，夏天的夜晚，满">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://jamhus-tao.github.io/img/default_cover.png">
+<meta property="article:published_time" content="2023-08-02T11:20:56.000Z">
+<meta property="article:modified_time" content="2023-08-02T11:20:56.000Z">
+<meta property="article:author" content="Jamhus Tao">
+<meta property="article:tag" content="题解">
+<meta property="article:tag" content="Kruskal">
+<meta property="article:tag" content="最小生成树">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://jamhus-tao.github.io/img/default_cover.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://jamhus-tao.github.io/posts/acm-zstu-3192/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-FQ4L3WN8LH"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-FQ4L3WN8LH');
+</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":600},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'ZSTU3192 仲夏之夜 (Summer) - 最小生成树问题解析',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-08-02 19:20:56'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/my.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">113</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">83</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">72</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/default_cover.png')"><nav id="nav"><span id="blog-info"><a href="/" title="JamhusTao の Blog"><span class="site-name">JamhusTao の Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">ZSTU3192 仲夏之夜 (Summer) - 最小生成树问题解析</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-08-02T11:20:56.000Z" title="发表于 2023-08-02 19:20:56">2023-08-02</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-08-02T11:20:56.000Z" title="更新于 2023-08-02 19:20:56">2023-08-02</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%AE%97%E7%AB%9E%E9%A2%98%E8%A7%A3/">算竞题解</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%AE%97%E7%AB%9E%E9%A2%98%E8%A7%A3/%E5%85%B6%E4%BB%96/">其他</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>6分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="ZSTU3192 仲夏之夜 (Summer) - 最小生成树问题解析"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><div class="note warning flat"><p>建站提交历史文章，原文写作时间 2022 年 11 月 12 日。</p>
+</div>
+<div class="note default flat"><p><a href="/categories/%E7%AE%97%E7%AB%9E%E9%A2%98%E8%A7%A3/">前往 算竞题解 分类</a> || <a href="/categories/%E7%AE%97%E7%AB%9E%E6%A8%A1%E6%9D%BF/">前往 算竞模板 分类</a></p>
+</div>
+<h2 id="放在前面">放在前面</h2>
+<p>还是那句话，因为找不到此题相关的题解，所以凉皮写了这篇文章。作为算法初学者，这道题卡了凉皮很久，现在凉皮AC了这道题，所以兴奋的地和大家分享这篇文章。本文如果有些术语使用不当或者其他错误欢迎在评论区回复。</p>
+<h2 id="题目描述">题目描述</h2>
+<blockquote>
+<p>“一闪一闪亮晶晶，满天都是小星星”，夏天的夜晚，满天繁星。Pty和xx躺在软绵绵的草坪上，仰望这美丽的星空，让人引起无限的遐想！（富有意境的废话）</p>
+<p>Pty开始展开他的想象力：在这片绚丽的星空图上，有n颗星星，从1到n进行编号。现在有n-1条双向星际航道把这n颗星星给连接了起来。每条星际航道都有一个为过路费（正整数），设这n-1条航道的过路费之和是V。Pty给每两个星星之间都连一条星际航道，并且赋予了它们相应的过路费，要求在连完之后：</p>
+<p>对于任意一种能把n颗星星连接起来的m条航道（这m条航道与原始航道不完全相同），满足这m条航道的过路费之和&gt;V。</p>
+<p>请你告诉Pty：能满足他条件的方案里：图中所有的星际航道过路费之和最小是多少？</p>
+<p>Pty将告诉你：这n-1条航道所连接的点，和每条航道的过路费。</p>
+</blockquote>
+<h2 id="题目解释">题目解释</h2>
+<p>原图具有 n 个节点，n-1 条边，显然是一棵树。</p>
+<p>连结所有的节点使得 n 个节点，两两互相连通，应当共有 (n-1)n/2 条边。</p>
+<blockquote>
+<p>对于任意一种能把 n 颗星星连接起来的 m 条航道（这 m 条航道与原始航道不完全相同），满足这m条航道的过路费之和 &gt;V。</p>
+</blockquote>
+<p>最令人费解的就应该是上面这句话，注意这里 m 是一个变量，要能连通 n 个节点，m 应当属于 [n-1, (n-1)n/2]，显然要使任意条件成立，只有使这个最小费用 &gt;V，m 取 n-1 时存在最小费用。事实上我们使用最小的费用连通整张图的路径就叫做最小生成树，而使用最少边连通整张图的路径就叫做生成树。最小生成树不一定是唯一的，根据题意，任意非最小生成树的生成树费用严格大于最小生成树。题意即 <mark class="hl-label default">n 个节点的边饱和图存在唯一的最小生成树。</mark> </p>
+<p>​<mark class="hl-label default">该图的所有边的和的最小值。</mark> </p>
+<h2 id="输入格式">输入格式</h2>
+<p>第一行，一个数 n，表示星星的个数。</p>
+<p>以后 n-1 行，每行三个数 u, v, w，表示原始航道。u, v 被连接的两个星星，w 航道的过路费</p>
+<h2 id="输出格式">输出格式</h2>
+<p>一个数，表示所求的所有航道过路费和。</p>
+<h2 id="测试样例">测试样例</h2>
+<p>原题的测试样例过于简单，这里改为我自己的测试样例。</p>
+<p>输入：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">7</span><br><span class="line">1 2 1</span><br><span class="line">2 4 2</span><br><span class="line">4 3 3</span><br><span class="line">2 5 10</span><br><span class="line">5 6 1</span><br><span class="line">5 7 1</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">152 </span><br></pre></td></tr></table></figure>
+<p>样例解释：</p>
+<p><img src="https://raw.githubusercontent.com/jamhus-tao/PictrueBed/main/img/ZSTU3192%20%E4%BB%B2%E5%A4%8F%E4%B9%8B%E5%A4%9C%20(Summer)%20-%20%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91%E9%97%AE%E9%A2%98%E8%A7%A3%E6%9E%90.jpeg" alt=""></p>
+<p><mark class="hl-label default">（因为边比较多，此图删去了一些边没有表现出来，缺失的边全部按边权11表示）</mark> </p>
+<p>由图我们可以计算出 费用为 18(原始费用) + 2 + 3 + 4 * 2 + 11 * 11 = 152</p>
+<h2 id="思路还原">思路还原</h2>
+<p>这道题的新奇之处在于它给定了最小生成树，然后求出图，并且保证这棵树是图的最小生成树，因此我们要保证任意边尽可能的小。</p>
+<p>最小生成树有两个典型算法，Prim 和 Kruskal。我们不妨从这两个典型算法入手。</p>
+<p>我们需要找的是最小边，而与点关联不大，因此可能从 Kruskal 入手比较合适，至少笔者凉皮没有找到基于 Prim 的解法。</p>
+<p>我们不妨假设原始的图是边饱和的，然后使用 Kruskal 算法模拟一遍，好的，那么我们开始。</p>
+<blockquote>
+<p>找到最小边：1-2 5-6 5-7，我们需要保证这若干条边是全图严格最小的边。<br>
+逐一将三条边列入并查集：1-2 5-6-7<br>
+注意我们将 7 并入 5-6 这个并查集时发现：6-7 之间有一条可以连的边，因为这条边的两个顶点已经被囊括在生成树之中，所以这条边不会出现在之后树生成的考虑范围之中，我们可以确定所连的边的费用的最小值是它所在的集合中最小生成树的边的 最大值+1。<br>
+…<br>
+但是在合并两个集合时，我们有多少条可连的边呢？假设合并的两个集合分别有 a 和 b 个元素，那么可连的边应该是 a*b-1。注意这里集合内部的边一定是不可连的，因为我们在之前的操作中已经保证了集合内部的边是饱和的，然后还需要减去一条已有的连接两个集合的边。</p>
+<p>…</p>
+<p>例如：我们现在进入了连接最后一条边 2-5 的环节。它将合并两个并查集：2-1-4-3 和 5-6-7，产生 4*3-1 条可连的边，每条边的权为 11。</p>
+</blockquote>
+<h2 id="AC代码">AC代码</h2>
+<p>ahhh~ 终于到了最爱的贴代码环节，这里我就不多废话了（废话真多）。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Summer</span></span><br><span class="line"><span class="comment">// Kruskal</span></span><br><span class="line"><span class="comment">// Powered by GreatLiangpi</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> int int64_t</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> endl <span class="string">&#x27;\n&#x27;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> tomax(x, y) x = max((x), (y))  <span class="comment">// Pay attention to the define.</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> pii pair<span class="string">&lt;int, int&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> MAX = <span class="number">100005</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">EDGE</span> &#123;</span><br><span class="line">    <span class="type">int</span> u;</span><br><span class="line">    <span class="type">int</span> v;</span><br><span class="line">    <span class="type">int</span> w;</span><br><span class="line">&#125; edge[MAX];</span><br><span class="line"><span class="type">int</span> father[MAX];  <span class="comment">// The father node of the node in the union-find set.</span></span><br><span class="line"><span class="type">int</span> weight[MAX];  <span class="comment">// The weight is the max weight of the edges in the union-find set, not the sum. The attribution is valid for the root of a set only.</span></span><br><span class="line"><span class="type">int</span> member[MAX];  <span class="comment">// The number of the members of the union-find set.</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">cmp</span><span class="params">(EDGE x, EDGE y)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x.w &lt; y.w;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">root</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (father[x] == x) <span class="keyword">return</span> x;</span><br><span class="line">    <span class="built_in">tomax</span>(weight[father[x]], weight[x]);</span><br><span class="line">    weight[x] = <span class="number">0</span>;  <span class="comment">// remove it is ok.</span></span><br><span class="line">    member[father[x]] += member[x];</span><br><span class="line">    member[x] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">return</span> father[x] = <span class="built_in">root</span>(father[x]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">merge</span><span class="params">(<span class="type">int</span> x, <span class="type">int</span> y)</span> </span>&#123;</span><br><span class="line">    x = <span class="built_in">root</span>(x);</span><br><span class="line">    y = <span class="built_in">root</span>(y);</span><br><span class="line">    <span class="keyword">if</span> (x != y) &#123;</span><br><span class="line">        <span class="built_in">tomax</span>(weight[y], weight[x]);</span><br><span class="line">        weight[x] = <span class="number">0</span>;  <span class="comment">// remove it is ok.</span></span><br><span class="line">        member[y] += member[x];</span><br><span class="line">        member[x] = <span class="number">0</span>;</span><br><span class="line">        father[x] = y;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int32_t</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> ONLINE_JUDGE</span></span><br><span class="line">    cin.<span class="built_in">tie</span>(<span class="number">0</span>);</span><br><span class="line">    cout.<span class="built_in">tie</span>(<span class="number">0</span>);</span><br><span class="line">    ios::<span class="built_in">sync_with_stdio</span>(<span class="literal">false</span>);</span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line">    <span class="built_in">freopen</span>(<span class="string">&quot;in.txt&quot;</span>, <span class="string">&quot;r&quot;</span>, stdin);</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">    </span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    cin &gt;&gt; n;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">        father[i] = i;</span><br><span class="line">        weight[i] = <span class="number">0</span>;</span><br><span class="line">        member[i] = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">int</span> res = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n<span class="number">-1</span>; i++) &#123;</span><br><span class="line">        cin &gt;&gt; edge[i].u &gt;&gt; edge[i].v &gt;&gt; edge[i].w;</span><br><span class="line">        res += edge[i].w;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">sort</span>(edge, edge+n<span class="number">-1</span>, cmp);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n<span class="number">-1</span>; i++) &#123;</span><br><span class="line">        <span class="type">int</span> u = <span class="built_in">root</span>(edge[i].u);</span><br><span class="line">        <span class="type">int</span> v = <span class="built_in">root</span>(edge[i].v);</span><br><span class="line">        <span class="built_in">tomax</span>(weight[u], edge[i].w);</span><br><span class="line">        <span class="built_in">tomax</span>(weight[v], edge[i].w);</span><br><span class="line">        <span class="type">int</span> mul = member[u] * member[v] - <span class="number">1</span>;</span><br><span class="line">        <span class="built_in">merge</span>(u, v);</span><br><span class="line">        res += (weight[v] + <span class="number">1</span>) * mul;</span><br><span class="line">    &#125;</span><br><span class="line">    cout &lt;&lt; res;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E9%A2%98%E8%A7%A3/">题解</a><a class="post-meta__tags" href="/tags/Kruskal/">Kruskal</a><a class="post-meta__tags" href="/tags/%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91/">最小生成树</a></div><div class="post_share"><div class="social-share" data-image="/img/default_cover.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/python-tattle-format/" title="python 变量命名规则与规范（约定）"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">python 变量命名规则与规范（约定）</div></div></a></div><div class="next-post pull-right"><a href="/posts/git-abc-0-preface/" title="Git 学习笔记(零) - 前言"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Git 学习笔记(零) - 前言</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/acm-think-suffix-expression/" title="对于后缀表达式的思考 - 栈"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-10-07</div><div class="title">对于后缀表达式的思考 - 栈</div></div></a></div><div><a href="/posts/acm-lanqiaocup-23cbs/" title="2023 年第十四届蓝桥杯 C&#x2F;C++ B组省赛题解"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-23</div><div class="title">2023 年第十四届蓝桥杯 C&#x2F;C++ B组省赛题解</div></div></a></div><div><a href="/posts/acm-lanqiaocup-24cbg/" title="2024 年第十五届蓝桥杯 C&#x2F;C++ B组国赛题解"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-06-05</div><div class="title">2024 年第十五届蓝桥杯 C&#x2F;C++ B组国赛题解</div></div></a></div><div><a href="/posts/acm-cf-cr889c/" title="构造 - Codeforces Round 889 (Div. 2) - Dual (Easy &amp; Hard Version)"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-07-30</div><div class="title">构造 - Codeforces Round 889 (Div. 2) - Dual (Easy &amp; Hard Version)</div></div></a></div><div><a href="/posts/acm-cf-890e/" title="背包优化与树上优化 - Codeforces Round 890 (Div. 2) - PermuTree (Hard Version)"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-08-09</div><div class="title">背包优化与树上优化 - Codeforces Round 890 (Div. 2) - PermuTree (Hard Version)</div></div></a></div><div><a href="/posts/acm-nc-ms23-3g/" title="二维哈希与二维Manacher - Beautiful Matrix - 牛客多校Day3"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-07-26</div><div class="title">二维哈希与二维Manacher - Beautiful Matrix - 牛客多校Day3</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Jamhus Tao</div><div class="author-info__description">找点好玩的去！</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">113</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">83</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">72</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/jamhus-tao"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/img/qq.jpg" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/img/weixin.jpg" target="_blank" title="Weixin"><i class="fab fa-weixin"></i></a><a class="social-icon" href="mailto:jamhus_tao@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="https://github.com/jamhus-tao" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%BE%E5%9C%A8%E5%89%8D%E9%9D%A2"><span class="toc-number">1.</span> <span class="toc-text">放在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0"><span class="toc-number">2.</span> <span class="toc-text">题目描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE%E8%A7%A3%E9%87%8A"><span class="toc-number">3.</span> <span class="toc-text">题目解释</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BE%93%E5%85%A5%E6%A0%BC%E5%BC%8F"><span class="toc-number">4.</span> <span class="toc-text">输入格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F"><span class="toc-number">5.</span> <span class="toc-text">输出格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E6%A0%B7%E4%BE%8B"><span class="toc-number">6.</span> <span class="toc-text">测试样例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%E8%BF%98%E5%8E%9F"><span class="toc-number">7.</span> <span class="toc-text">思路还原</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AC%E4%BB%A3%E7%A0%81"><span class="toc-number">8.</span> <span class="toc-text">AC代码</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cpp-cmake-abc/" title="CMake 项目构建和代码测试">CMake 项目构建和代码测试</a><time datetime="2024-09-27T13:01:00.000Z" title="更新于 2024-09-27 21:01:00">2024-09-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ds-consistent-hash/" title="浅析几种一致性哈希算法">浅析几种一致性哈希算法</a><time datetime="2024-09-11T09:58:00.000Z" title="更新于 2024-09-11 17:58:00">2024-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ds-bloom-filter/" title="布隆过滤器及其误判率推导">布隆过滤器及其误判率推导</a><time datetime="2024-07-14T06:28:00.000Z" title="更新于 2024-07-14 14:28:00">2024-07-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cs-hanmming-check/" title="海明校验码 - 计算机网络">海明校验码 - 计算机网络</a><time datetime="2024-06-26T05:24:00.000Z" title="更新于 2024-06-26 13:24:00">2024-06-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/acm-lanqiaocup-24cbg/" title="2024 年第十五届蓝桥杯 C/C++ B组国赛题解">2024 年第十五届蓝桥杯 C/C++ B组国赛题解</a><time datetime="2024-06-08T05:49:00.000Z" title="更新于 2024-06-08 13:49:00">2024-06-08</time></div></div></div></div></div></div></main><footer id="footer" style="background: #171717"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2025 By Jamhus Tao</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.umd.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="/pluginsSrc/katex/dist/katex.min.css"><script src="/pluginsSrc/katex/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('/pluginsSrc/mermaid/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addModeChange('mermaid', runMermaid)
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: 'f5ab0e5f4c6139f6fc66',
+      clientSecret: '34afc0f7b7a9086e590fbcb099bae698933ed074',
+      repo: 'jamhus-tao.github.io.gitalk',
+      owner: 'jamhus-tao',
+      admin: ['jamhus-tao'],
+      id: 'db512412a346d1c13c31e4bd0fd1518c',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    getCSS('/pluginsSrc/gitalk/dist/gitalk.css')
+    getScript('/pluginsSrc/gitalk/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.textContent= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !false) {
+  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script data-pjax defer src="/js/my.js"></script><script defer="defer" id="ribbon" src="/pluginsSrc/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

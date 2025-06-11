@@ -1,0 +1,409 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Golang 入门基础(三) - 内置数据类型(上) | JamhusTao の Blog</title><meta name="author" content="Jamhus Tao"><meta name="copyright" content="Jamhus Tao"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="回到文章目录  指针类型 定义指针 123var a int &#x3D; 10var p *int &#x3D; &amp;app :&#x3D; &amp;a 空指针  默认值，空指针的值为 nil 。  访问指针  使用 *ptr 访问值，地址无法访问将产生运行错误。 结构体使用 name.attr 访问元素，在 Golang 中可以使用 ptr.attr 通过指针访问元素（Clang 是 ptr-&gt;attr）。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang 入门基础(三) - 内置数据类型(上)">
+<meta property="og:url" content="https://jamhus-tao.github.io/posts/go-abc-3-type/">
+<meta property="og:site_name" content="JamhusTao の Blog">
+<meta property="og:description" content="回到文章目录  指针类型 定义指针 123var a int &#x3D; 10var p *int &#x3D; &amp;app :&#x3D; &amp;a 空指针  默认值，空指针的值为 nil 。  访问指针  使用 *ptr 访问值，地址无法访问将产生运行错误。 结构体使用 name.attr 访问元素，在 Golang 中可以使用 ptr.attr 通过指针访问元素（Clang 是 ptr-&gt;attr）。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://jamhus-tao.github.io/img/default_cover.png">
+<meta property="article:published_time" content="2023-07-27T11:25:28.000Z">
+<meta property="article:modified_time" content="2023-07-27T11:25:28.000Z">
+<meta property="article:author" content="Jamhus Tao">
+<meta property="article:tag" content="语法">
+<meta property="article:tag" content="Golang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://jamhus-tao.github.io/img/default_cover.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://jamhus-tao.github.io/posts/go-abc-3-type/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="/pluginsSrc/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-FQ4L3WN8LH"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-FQ4L3WN8LH');
+</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":600},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Golang 入门基础(三) - 内置数据类型(上)',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-07-27 19:25:28'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/my.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">113</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">83</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">72</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/default_cover.png')"><nav id="nav"><span id="blog-info"><a href="/" title="JamhusTao の Blog"><span class="site-name">JamhusTao の Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-at"></i><span> 与我</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></li><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></li><li><a class="site-page child" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Golang 入门基础(三) - 内置数据类型(上)</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-07-27T11:25:28.000Z" title="发表于 2023-07-27 19:25:28">2023-07-27</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-07-27T11:25:28.000Z" title="更新于 2023-07-27 19:25:28">2023-07-27</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Golang/">Golang</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Golang/Golang-%E5%85%A5%E9%97%A8%E5%9F%BA%E7%A1%80-%E7%B3%BB%E5%88%97/">Golang 入门基础(系列)</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>9分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Golang 入门基础(三) - 内置数据类型(上)"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><div class="note default flat"><p><a href="/2023/07/27/Golang/Golang%20%E5%85%A5%E9%97%A8%E5%9F%BA%E7%A1%80/Golang%20%E5%85%A5%E9%97%A8%E5%9F%BA%E7%A1%80(%E9%9B%B6)%20-%20%E5%89%8D%E8%A8%80/">回到文章目录</a></p>
+</div>
+<h2 id="指针类型">指针类型</h2>
+<h3 id="定义指针">定义指针</h3>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="type">int</span> = <span class="number">10</span></span><br><span class="line"><span class="keyword">var</span> p *<span class="type">int</span> = &amp;a</span><br><span class="line">pp := &amp;a</span><br></pre></td></tr></table></figure>
+<h3 id="空指针">空指针</h3>
+<ul>
+<li>默认值，空指针的值为 <code>nil</code> 。</li>
+</ul>
+<h3 id="访问指针">访问指针</h3>
+<ul>
+<li>使用 <code>*ptr</code> 访问值，地址无法访问将产生运行错误。</li>
+<li>结构体使用 <code>name.attr</code> 访问元素，在 <code>Golang</code> 中可以使用 <code>ptr.attr</code> 通过指针访问元素（<code>Clang</code> 是 <code>ptr-&gt;attr</code>）。</li>
+</ul>
+<h2 id="结构体类型">结构体类型</h2>
+<h3 id="定义结构体">定义结构体</h3>
+<ul>
+<li>具名结构体</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Book <span class="keyword">struct</span> &#123;</span><br><span class="line">    name <span class="type">string</span></span><br><span class="line">    author <span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> a Book  <span class="comment">// 定义默认结构体</span></span><br><span class="line"><span class="keyword">var</span> b = Book&#123;<span class="string">&quot;Golang 入门经典&quot;</span>, <span class="string">&quot;Unknown&quot;</span>&#125;  <span class="comment">// 全部初始化</span></span><br><span class="line"><span class="keyword">var</span> c = Book&#123;name: <span class="string">&quot;C++ 入门指南&quot;</span>&#125;  <span class="comment">// 局部初始化</span></span><br><span class="line">d := Book&#123;name: <span class="string">&quot;鸟哥的 Linux 私房菜&quot;</span>&#125;  <span class="comment">// 使用 :=</span></span><br><span class="line"><span class="keyword">var</span> e *Book = <span class="built_in">new</span>(Book)  <span class="comment">// 使用指针</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>字段匿名</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Book <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="type">string</span></span><br><span class="line">    <span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> a Book = Book&#123;<span class="string">&quot;Golang 入门经典&quot;</span>, <span class="string">&quot;Unknown&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>结构体匿名</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="keyword">struct</span>&#123;</span><br><span class="line">    name <span class="type">string</span></span><br><span class="line">    author <span class="type">string</span></span><br><span class="line">&#125;&#123;<span class="string">&quot;Golang 入门经典&quot;</span>, <span class="string">&quot;Unknown&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>两种匿名不可同时使用。</li>
+</ul>
+<h3 id="访问结构体">访问结构体</h3>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a Book = Book&#123;<span class="string">&quot;Golang 入门经典&quot;</span>, <span class="string">&quot;Unknown&quot;</span>&#125;</span><br><span class="line"><span class="keyword">var</span> p *Book = &amp;a</span><br><span class="line">fmt.Println(a.name, a.author)</span><br><span class="line">fmt.Println(p.name, p.author)  <span class="comment">// 结构体指针直接使用 ptr.attr 访问</span></span><br></pre></td></tr></table></figure>
+<h3 id="类型转换">类型转换</h3>
+<ul>
+<li>如果两个结构体具有完全相同的定义，它们可以进行显式类型转换。</li>
+</ul>
+<h3 id="嵌套与继承">嵌套与继承</h3>
+<ul>
+<li>结构体嵌套将一个结构体作为新结构体的一个字段。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Library <span class="keyword">struct</span> &#123;</span><br><span class="line">    name <span class="type">string</span></span><br><span class="line">    books []Book</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>结构体继承将一个结构体的字段和方法引入新结构体。<em>结构体的方法后面会提及。</em></li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> ChildBook <span class="keyword">struct</span> &#123;</span><br><span class="line">    fitAge <span class="type">int</span></span><br><span class="line">    Book</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="数组类型">数组类型</h2>
+<h3 id="定义数组">定义数组</h3>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a [<span class="number">3</span>]<span class="type">int</span></span><br><span class="line"><span class="keyword">var</span> b = [<span class="number">3</span>]<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line"><span class="keyword">var</span> c = [...]<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;  <span class="comment">// 注意 [...]int 是数组, []int 是切片 (下一节会讲)</span></span><br><span class="line">d := [...]<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="传递数组">传递数组</h3>
+<ul>
+<li><code>Golang</code> 中数组名表示整个数组。这与 <code>Clang</code> 表示数组头指针不同，但与其 <code>std::array</code> 类似。传递数组有时会产生很大的开销，可以使用指针数组。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a [<span class="number">3</span>]<span class="type">int</span> = [<span class="number">3</span>]<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line"><span class="keyword">var</span> p *[<span class="number">3</span>]<span class="type">int</span> = &amp;a</span><br></pre></td></tr></table></figure>
+<h2 id="切片类型">切片类型</h2>
+<h3 id="定义切片">定义切片</h3>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a []<span class="type">int</span>  <span class="comment">// [], 注意 [3]int / [...]int 都是数组不是切片</span></span><br><span class="line"><span class="keyword">var</span> a = []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;  <span class="comment">// [1 2 3]</span></span><br><span class="line">a := []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;     <span class="comment">// [1 2 3]</span></span><br><span class="line"><span class="keyword">var</span> a = <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">3</span>)  <span class="comment">// [0 0 0]</span></span><br><span class="line"><span class="comment">// make: make 只用于构造 slice / map / channel, 第一个参数为类型, 第二个参数为大小</span></span><br></pre></td></tr></table></figure>
+<h3 id="切片原型">切片原型</h3>
+<ul>
+<li><code>slice</code> 是引用数据类型，对切片的赋值不会拷贝数据，切片的切片也是引用而非拷贝。</li>
+<li>后面介绍的所有切片操作请注意区别 <mark class="hl-label default">引用与拷贝</mark> </li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> SliceHeader <span class="keyword">struct</span> &#123;</span><br><span class="line">    Data <span class="type">uintptr</span>  <span class="comment">// 数据存储地址</span></span><br><span class="line">    Len <span class="type">int</span>       <span class="comment">// 数据长度</span></span><br><span class="line">    Cap <span class="type">int</span>       <span class="comment">// 数据申请长度</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="切片操作">切片操作</h3>
+<h4 id="切片">切片</h4>
+<ul>
+<li>
+<p><em>切片是一种数据类型也是一种操作</em></p>
+</li>
+<li>
+<p>进行切片的对象可以是数组或切片，将返回 <code>SliceHeader</code> ，是对数据的引用而非拷贝。</p>
+</li>
+<li>
+<p><code>Golang</code> 中的切片应与 <code>Python</code> 区分的是：<code>Golang</code> 中索引不可使用负数表示，并且不可设置步长。</p>
+</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;</span><br><span class="line">b := a[:]    <span class="comment">// [1 2 3] 如果 a 是一个数组, 此方法将创建一个切片</span></span><br><span class="line">c := a[<span class="number">1</span>:]   <span class="comment">// [2 3]</span></span><br><span class="line">c := a[:<span class="number">2</span>]   <span class="comment">// [1 2]</span></span><br><span class="line">c := a[<span class="number">1</span>:<span class="number">2</span>]  <span class="comment">// [2]</span></span><br></pre></td></tr></table></figure>
+<h4 id="append-与-copy">append() 与 copy()</h4>
+<ul>
+<li><code>append()</code> 与 <code>copy()</code> 都是对数据的拷贝，会对引用到的所有数据进行拷贝。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>&#125;</span><br><span class="line"><span class="keyword">var</span> b = []<span class="type">int</span>&#123;<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;</span><br><span class="line"><span class="keyword">var</span> c []<span class="type">int</span> = <span class="built_in">append</span>(a, <span class="number">4</span>)        <span class="comment">// [1 2 4]     传入切片类型与元素类型, 返回切片类型</span></span><br><span class="line"><span class="keyword">var</span> d []<span class="type">int</span> = <span class="built_in">append</span>(a, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>)  <span class="comment">// [1 2 4 5 6] 传入切片类型与多个元素类型，返回切片类型</span></span><br><span class="line"><span class="keyword">var</span> e []<span class="type">int</span> = <span class="built_in">append</span>(a, b...)     <span class="comment">// [1 2 4 5 6] 传入两个切片类型, 返回切片类型, 是将 b 追加到 a 尾后的新切片</span></span><br><span class="line"><span class="keyword">var</span> i <span class="type">int</span> = <span class="built_in">copy</span>(a, b)            <span class="comment">// 2 [4 5] [4 5 6]  将 b 拷贝到 a , 返回拷贝量, 拷贝量为 min(len(a), len(b))</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>Golang</code> 中 <code>args...</code> 表示解包，对应 <code>Python</code> 中的 <code>*args</code> 。</li>
+</ul>
+<h4 id="常见组合操作">常见组合操作</h4>
+<h5 id="拷贝切片">拷贝切片</h5>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">b := <span class="built_in">append</span>([]<span class="type">int</span>&#123;&#125;, a...)</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">b := <span class="built_in">make</span>([]<span class="type">int</span>, <span class="built_in">len</span>(a))</span><br><span class="line"><span class="built_in">copy</span>(b, a)</span><br></pre></td></tr></table></figure>
+<h5 id="原地删除">原地删除</h5>
+<ul>
+<li>原地删除首部</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a = a[st:]  <span class="comment">// 删除前 st 个元素</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>原地删除尾部</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a = a[:ed]  <span class="comment">// 保留前 ed 个元素</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>原地截取中部</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a = a[st:ed]  <span class="comment">// 截取索引 [st, ed) 元素</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>原地删除中部</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="built_in">append</span>(a[:st], a[ed:]...)  <span class="comment">// 删除索引 [st, ed) 元素</span></span><br></pre></td></tr></table></figure>
+<h5 id="原地插入">原地插入</h5>
+<ul>
+<li>原地末尾追加</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="built_in">append</span>(a, b...)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>原地首部插入</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="built_in">append</span>(b, a...)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>原地中间插入</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="built_in">append</span>(<span class="built_in">append</span>(a[:st], b...), a[st:]...)  <span class="comment">// 从第 st 个元素开始插入元素</span></span><br></pre></td></tr></table></figure>
+<h2 id="字符串类型">字符串类型</h2>
+<h3 id="定义字符串">定义字符串</h3>
+<ul>
+<li>在 <code>Golang</code> 字符串默认使用 <code>UTF-8</code> 编码。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="type">string</span> = <span class="string">&quot;Hello World!&quot;</span></span><br><span class="line"><span class="keyword">var</span> b = <span class="string">&quot;Golang 入门经典&quot;</span></span><br><span class="line">c := <span class="string">&quot;abcABC123&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="字符串原型">字符串原型</h3>
+<ul>
+<li>字符串是引用数据类型，底层使用 <code>[...]byte</code> 存储，而使用 <code>UTF-8</code> 解析。与 <code>Java</code> 相似字符串作常量使用，不直接修改其值。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> StringHeader <span class="keyword">struct</span> &#123;</span><br><span class="line">    Data <span class="type">uintptr</span></span><br><span class="line">    Len <span class="type">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="字符串操作">字符串操作</h3>
+<ul>
+<li>许多字符串操作位于库文件 <code>strings</code> 中，许多字符串类型转换位于库文件 <code>strconv</code> 中。</li>
+<li>这里假设已经定义了两个变量：</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="string">&quot;你好&quot;</span></span><br><span class="line"><span class="keyword">var</span> b = <span class="string">&quot;Hello&quot;</span></span><br></pre></td></tr></table></figure>
+<h4 id="字符串切片">字符串切片</h4>
+<ul>
+<li>字符串可以认为是一个静态切片类型，可以进行相应的切片操作。不可使用 <code>append</code> 和 <code>copy</code> 函数。</li>
+</ul>
+<h4 id="字符串拼接">字符串拼接</h4>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c := a + b  <span class="comment">// 运算符 两字符串拼接</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c = strings.Join([]<span class="type">string</span>&#123;a, b&#125;, <span class="string">&quot;&quot;</span>)  <span class="comment">// 函数 多字符串拼接</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 官方推荐的 最高效率</span></span><br><span class="line"><span class="keyword">var</span> builder strings.Builder  <span class="comment">// 或 builder := strings.Builder&#123;&#125;</span></span><br><span class="line">builder.WriteString(a)</span><br><span class="line">builder.WriteString(b)</span><br><span class="line"><span class="keyword">var</span> s <span class="type">string</span> = builder.String()  <span class="comment">// 或 s := builder.String()</span></span><br></pre></td></tr></table></figure>
+<h4 id="字符串编码">字符串编码</h4>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">c := []<span class="type">byte</span>(a)  <span class="comment">// 转换为 ASCII 编码, 一个 Unicode 字符占用 3 Bytes</span></span><br><span class="line">d := <span class="built_in">len</span>(c)     <span class="comment">// 6</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">c := []<span class="type">rune</span>(a)  <span class="comment">// 转换为 UTF-8 编码</span></span><br><span class="line">d := <span class="built_in">len</span>(c)     <span class="comment">// 2</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>对 <code>string</code> 类型直接使用 <code>len()</code> ，返回值为 <code>ASCII</code> 编码长度。</li>
+</ul>
+<h4 id="其他操作">其他操作</h4>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strings</span>.<span class="title">Contains</span><span class="params">(s <span class="type">string</span>, substr <span class="type">string</span>)</span></span> <span class="type">bool</span>   <span class="comment">// s 是否包含 substr</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strings</span>.<span class="title">HasPrefix</span><span class="params">(s <span class="type">string</span>, prefix <span class="type">string</span>)</span></span> <span class="type">bool</span>  <span class="comment">// s 是否以 substr 开头</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strings</span>.<span class="title">HasSuffix</span><span class="params">(s <span class="type">string</span>, suffix <span class="type">string</span>)</span></span> <span class="type">bool</span>  <span class="comment">// s 是否以 substr 结尾</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strings</span>.<span class="title">Index</span><span class="params">(s <span class="type">string</span>, substr <span class="type">string</span>)</span></span> <span class="type">int</span>       <span class="comment">// substr 在 s 中第一次出现的索引</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strings</span>.<span class="title">LastIndex</span><span class="params">(s <span class="type">string</span>, substr <span class="type">string</span>)</span></span> <span class="type">int</span>   <span class="comment">// substr 在 s 中最后次出现的索引</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strings</span>.<span class="title">ToLower</span><span class="params">(s <span class="type">string</span>)</span></span> <span class="type">string</span>            <span class="comment">// 返回 s 的小写形式</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strings</span>.<span class="title">ToUpper</span><span class="params">(s <span class="type">string</span>)</span></span> <span class="type">string</span>            <span class="comment">// 返回 s 的大写形式</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strings</span>.<span class="title">EqualFold</span><span class="params">(s <span class="type">string</span>, t <span class="type">string</span>)</span></span> <span class="type">bool</span>  <span class="comment">// 不区分大小写的情况下, s 与 t 是否相等</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strings</span>.<span class="title">Split</span><span class="params">(s <span class="type">string</span>, sep <span class="type">string</span>)</span></span> []<span class="type">string</span>   <span class="comment">// 以 sep 分割字符串 s</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strings</span>.<span class="title">SplitN</span><span class="params">(s <span class="type">string</span>, sep <span class="type">string</span>, n <span class="type">int</span>)</span></span> []<span class="type">string</span>  </span><br><span class="line"><span class="comment">// 以 sep 分割字符串 s. 最多将字符串分割为 n 份, -1 表示无穷</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strings</span>.<span class="title">SplitAfter</span><span class="params">(s <span class="type">string</span>, sep <span class="type">string</span>)</span></span> []<span class="type">string</span>  <span class="comment">// 以 sep 分割字符串 s, sep 会保留在前一个字符串尾</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strings</span>.<span class="title">SplitAfterN</span><span class="params">(s <span class="type">string</span>, sep <span class="type">string</span>, n <span class="type">int</span>)</span></span> []<span class="type">string</span>  </span><br><span class="line"><span class="comment">// 以 sep 分割字符串 s, sep 会保留在前一个字符串尾. 最多将字符串分割为 n 份, -1 表示无穷</span></span><br><span class="line"><span class="comment">// ??? 为什么 go 没有 rsplit</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strings</span>.<span class="title">Join</span><span class="params">(elem []<span class="type">string</span>, sep <span class="type">string</span>)</span></span> <span class="type">string</span>  <span class="comment">// 以 sep 衔接 elem 中元素, Split 的逆过程</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strings</span>.<span class="title">Replace</span><span class="params">(s <span class="type">string</span>, old <span class="type">string</span>, <span class="built_in">new</span> <span class="type">string</span>, n <span class="type">int</span>)</span></span> <span class="type">string</span>  </span><br><span class="line"><span class="comment">// 将 s 中的 old 替换为 new 至多 n 次, n 为 -1 表示无穷</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strings</span>.<span class="title">ReplaceAll</span><span class="params">(s <span class="type">string</span>, old <span class="type">string</span>, <span class="built_in">new</span> <span class="type">string</span>)</span></span> <span class="type">string</span>      <span class="comment">// 替换全部</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">string</span>.<span class="title">Repeat</span><span class="params">(s <span class="type">string</span>, n <span class="type">int</span>)</span></span> <span class="type">string</span>  <span class="comment">// s 重复 n 次</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strings</span>.<span class="title">TrimSpace</span><span class="params">(s <span class="type">string</span>)</span></span> <span class="type">string</span>                  <span class="comment">// 去除前后空字符</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strings</span>.<span class="title">Trim</span><span class="params">(s <span class="type">string</span>, chars <span class="type">string</span>)</span></span> <span class="type">string</span>         <span class="comment">// 去除前后 chars 中的字符</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strings</span>.<span class="title">TrimLeft</span><span class="params">(s <span class="type">string</span>, chars <span class="type">string</span>)</span></span> <span class="type">string</span>     <span class="comment">// 去除前导 chars 中的字符</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strings</span>.<span class="title">TrimRight</span><span class="params">(s <span class="type">string</span>, chars <span class="type">string</span>)</span></span> <span class="type">string</span>    <span class="comment">// 去除后导 chars 中的字符</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strings</span>.<span class="title">TrimPrerix</span><span class="params">(s <span class="type">string</span>, prefix <span class="type">string</span>)</span></span> <span class="type">string</span>  <span class="comment">// 去除前导 prefix 字符串至多一次</span></span><br><span class="line"><span class="comment">// func strings.CutPrefix(s string, prefix string) (string, bool)  // 功能相似, 返回是否去除</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strings</span>.<span class="title">TrimSuffix</span><span class="params">(s <span class="type">string</span>, suffix <span class="type">string</span>)</span></span> <span class="type">string</span>  <span class="comment">// 去除后导 suffix 字符串至多一次</span></span><br><span class="line"><span class="comment">// func strings.CutSuffix(s string, suffix string) (string, bool)  // 功能相似, 返回是否去除</span></span><br></pre></td></tr></table></figure>
+<h3 id="字符串转换">字符串转换</h3>
+<h4 id="转换为字符串类型">转换为字符串类型</h4>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">fmt</span>.<span class="title">Sprint</span><span class="params">(a ...any)</span></span> <span class="type">string</span>  <span class="comment">// 将任意类型转换为字符串, 只要类型满足 fmt.Stringer 接口</span></span><br><span class="line"><span class="comment">// fmt.Sprint(Complex(1, 5))</span></span><br></pre></td></tr></table></figure>
+<h4 id="转换自字符串类型">转换自字符串类型</h4>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strconv</span>.<span class="title">ParseBool</span><span class="params">(s <span class="type">string</span>)</span></span> (<span class="type">bool</span>, <span class="type">error</span>)  </span><br><span class="line"><span class="comment">// 将 string 转为 bool 类型 (true/false), 如果错误存在同时返回</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strconv</span>.<span class="title">ParseComplex</span><span class="params">(s <span class="type">string</span>, bitSize <span class="type">int</span>)</span></span> (<span class="type">complex128</span>, <span class="type">error</span>)</span><br><span class="line"><span class="comment">// 将 string 转为 complex 类型, 如果错误存在同时返回</span></span><br><span class="line"><span class="comment">// bitSize 为 64/128 表示 complex64/complex128, 一般使用 128</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strconv</span>.<span class="title">ParseFloat</span><span class="params">(s <span class="type">string</span>, bitSize <span class="type">int</span>)</span></span> (<span class="type">float64</span>, <span class="type">error</span>)</span><br><span class="line"><span class="comment">// 将 string 转为 complex 类型, 如果错误存在同时返回</span></span><br><span class="line"><span class="comment">// bitSize 为 32/64 表示 float32/float64, 一般使用 64</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strconv</span>.<span class="title">ParseInt</span><span class="params">(s <span class="type">string</span>, base <span class="type">int</span>, bitSize <span class="type">int</span>)</span></span> (<span class="type">int64</span>, <span class="type">error</span>)</span><br><span class="line"><span class="comment">// 将 string 转为 complex 类型, 如果错误存在同时返回</span></span><br><span class="line"><span class="comment">// base 为进制 0/2-36, 特别地, 0 表示自动进制</span></span><br><span class="line"><span class="comment">//     0b 开头被识别为二进制</span></span><br><span class="line"><span class="comment">//     0o 开头被识别为八进制</span></span><br><span class="line"><span class="comment">//     0x 开头被识别为十六进制</span></span><br><span class="line"><span class="comment">//     否则被识别为十进制</span></span><br><span class="line"><span class="comment">// bitSize 为 8/16/32/64 表示 int8/int16/int32/int64, 一般使用 64</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">strconv</span>.<span class="title">ParseUint</span><span class="params">(s <span class="type">string</span>, base <span class="type">int</span>, bitSize <span class="type">int</span>)</span></span> (<span class="type">uint64</span>, <span class="type">error</span>)  <span class="comment">// 与 strconv.ParseInt 相似</span></span><br></pre></td></tr></table></figure>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%AF%AD%E6%B3%95/">语法</a><a class="post-meta__tags" href="/tags/Golang/">Golang</a></div><div class="post_share"><div class="social-share" data-image="/img/default_cover.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/go-abc-2-variable/" title="Golang 入门基础(二) - 变量与常量"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Golang 入门基础(二) - 变量与常量</div></div></a></div><div class="next-post pull-right"><a href="/posts/go-abc-4-type-2/" title="Golang 入门基础(四) - 内置数据类型(下)"><img class="cover" src="/img/default_cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Golang 入门基础(四) - 内置数据类型(下)</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/posts/go-abc-1-start/" title="Golang 入门基础(一) - Get Start"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-07-27</div><div class="title">Golang 入门基础(一) - Get Start</div></div></a></div><div><a href="/posts/go-abc-2-variable/" title="Golang 入门基础(二) - 变量与常量"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-07-27</div><div class="title">Golang 入门基础(二) - 变量与常量</div></div></a></div><div><a href="/posts/go-abc-0-preface/" title="Golang 入门基础(零) - 前言"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-07-27</div><div class="title">Golang 入门基础(零) - 前言</div></div></a></div><div><a href="/posts/go-abc-4-type-2/" title="Golang 入门基础(四) - 内置数据类型(下)"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-07-27</div><div class="title">Golang 入门基础(四) - 内置数据类型(下)</div></div></a></div><div><a href="/posts/go-abc-6-async/" title="Golang 入门基础(六) - 多线程开发"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-07-27</div><div class="title">Golang 入门基础(六) - 多线程开发</div></div></a></div><div><a href="/posts/go-abc-5-control/" title="Golang 入门基础(五) - 控制语句"><img class="cover" src="/img/default_cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-07-27</div><div class="title">Golang 入门基础(五) - 控制语句</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Jamhus Tao</div><div class="author-info__description">找点好玩的去！</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">113</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">83</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">72</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/jamhus-tao"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/img/qq.jpg" target="_blank" title="QQ"><i class="fab fa-qq"></i></a><a class="social-icon" href="/img/weixin.jpg" target="_blank" title="Weixin"><i class="fab fa-weixin"></i></a><a class="social-icon" href="mailto:jamhus_tao@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="https://github.com/jamhus-tao" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8C%87%E9%92%88%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.</span> <span class="toc-text">指针类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E6%8C%87%E9%92%88"><span class="toc-number">1.1.</span> <span class="toc-text">定义指针</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A9%BA%E6%8C%87%E9%92%88"><span class="toc-number">1.2.</span> <span class="toc-text">空指针</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BF%E9%97%AE%E6%8C%87%E9%92%88"><span class="toc-number">1.3.</span> <span class="toc-text">访问指针</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E6%9E%84%E4%BD%93%E7%B1%BB%E5%9E%8B"><span class="toc-number">2.</span> <span class="toc-text">结构体类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-number">2.1.</span> <span class="toc-text">定义结构体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BF%E9%97%AE%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-number">2.2.</span> <span class="toc-text">访问结构体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2"><span class="toc-number">2.3.</span> <span class="toc-text">类型转换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B5%8C%E5%A5%97%E4%B8%8E%E7%BB%A7%E6%89%BF"><span class="toc-number">2.4.</span> <span class="toc-text">嵌套与继承</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E7%BB%84%E7%B1%BB%E5%9E%8B"><span class="toc-number">3.</span> <span class="toc-text">数组类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E6%95%B0%E7%BB%84"><span class="toc-number">3.1.</span> <span class="toc-text">定义数组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%A0%E9%80%92%E6%95%B0%E7%BB%84"><span class="toc-number">3.2.</span> <span class="toc-text">传递数组</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%87%E7%89%87%E7%B1%BB%E5%9E%8B"><span class="toc-number">4.</span> <span class="toc-text">切片类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E5%88%87%E7%89%87"><span class="toc-number">4.1.</span> <span class="toc-text">定义切片</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%87%E7%89%87%E5%8E%9F%E5%9E%8B"><span class="toc-number">4.2.</span> <span class="toc-text">切片原型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%87%E7%89%87%E6%93%8D%E4%BD%9C"><span class="toc-number">4.3.</span> <span class="toc-text">切片操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%87%E7%89%87"><span class="toc-number">4.3.1.</span> <span class="toc-text">切片</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#append-%E4%B8%8E-copy"><span class="toc-number">4.3.2.</span> <span class="toc-text">append() 与 copy()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%BB%84%E5%90%88%E6%93%8D%E4%BD%9C"><span class="toc-number">4.3.3.</span> <span class="toc-text">常见组合操作</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%8B%B7%E8%B4%9D%E5%88%87%E7%89%87"><span class="toc-number">4.3.3.1.</span> <span class="toc-text">拷贝切片</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8E%9F%E5%9C%B0%E5%88%A0%E9%99%A4"><span class="toc-number">4.3.3.2.</span> <span class="toc-text">原地删除</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8E%9F%E5%9C%B0%E6%8F%92%E5%85%A5"><span class="toc-number">4.3.3.3.</span> <span class="toc-text">原地插入</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%B1%BB%E5%9E%8B"><span class="toc-number">5.</span> <span class="toc-text">字符串类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-number">5.1.</span> <span class="toc-text">定义字符串</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8E%9F%E5%9E%8B"><span class="toc-number">5.2.</span> <span class="toc-text">字符串原型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%93%8D%E4%BD%9C"><span class="toc-number">5.3.</span> <span class="toc-text">字符串操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%88%87%E7%89%87"><span class="toc-number">5.3.1.</span> <span class="toc-text">字符串切片</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%8B%BC%E6%8E%A5"><span class="toc-number">5.3.2.</span> <span class="toc-text">字符串拼接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%BC%96%E7%A0%81"><span class="toc-number">5.3.3.</span> <span class="toc-text">字符串编码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E6%93%8D%E4%BD%9C"><span class="toc-number">5.3.4.</span> <span class="toc-text">其他操作</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%BD%AC%E6%8D%A2"><span class="toc-number">5.4.</span> <span class="toc-text">字符串转换</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BD%AC%E6%8D%A2%E4%B8%BA%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%B1%BB%E5%9E%8B"><span class="toc-number">5.4.1.</span> <span class="toc-text">转换为字符串类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BD%AC%E6%8D%A2%E8%87%AA%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%B1%BB%E5%9E%8B"><span class="toc-number">5.4.2.</span> <span class="toc-text">转换自字符串类型</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cpp-cmake-abc/" title="CMake 项目构建和代码测试">CMake 项目构建和代码测试</a><time datetime="2024-09-27T13:01:00.000Z" title="更新于 2024-09-27 21:01:00">2024-09-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ds-consistent-hash/" title="浅析几种一致性哈希算法">浅析几种一致性哈希算法</a><time datetime="2024-09-11T09:58:00.000Z" title="更新于 2024-09-11 17:58:00">2024-09-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/ds-bloom-filter/" title="布隆过滤器及其误判率推导">布隆过滤器及其误判率推导</a><time datetime="2024-07-14T06:28:00.000Z" title="更新于 2024-07-14 14:28:00">2024-07-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/cs-hanmming-check/" title="海明校验码 - 计算机网络">海明校验码 - 计算机网络</a><time datetime="2024-06-26T05:24:00.000Z" title="更新于 2024-06-26 13:24:00">2024-06-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/acm-lanqiaocup-24cbg/" title="2024 年第十五届蓝桥杯 C/C++ B组国赛题解">2024 年第十五届蓝桥杯 C/C++ B组国赛题解</a><time datetime="2024-06-08T05:49:00.000Z" title="更新于 2024-06-08 13:49:00">2024-06-08</time></div></div></div></div></div></div></main><footer id="footer" style="background: #171717"><div id="footer-wrap"><div class="copyright">&copy;2023 - 2025 By Jamhus Tao</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/@fancyapps/ui/dist/fancybox/fancybox.umd.js"></script><div class="js-pjax"><link rel="stylesheet" type="text/css" href="/pluginsSrc/katex/dist/katex.min.css"><script src="/pluginsSrc/katex/dist/contrib/copy-tex.min.js"></script><script>(() => {
+  document.querySelectorAll('#article-container span.katex-display').forEach(item => {
+    btf.wrap(item, 'div', { class: 'katex-wrap'})
+  })
+})()</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('/pluginsSrc/mermaid/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addModeChange('mermaid', runMermaid)
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: 'f5ab0e5f4c6139f6fc66',
+      clientSecret: '34afc0f7b7a9086e590fbcb099bae698933ed074',
+      repo: 'jamhus-tao.github.io.gitalk',
+      owner: 'jamhus-tao',
+      admin: ['jamhus-tao'],
+      id: '82a6aa12f21a26734af6c6b167410612',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    getCSS('/pluginsSrc/gitalk/dist/gitalk.css')
+    getScript('/pluginsSrc/gitalk/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.textContent= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !false) {
+  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script data-pjax defer src="/js/my.js"></script><script defer="defer" id="ribbon" src="/pluginsSrc/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="true" data-click="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
